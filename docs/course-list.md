@@ -2,7 +2,7 @@
 
 Automatically showcase your educational background with a clean, organized table of college courses in your GitHub README.
 
-## 🚀 Quick Start
+## 🚀 Quick Start (File-Based Approach - Recommended)
 
 ### 1. Add Comments to Your README
 
@@ -15,7 +15,28 @@ Add the following comments to your `README.md` where you want the content to app
 <!--END_SECTION:github-readme-actions-course_list-->
 ```
 
-### 2. Create Workflow File
+### 2. Create Course Data File
+
+Create `.github/course-data.json` in your repository:
+
+```json
+[
+  {
+    "name": "Your University",
+    "degree": "Your Degree",
+    "icon": "🎓",
+    "courses": [
+      {
+        "code": "CS101",
+        "name": "Introduction to Computer Science",
+        "link": "https://example.edu/cs101"
+      }
+    ]
+  }
+]
+```
+
+### 3. Create Workflow File
 
 Create `.github/workflows/update-readme.yml`:
 
@@ -42,6 +63,8 @@ jobs:
           ACTION_TYPE: 'course_list'
 ```
 
+The action will automatically find and use your `.github/course-data.json` file!
+
 ## 📋 Configuration Options
 
 ### Core Inputs
@@ -59,47 +82,16 @@ jobs:
 
 | Input                    | Description                                                | Default | Required |
 | ------------------------ | ---------------------------------------------------------- | ------- | -------- |
-| COURSE\_DATA             | JSON string containing course data with institutions       | Sample data | ❌        |
 | COURSE\_DATA\_FILE       | Path to JSON file containing course data                   | Auto-detected | ❌        |
+| COURSE\_DATA             | JSON string containing course data with institutions       | Sample data | ❌        |
 | MAX\_COURSES\_PER\_COLUMN | Maximum number of courses to display per institution      | 15      | ❌        |
 
 **Note**: The action will look for course data in this priority order:
 
-1. `COURSE_DATA` input (JSON string)
-2. `COURSE_DATA_FILE` input (custom file path)
-3. Auto-detected files: `.github/course-data.json`, `course-data.json`, `.github/courses.json`, `courses.json`
+1. `COURSE_DATA_FILE` input (custom file path)
+2. Auto-detected files: `.github/course-data.json`, `course-data.json`, `.github/courses.json`, `courses.json`
+3. `COURSE_DATA` input (JSON string)
 4. Sample data (fallback)
-
-## 🎨 Course Data Format
-
-The `COURSE_DATA` input expects a JSON string with the following structure:
-
-```json
-[
-  {
-    "name": "University Name",
-    "degree": "Degree Type (e.g., BS Computer Science)",
-    "icon": "🦡",
-    "courses": [
-      {
-        "code": "CS101",
-        "name": "Introduction to Computer Science",
-        "link": "https://example.edu/cs101"
-      }
-    ]
-  }
-]
-```
-
-### Field Descriptions
-
-- **name**: Full name of the educational institution
-- **degree**: Degree type and major (e.g., "BS Computer Science", "MS Data Science")
-- **icon**: Emoji icon to represent the institution (optional, defaults to 🎓)
-- **courses**: Array of course objects
-  - **code**: Course code/number (e.g., "CS577", "MATH340")
-  - **name**: Full course name
-  - **link**: URL to course page (optional)
 
 ## 📁 File-Based Setup (Recommended)
 
@@ -149,9 +141,40 @@ The action will automatically find and use your `.github/course-data.json` file!
     COURSE_DATA_FILE: 'my-education.json'
 ```
 
+## 🎨 Course Data Format
+
+The course data (whether in a file or as a JSON string) should follow this structure:
+
+```json
+[
+  {
+    "name": "University Name",
+    "degree": "Degree Type (e.g., BS Computer Science)",
+    "icon": "🦡",
+    "courses": [
+      {
+        "code": "CS101",
+        "name": "Introduction to Computer Science",
+        "link": "https://example.edu/cs101"
+      }
+    ]
+  }
+]
+```
+
+### Field Descriptions
+
+- **name**: Full name of the educational institution
+- **degree**: Degree type and major (e.g., "BS Computer Science", "MS Data Science")
+- **icon**: Emoji icon to represent the institution (optional, defaults to 🎓)
+- **courses**: Array of course objects
+  - **code**: Course code/number (e.g., "CS577", "MATH340")
+  - **name**: Full course name
+  - **link**: URL to course page (optional)
+
 ## 🎨 Example Configurations
 
-### Basic Course List (Uses Sample Data)
+### File-Based Setup (Recommended)
 
 ```yaml
 - uses: highlyavailable/github-readme-actions@main
@@ -161,7 +184,20 @@ The action will automatically find and use your `.github/course-data.json` file!
     ACTION_TYPE: 'course_list'
 ```
 
-### Custom Course Data
+### Custom File Location
+
+```yaml
+- uses: highlyavailable/github-readme-actions@main
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  with:
+    ACTION_TYPE: 'course_list'
+    COURSE_DATA_FILE: 'my-education.json'
+    MAX_COURSES_PER_COLUMN: '8'
+    COMMIT_MSG: '🎓 Updated education and coursework'
+```
+
+### Inline Course Data (Alternative Approach)
 
 ```yaml
 - uses: highlyavailable/github-readme-actions@main
@@ -214,7 +250,7 @@ The action will automatically find and use your `.github/course-data.json` file!
       ]
 ```
 
-### Multiple Institutions with Limits
+### Basic Course List (Uses Sample Data)
 
 ```yaml
 - uses: highlyavailable/github-readme-actions@main
@@ -222,8 +258,6 @@ The action will automatically find and use your `.github/course-data.json` file!
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   with:
     ACTION_TYPE: 'course_list'
-    MAX_COURSES_PER_COLUMN: '8'
-    COMMIT_MSG: '🎓 Updated education and coursework'
 ```
 
 ## 📊 Output Format
@@ -244,28 +278,6 @@ The action generates a clean, organized table showing your educational backgroun
 - **Clickable Links**: Course names link to course pages when available
 - **Responsive Design**: Works well on both desktop and mobile
 - **Truncation Support**: Shows "... and X more" when courses exceed the limit
-
-## 🔧 Advanced Usage
-
-### Using School-Specific Icons
-
-```json
-{
-  "name": "University of Wisconsin-Madison",
-  "icon": "🦡",
-  "degree": "BS Computer Science & Data Science"
-}
-```
-
-### Organizing by Time Period
-
-You can organize institutions chronologically or by importance in your JSON data.
-
-### Course Links Best Practices
-
-- Link to official course pages when available
-- Use department pages for courses without specific URLs
-- Consider linking to course catalogs for older courses
 
 ## 📚 Examples
 
