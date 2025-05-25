@@ -1,0 +1,33 @@
+name: Update README with GitHub Actions
+
+on:
+  schedule:
+    # Runs every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  update-readme:
+    name: Update README with dynamic content
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update README with Pinned PRs
+        uses: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          ACTION_TYPE: 'pinned_prs'
+          GH_USERNAME: ${{ github.repository_owner }}
+          MAX_LINES: 10
+          PR_STATE: 'all'
+          INCLUDE_DRAFT: 'false'
+          SORT_BY: 'updated'
+          COMMIT_MSG: '🚀 Update README with latest pinned pull requests' 

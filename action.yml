@@ -1,0 +1,69 @@
+name: 'GitHub README Actions'
+description: 'A collection of GitHub Actions to automatically update your README with dynamic content'
+author: 'Peter Bryant'
+branding:
+  icon: 'activity'
+  color: 'blue'
+
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub token for API access'
+    required: true
+  ACTION_TYPE:
+    description: 'Type of action to perform (pinned_prs, coming soon: recent_commits, top_repos, etc.)'
+    required: false
+    default: 'pinned_prs'
+  GH_USERNAME:
+    description: 'GitHub username to fetch data for'
+    required: false
+    default: ${{ github.repository_owner }}
+  TARGET_FILE:
+    description: 'Target file to update'
+    required: false
+    default: 'README.md'
+  COMMIT_MSG:
+    description: 'Commit message for the update'
+    required: false
+    default: '🚀 Update README with GitHub actions'
+  COMMIT_NAME:
+    description: 'Name of the committer'
+    required: false
+    default: 'github-actions[bot]'
+  COMMIT_EMAIL:
+    description: 'Email of the committer'
+    required: false
+    default: '41898282+github-actions[bot]@users.noreply.github.com'
+  
+  # Pinned PRs specific inputs
+  MAX_LINES:
+    description: '[pinned_prs] Maximum number of PRs to display'
+    required: false
+    default: '5'
+  PR_STATE:
+    description: '[pinned_prs] Filter PRs by state (open, closed, merged, all)'
+    required: false
+    default: 'all'
+  START_DATE:
+    description: '[pinned_prs] Start date for PR filtering (YYYY-MM-DD)'
+    required: false
+  END_DATE:
+    description: '[pinned_prs] End date for PR filtering (YYYY-MM-DD)'
+    required: false
+  BLACKLIST:
+    description: '[pinned_prs] Comma-separated list of PR numbers to exclude'
+    required: false
+  REPOSITORIES:
+    description: '[pinned_prs] Comma-separated list of repositories to include (owner/repo format). If empty, includes all user repositories'
+    required: false
+  INCLUDE_DRAFT:
+    description: '[pinned_prs] Include draft pull requests'
+    required: false
+    default: 'false'
+  SORT_BY:
+    description: '[pinned_prs] Sort PRs by (created, updated, popularity)'
+    required: false
+    default: 'updated'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js' 

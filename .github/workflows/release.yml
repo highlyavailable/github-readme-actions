@@ -1,0 +1,173 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: make install
+      
+      - name: Run CI pipeline
+        run: make ci
+      
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_number=${VERSION#v}" >> $GITHUB_OUTPUT
+      
+      - name: Update package.json version
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          npm version ${{ steps.version.outputs.version_number }} --no-git-tag-version
+          make build
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Release ${{ steps.version.outputs.version }}" || exit 0
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -z "$PREV_TAG" ]; then
+            echo "changelog=Initial release" >> $GITHUB_OUTPUT
+          else
+            # Generate changelog from commits
+            CHANGELOG=$(git log --pretty=format:"- %s" $PREV_TAG..HEAD | grep -v "^- Merge" | head -20)
+            if [ -z "$CHANGELOG" ]; then
+              CHANGELOG="- Bug fixes and improvements"
+            fi
+            echo "changelog<<EOF" >> $GITHUB_OUTPUT
+            echo "$CHANGELOG" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: ${{ steps.version.outputs.version }}
+          body: |
+            ## Changes
+            
+            ${{ steps.changelog.outputs.changelog }}
+            
+            ## Installation
+            
+            ```yaml
+            - uses: highlyavailable/github-readme-actions@${{ steps.version.outputs.version }}
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                ACTION_TYPE: 'pinned_prs'
+            ```
+            
+            ## What's Changed
+            
+            See the [README](https://github.com/highlyavailable/github-readme-actions#readme) for full documentation.
+          draft: false
+          prerelease: false
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/index.js
+          asset_name: index.js
+          asset_content_type: application/javascript
+
+  publish-marketplace:
+    name: Publish to Marketplace
+    needs: release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: make install
+      
+      - name: Build
+        run: make build
+      
+      - name: Publish to Marketplace
+        uses: actions/publish-action@v0.2.2
+        with:
+          source-tag: ${{ github.ref_name }}
+          slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
+
+  update-major-tag:
+    name: Update Major Version Tag
+    needs: release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Update major version tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          MAJOR_VERSION=$(echo $VERSION | cut -d. -f1)
+          
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Delete existing major version tag if it exists
+          git tag -d v$MAJOR_VERSION || true
+          git push origin :refs/tags/v$MAJOR_VERSION || true
+          
+          # Create new major version tag
+          git tag v$MAJOR_VERSION
+          git push origin v$MAJOR_VERSION 

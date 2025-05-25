@@ -1,0 +1,28 @@
+name: Update Pinned PRs
+
+on:
+  schedule:
+    # Runs every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    name: Update README with pinned pull requests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update README
+        uses: highlyavailable/github-readme-actions@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          ACTION_TYPE: 'pinned_prs'
+          MAX_LINES: 5
+          PR_STATE: 'all'
+          SORT_BY: 'updated' 

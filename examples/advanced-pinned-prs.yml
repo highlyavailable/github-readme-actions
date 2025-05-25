@@ -1,0 +1,27 @@
+name: Update README with Advanced Pinned PRs
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Every 12 hours
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: highlyavailable/github-readme-actions@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          ACTION_TYPE: 'pinned_prs'
+          MAX_LINES: 10
+          PR_STATE: 'merged'
+          START_DATE: '2024-01-01'
+          INCLUDE_DRAFT: 'false'
+          SORT_BY: 'updated'
+          REPOSITORIES: 'owner/important-repo1,owner/important-repo2'
+          COMMIT_MSG: '🚀 Updated showcase of merged pull requests' 
