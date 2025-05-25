@@ -30232,8 +30232,14 @@ function filterPRs(prs, inputs, blacklist) {
 function formatPR(pr, repoName) {
   const state = isPRMerged(pr) ? '🟢' : pr.state === 'open' ? '🟡' : '🔴';
   const draft = pr.draft ? ' (Draft)' : '';
-  const issueLink = pr.body && pr.body.match(/#(\d+)/) ? 
-    ` | [Issue #${pr.body.match(/#(\d+)/)[1]}](https://github.com/${pr.base.repo.full_name}/issues/${pr.body.match(/#(\d+)/)[1]})` : '';
+  
+  // Handle issue link - use repoName for search API results, pr.base.repo.full_name for repository API results
+  let issueLink = '';
+  if (pr.body && pr.body.match(/#(\d+)/)) {
+    const issueNumber = pr.body.match(/#(\d+)/)[1];
+    const repoFullName = pr.base?.repo?.full_name || repoName;
+    issueLink = ` | [Issue #${issueNumber}](https://github.com/${repoFullName}/issues/${issueNumber})`;
+  }
   
   return `- ${state} [${pr.title}${draft}](${pr.html_url}) - ${repoName}${issueLink}`;
 }
