@@ -12,13 +12,13 @@ A collection of GitHub Actions to automatically update your README with dynamic 
 
 Automatically showcase your most important pull requests across repositories.
 
-**[📖 Full Documentation](docs/pinned-prs.md)** | **[🚀 Quick Start](#-quick-start)** | **[📚 Examples](examples/)**
+**[📖 Full Documentation](docs/pinned-prs.md)** | **[📚 Examples](examples/)**
 
 ### 🎓 Course List
 
 Display your educational background with a clean, organized table of college courses and institutions.
 
-**[📖 Full Documentation](docs/course-list.md)** | **[🚀 Quick Start](#-quick-start)** | **[📚 Examples](examples/)**
+**[📖 Full Documentation](docs/course-list.md)** | **[📚 Examples](examples/)**
 
 ## 🚀 Quick Start
 
@@ -26,21 +26,14 @@ Display your educational background with a clean, organized table of college cou
 
 Add the following comments to your `README.md` where you want the content to appear:
 
-**For Pinned PRs:**
 ```markdown
-## 📌 Pinned Pull Requests
+## Your Section Title
 
-<!--START_SECTION:github-readme-actions-pinned_prs-->
-<!--END_SECTION:github-readme-actions-pinned_prs-->
+<!--START_SECTION:github-readme-actions-<action_type>-->
+<!--END_SECTION:github-readme-actions-<action_type>-->
 ```
 
-**For Course List:**
-```markdown
-## 🎓 Education & Coursework
-
-<!--START_SECTION:github-readme-actions-course_list-->
-<!--END_SECTION:github-readme-actions-course_list-->
-```
+Replace `<action_type>` with one of: `pinned_prs`, `course_list`
 
 ### 2. Create Workflow File
 
@@ -66,7 +59,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          ACTION_TYPE: 'pinned_prs'  # or 'course_list'
+          ACTION_TYPE: '<action_type>'  # pinned_prs, course_list, etc.
 ```
 
 ### 3. Trigger the Action
@@ -123,7 +116,6 @@ steps:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
       ACTION_TYPE: 'pinned_prs'
-      MAX_LINES: 5
   
   # Update course list
   - uses: highlyavailable/github-readme-actions@main
@@ -131,25 +123,7 @@ steps:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
       ACTION_TYPE: 'course_list'
-      MAX_COURSES_PER_COLUMN: 10
 ```
-
-## 📊 Output Examples
-
-### Pinned Pull Requests
-
-```markdown
-- 🟢 [Add new feature for user authentication](https://github.com/owner/repo/pull/123) - owner/repo
-- 🟡 [Fix bug in payment processing](https://github.com/owner/repo/pull/124) - owner/repo
-- 🔴 [Update documentation for API endpoints](https://github.com/owner/repo/pull/125) - owner/repo
-```
-
-### Course List
-
-| 🏫 **University of Wisconsin-Madison**<br/><sub>BS Computer Science & Data Science</sub> | 🐝 **Georgia Institute of Technology**<br/><sub>MS Computer Science</sub> |
-|---|---|
-| [CS577 Intro to Algorithms](https://pages.cs.wisc.edu/~shuchi/courses/787-F07/) | [CS6300 Software Development Process](https://omscs.gatech.edu/cs-6300-software-development-process) |
-| [CS564 Database Management Systems](https://pages.cs.wisc.edu/~paris/cs564-f21/) | [CS7632 Game AI](https://omscs.gatech.edu/cs-7632-game-ai) |
 
 ## 📚 Documentation
 
