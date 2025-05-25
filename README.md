@@ -11,11 +11,6 @@ A collection of GitHub Actions to automatically update your README with dynamic 
 ### 🎯 Pinned Pull Requests
 Automatically showcase your most important pull requests across repositories.
 
-**Coming Soon:**
-- 📊 **Recent Commits** - Display your latest commits across repositories
-- 🏆 **Top Repositories** - Showcase your most starred/popular repositories  
-- 📈 **Contribution Stats** - Display contribution graphs and statistics
-- 🔥 **Activity Feed** - Show recent GitHub activity
 
 ## 🚀 Quick Start
 
@@ -27,7 +22,6 @@ Add the following comments to your `README.md` where you want the content to app
 ## 📌 Pinned Pull Requests
 
 <!--START_SECTION:github-readme-actions-pinned_prs-->
-- 🟢 [Refactor](https://github.com/highlyavailable/RateMyProfessor.com-Web-Scraper/pull/11) - highlyavailable/RateMyProfessor.com-Web-Scraper
 <!--END_SECTION:github-readme-actions-pinned_prs-->
 ```
 
@@ -172,7 +166,7 @@ steps:
   #   env:
   #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #   with:
-  #     ACTION_TYPE: 'recent_commits'
+  #     ACTION_TYPE: 'new_action'
 ```
 
 ### Filtering Specific Repositories
@@ -224,20 +218,13 @@ Contributions are welcome! Please read the [Contributing Guide](CONTRIBUTING.md)
 **Quick contribution steps:**
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b feature/NewFeature`)
 3. Follow the [Development Guide](DEVELOPMENT.md) for local setup
 4. Run `make check` to ensure your changes pass all tests
-5. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-6. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Commit your changes (`git commit -m 'Add some NewFeature'`)
+6. Push to the branch (`git push origin feature/NewFeature`)
 7. Open a Pull Request
 
-## 🗺️ Roadmap
-
-- ✅ **Pinned Pull Requests** - Showcase important PRs
-- 🔄 **Recent Commits** - Display latest commits (Coming Soon)
-- 🔄 **Top Repositories** - Show most popular repos (Coming Soon)
-- 🔄 **Contribution Stats** - GitHub contribution metrics (Coming Soon)
-- 🔄 **Activity Feed** - Recent GitHub activity (Coming Soon)
 
 ## 📝 License
 
