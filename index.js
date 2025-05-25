@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const { updateReadme } = require('./src/utils/readme-updater');
 const { executePinnedPRsAction } = require('./src/actions/pinned-prs');
+const { executeCourseListAction } = require('./src/actions/course-list');
 
 /**
  * Get input parameters with defaults
@@ -24,7 +25,11 @@ function getInputs() {
     blacklist: core.getInput('BLACKLIST'),
     repositories: core.getInput('REPOSITORIES'),
     includeDraft: core.getInput('INCLUDE_DRAFT') === 'true',
-    sortBy: core.getInput('SORT_BY') || 'updated'
+    sortBy: core.getInput('SORT_BY') || 'updated',
+    
+    // Course List specific inputs
+    courseData: core.getInput('COURSE_DATA'),
+    maxCoursesPerColumn: parseInt(core.getInput('MAX_COURSES_PER_COLUMN') || '15')
   };
 }
 
@@ -38,6 +43,9 @@ async function executeAction(octokit, inputs) {
     case 'pinned_prs':
       return await executePinnedPRsAction(octokit, inputs);
     
+    case 'course_list':
+      return await executeCourseListAction(octokit, inputs);
+    
     // Future action types can be added here
     // case 'recent_commits':
     //   return await executeRecentCommitsAction(octokit, inputs);
@@ -45,7 +53,7 @@ async function executeAction(octokit, inputs) {
     //   return await executeTopReposAction(octokit, inputs);
     
     default:
-      throw new Error(`Unknown action type: ${inputs.actionType}. Supported types: pinned_prs`);
+      throw new Error(`Unknown action type: ${inputs.actionType}. Supported types: pinned_prs, course_list`);
   }
 }
 

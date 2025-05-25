@@ -32,35 +32,7 @@ function isDateInRange(date, startDate, endDate) {
   return true;
 }
 
-/**
- * Get all repositories for a user
- */
-async function getUserRepositories(octokit, username) {
-  try {
-    const repos = [];
-    let page = 1;
-    let hasMore = true;
 
-    while (hasMore) {
-      const response = await octokit.rest.repos.listForUser({
-        username,
-        type: 'all',
-        sort: 'updated',
-        per_page: 100,
-        page
-      });
-
-      repos.push(...response.data);
-      hasMore = response.data.length === 100;
-      page++;
-    }
-
-    return repos.map(repo => ({ owner: repo.owner.login, name: repo.name }));
-  } catch (error) {
-    core.warning(`Failed to fetch repositories for ${username}: ${error.message}`);
-    return [];
-  }
-}
 
 /**
  * Search for all PRs by a user across GitHub using the search API
@@ -176,28 +148,7 @@ function isPRMerged(pr) {
   return pr.merged_at !== null;
 }
 
-/**
- * Filter PRs based on criteria
- */
-function filterPRs(prs, inputs, blacklist) {
-  return prs.filter(pr => {
-    // Check blacklist
-    if (blacklist.includes(pr.number)) return false;
-    
-    // Check draft status
-    if (!inputs.includeDraft && pr.draft) return false;
-    
-    // Check date range
-    if (!isDateInRange(pr.created_at, inputs.startDate, inputs.endDate)) return false;
-    
-    // Check state filter
-    if (inputs.prState === 'merged' && !isPRMerged(pr)) return false;
-    if (inputs.prState === 'open' && pr.state !== 'open') return false;
-    if (inputs.prState === 'closed' && (pr.state !== 'closed' || isPRMerged(pr))) return false;
-    
-    return true;
-  });
-}
+
 
 /**
  * Format PR for display

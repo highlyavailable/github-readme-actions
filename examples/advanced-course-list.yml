@@ -1,0 +1,41 @@
+name: Update README with Custom Course List
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: highlyavailable/github-readme-actions@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          ACTION_TYPE: 'course_list'
+          MAX_COURSES_PER_COLUMN: '10'
+          COURSE_DATA: |
+            [
+              {
+                "name": "Stanford University",
+                "degree": "MS Computer Science",
+                "icon": "🌲",
+                "courses": [
+                  {
+                    "code": "CS229",
+                    "name": "Machine Learning",
+                    "link": "https://cs229.stanford.edu/"
+                  },
+                  {
+                    "code": "CS231N",
+                    "name": "Convolutional Neural Networks",
+                    "link": "https://cs231n.stanford.edu/"
+                  }
+                ]
+              }
+            ] 

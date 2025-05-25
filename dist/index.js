@@ -8,6 +8,7 @@ const core = __nccwpck_require__(7484);
 const github = __nccwpck_require__(3228);
 const { updateReadme } = __nccwpck_require__(8829);
 const { executePinnedPRsAction } = __nccwpck_require__(1449);
+const { executeCourseListAction } = __nccwpck_require__(7373);
 
 /**
  * Get input parameters with defaults
@@ -30,7 +31,11 @@ function getInputs() {
     blacklist: core.getInput('BLACKLIST'),
     repositories: core.getInput('REPOSITORIES'),
     includeDraft: core.getInput('INCLUDE_DRAFT') === 'true',
-    sortBy: core.getInput('SORT_BY') || 'updated'
+    sortBy: core.getInput('SORT_BY') || 'updated',
+    
+    // Course List specific inputs
+    courseData: core.getInput('COURSE_DATA'),
+    maxCoursesPerColumn: parseInt(core.getInput('MAX_COURSES_PER_COLUMN') || '15')
   };
 }
 
@@ -44,6 +49,9 @@ async function executeAction(octokit, inputs) {
     case 'pinned_prs':
       return await executePinnedPRsAction(octokit, inputs);
     
+    case 'course_list':
+      return await executeCourseListAction(octokit, inputs);
+    
     // Future action types can be added here
     // case 'recent_commits':
     //   return await executeRecentCommitsAction(octokit, inputs);
@@ -51,7 +59,7 @@ async function executeAction(octokit, inputs) {
     //   return await executeTopReposAction(octokit, inputs);
     
     default:
-      throw new Error(`Unknown action type: ${inputs.actionType}. Supported types: pinned_prs`);
+      throw new Error(`Unknown action type: ${inputs.actionType}. Supported types: pinned_prs, course_list`);
   }
 }
 
@@ -30022,6 +30030,170 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 7373:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(7484);
+
+const START_COMMENT = '<!--START_SECTION:github-readme-actions-course_list-->';
+const END_COMMENT = '<!--END_SECTION:github-readme-actions-course_list-->';
+
+/**
+ * Parse course data from input
+ * Expected format: JSON string with array of institutions
+ * [
+ *   {
+ *     "name": "University of Wisconsin-Madison",
+ *     "degree": "BS Computer Science & Data Science",
+ *     "icon": "🏫",
+ *     "courses": [
+ *       {
+ *         "code": "CS577",
+ *         "name": "Intro to Algorithms",
+ *         "link": "https://pages.cs.wisc.edu/~shuchi/courses/787-F07/scribe-notes/lecture01.pdf"
+ *       }
+ *     ]
+ *   }
+ * ]
+ */
+function parseCourseData(courseDataInput) {
+  if (!courseDataInput) {
+    // Return sample data if no input provided
+    return [
+      {
+        name: "University of Wisconsin-Madison",
+        degree: "BS Computer Science & Data Science",
+        icon: "🏫",
+        courses: [
+          { code: "CS577", name: "Intro to Algorithms", link: "https://pages.cs.wisc.edu/~shuchi/courses/787-F07/" },
+          { code: "CS564", name: "Database Management Systems", link: "https://pages.cs.wisc.edu/~paris/cs564-f21/" },
+          { code: "CS540", name: "Artificial Intelligence", link: "https://pages.cs.wisc.edu/~dpage/cs540/" },
+          { code: "MATH541", name: "Modern Algebra II", link: "https://www.math.wisc.edu/~anderson/541F08/" },
+          { code: "MATH540", name: "Modern Algebra I", link: "https://www.math.wisc.edu/~anderson/540F08/" },
+          { code: "CS537", name: "Intro to Operating Systems", link: "https://pages.cs.wisc.edu/~remzi/Classes/537/Spring2018/" },
+          { code: "CS524", name: "Optimization", link: "https://pages.cs.wisc.edu/~ferris/cs524/" },
+          { code: "CS506", name: "Software Engineering", link: "https://pages.cs.wisc.edu/~cs506/" },
+          { code: "STAT436", name: "Statistical Data Visualization", link: "https://pages.cs.wisc.edu/~sscheidegger/436/" },
+          { code: "CS400", name: "Java Programming III", link: "https://pages.cs.wisc.edu/~cs400/" }
+        ]
+      },
+      {
+        name: "Georgia Institute of Technology",
+        degree: "MS Computer Science",
+        icon: "🐝",
+        courses: [
+          { code: "CS6300", name: "Software Development Process", link: "https://omscs.gatech.edu/cs-6300-software-development-process" },
+          { code: "CS7632", name: "Game AI", link: "https://omscs.gatech.edu/cs-7632-game-ai" },
+          { code: "CS6400", name: "Database Systems Concepts and Design", link: "https://omscs.gatech.edu/cs-6400-database-systems-concepts-and-design" },
+          { code: "CS6250", name: "Computer Networks", link: "https://omscs.gatech.edu/cs-6250-computer-networks" },
+          { code: "CS7646", name: "Machine Learning for Trading", link: "https://omscs.gatech.edu/cs-7646-machine-learning-trading" },
+          { code: "CS7637", name: "Knowledge-Based Artificial Intelligence", link: "https://omscs.gatech.edu/cs-7637-knowledge-based-artificial-intelligence-cognitive-systems" }
+        ]
+      }
+    ];
+  }
+
+  try {
+    return JSON.parse(courseDataInput);
+  } catch (error) {
+    core.warning(`Failed to parse course data: ${error.message}. Using sample data.`);
+    return parseCourseData(); // Return sample data on parse error
+  }
+}
+
+/**
+ * Format a single course entry
+ */
+function formatCourse(course) {
+  if (course.link) {
+    return `[${course.code} ${course.name}](${course.link})`;
+  }
+  return `${course.code} ${course.name}`;
+}
+
+/**
+ * Generate course table content
+ */
+function generateCourseTable(institutions, maxCoursesPerColumn) {
+  if (institutions.length === 0) {
+    return 'No course data available.';
+  }
+
+  // Create table header
+  const headers = institutions.map(inst => 
+    `${inst.icon || '🎓'} **${inst.name}**<br/><sub>${inst.degree}</sub>`
+  );
+  
+  const headerRow = `| ${headers.join(' | ')} |`;
+  const separatorRow = `|${headers.map(() => '---').join('|')}|`;
+  
+  // Find the maximum number of courses across all institutions
+  const maxCourses = Math.min(
+    Math.max(...institutions.map(inst => inst.courses.length)),
+    maxCoursesPerColumn
+  );
+  
+  // Generate course rows
+  const courseRows = [];
+  for (let i = 0; i < maxCourses; i++) {
+    const row = institutions.map(inst => {
+      if (i < inst.courses.length) {
+        return formatCourse(inst.courses[i]);
+      }
+      return ''; // Empty cell if institution has fewer courses
+    });
+    courseRows.push(`| ${row.join(' | ')} |`);
+  }
+  
+  // Add "show more" indicators if courses were truncated
+  const showMoreRow = institutions.map(inst => {
+    const remaining = inst.courses.length - maxCoursesPerColumn;
+    if (remaining > 0) {
+      return `<sub>... and ${remaining} more</sub>`;
+    }
+    return '';
+  });
+  
+  const hasShowMore = showMoreRow.some(cell => cell !== '');
+  if (hasShowMore) {
+    courseRows.push(`| ${showMoreRow.join(' | ')} |`);
+  }
+  
+  return [headerRow, separatorRow, ...courseRows].join('\n');
+}
+
+/**
+ * Execute course list action
+ */
+async function executeCourseListAction(octokit, inputs) {
+  core.info(`Generating course list for ${inputs.username}`);
+  
+  const institutions = parseCourseData(inputs.courseData);
+  
+  core.info(`Found ${institutions.length} institutions with courses`);
+  
+  // Generate content
+  const content = generateCourseTable(institutions, inputs.maxCoursesPerColumn);
+  
+  return {
+    content,
+    startComment: START_COMMENT,
+    endComment: END_COMMENT,
+    metadata: {
+      institutionCount: institutions.length,
+      totalCourses: institutions.reduce((sum, inst) => sum + inst.courses.length, 0)
+    }
+  };
+}
+
+module.exports = {
+  executeCourseListAction,
+  START_COMMENT,
+  END_COMMENT
+}; 
+
+/***/ }),
+
 /***/ 1449:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -30059,35 +30231,7 @@ function isDateInRange(date, startDate, endDate) {
   return true;
 }
 
-/**
- * Get all repositories for a user
- */
-async function getUserRepositories(octokit, username) {
-  try {
-    const repos = [];
-    let page = 1;
-    let hasMore = true;
 
-    while (hasMore) {
-      const response = await octokit.rest.repos.listForUser({
-        username,
-        type: 'all',
-        sort: 'updated',
-        per_page: 100,
-        page
-      });
-
-      repos.push(...response.data);
-      hasMore = response.data.length === 100;
-      page++;
-    }
-
-    return repos.map(repo => ({ owner: repo.owner.login, name: repo.name }));
-  } catch (error) {
-    core.warning(`Failed to fetch repositories for ${username}: ${error.message}`);
-    return [];
-  }
-}
 
 /**
  * Search for all PRs by a user across GitHub using the search API
@@ -30203,28 +30347,7 @@ function isPRMerged(pr) {
   return pr.merged_at !== null;
 }
 
-/**
- * Filter PRs based on criteria
- */
-function filterPRs(prs, inputs, blacklist) {
-  return prs.filter(pr => {
-    // Check blacklist
-    if (blacklist.includes(pr.number)) return false;
-    
-    // Check draft status
-    if (!inputs.includeDraft && pr.draft) return false;
-    
-    // Check date range
-    if (!isDateInRange(pr.created_at, inputs.startDate, inputs.endDate)) return false;
-    
-    // Check state filter
-    if (inputs.prState === 'merged' && !isPRMerged(pr)) return false;
-    if (inputs.prState === 'open' && pr.state !== 'open') return false;
-    if (inputs.prState === 'closed' && (pr.state !== 'closed' || isPRMerged(pr))) return false;
-    
-    return true;
-  });
-}
+
 
 /**
  * Format PR for display

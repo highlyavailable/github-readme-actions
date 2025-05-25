@@ -4,13 +4,21 @@
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-github--readme--actions-blue?logo=github)](https://github.com/marketplace/actions/github-readme-actions)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A collection of GitHub Actions to automatically update your README with dynamic content. Perfect for showcasing your GitHub activity and contributions in your profile!
+A collection of GitHub Actions to automatically update your README with dynamic content. Perfect for showcasing your GitHub activity, education, and contributions in your profile!
 
 ## ✨ Available Actions
 
 ### 🎯 Pinned Pull Requests
+
 Automatically showcase your most important pull requests across repositories.
 
+**[📖 Full Documentation](docs/pinned-prs.md)** | **[🚀 Quick Start](#-quick-start)** | **[📚 Examples](examples/)**
+
+### 🎓 Course List
+
+Display your educational background with a clean, organized table of college courses and institutions.
+
+**[📖 Full Documentation](docs/course-list.md)** | **[🚀 Quick Start](#-quick-start)** | **[📚 Examples](examples/)**
 
 ## 🚀 Quick Start
 
@@ -18,11 +26,20 @@ Automatically showcase your most important pull requests across repositories.
 
 Add the following comments to your `README.md` where you want the content to appear:
 
+**For Pinned PRs:**
 ```markdown
 ## 📌 Pinned Pull Requests
 
 <!--START_SECTION:github-readme-actions-pinned_prs-->
 <!--END_SECTION:github-readme-actions-pinned_prs-->
+```
+
+**For Course List:**
+```markdown
+## 🎓 Education & Coursework
+
+<!--START_SECTION:github-readme-actions-course_list-->
+<!--END_SECTION:github-readme-actions-course_list-->
 ```
 
 ### 2. Create Workflow File
@@ -49,7 +66,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          ACTION_TYPE: 'pinned_prs'
+          ACTION_TYPE: 'pinned_prs'  # or 'course_list'
 ```
 
 ### 3. Trigger the Action
@@ -60,99 +77,39 @@ The action will run automatically based on your schedule, or you can trigger it 
 
 ### Core Inputs
 
-| Input | Description | Default | Required |
-|-------|-------------|---------|----------|
-| `GITHUB_TOKEN` | GitHub token for API access (can be provided via `with:` or `env:`) | - | ✅ |
-| `ACTION_TYPE` | Type of action (`pinned_prs`, more coming soon) | `pinned_prs` | ❌ |
-| `GH_USERNAME` | GitHub username to fetch data for | Repository owner | ❌ |
-| `TARGET_FILE` | File to update | `README.md` | ❌ |
-| `COMMIT_MSG` | Commit message | `🚀 Update README with GitHub actions` | ❌ |
-| `COMMIT_NAME` | Committer name | `github-actions[bot]` | ❌ |
-| `COMMIT_EMAIL` | Committer email | `41898282+github-actions[bot]@users.noreply.github.com` | ❌ |
+| Input         | Description                                                     | Default                                                 | Required |
+| ------------- | --------------------------------------------------------------- | ------------------------------------------------------- | -------- |
+| GITHUB\_TOKEN | GitHub token for API access (can be provided via with: or env:) | \-                                                      | ✅        |
+| ACTION\_TYPE  | Type of action (pinned\_prs, course\_list)                      | pinned\_prs                                             | ❌        |
+| GH\_USERNAME  | GitHub username to fetch data for                               | Repository owner                                        | ❌        |
+| TARGET\_FILE  | File to update                                                  | README.md                                               | ❌        |
+| COMMIT\_MSG   | Commit message                                                  | 🚀 Update README with GitHub actions                    | ❌        |
+| COMMIT\_NAME  | Committer name                                                  | github-actions\[bot\]                                   | ❌        |
+| COMMIT\_EMAIL | Committer email                                                 | 41898282+github-actions\[bot\]@users.noreply.github.com | ❌        |
 
-### Pinned PRs Specific Inputs
-
-| Input | Description | Default | Required |
-|-------|-------------|---------|----------|
-| `MAX_LINES` | Maximum number of PRs to display | `5` | ❌ |
-| `PR_STATE` | Filter by PR state (`open`, `closed`, `merged`, `all`) | `all` | ❌ |
-| `START_DATE` | Start date for filtering (YYYY-MM-DD) | - | ❌ |
-| `END_DATE` | End date for filtering (YYYY-MM-DD) | - | ❌ |
-| `BLACKLIST` | Comma-separated PR numbers to exclude | - | ❌ |
-| `REPOSITORIES` | Comma-separated list of repos (owner/repo) | Searches all PRs across GitHub | ❌ |
-| `INCLUDE_DRAFT` | Include draft PRs | `false` | ❌ |
-| `SORT_BY` | Sort PRs by (`created`, `updated`, `popularity`) | `updated` | ❌ |
+For action-specific configuration options, see the detailed documentation:
+- **[Pinned PRs Configuration](docs/pinned-prs.md#-configuration-options)**
+- **[Course List Configuration](docs/course-list.md#-configuration-options)**
 
 ## 🎨 Example Configurations
 
-### Basic Pinned PRs
+### Basic Usage
 
 ```yaml
-# Option 1: Token via environment (recommended)
+# Pinned PRs
 - uses: highlyavailable/github-readme-actions@main
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   with:
     ACTION_TYPE: 'pinned_prs'
 
-# Option 2: Token via inputs
-- uses: highlyavailable/github-readme-actions@main
-  with:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    ACTION_TYPE: 'pinned_prs'
-```
-
-### Advanced Pinned PRs Configuration
-
-```yaml
+# Course List
 - uses: highlyavailable/github-readme-actions@main
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   with:
-    ACTION_TYPE: 'pinned_prs'
-    MAX_LINES: 10
-    PR_STATE: 'merged'
-    START_DATE: '2024-01-01'
-    INCLUDE_DRAFT: 'true'
-    SORT_BY: 'created'
-    BLACKLIST: '123,456,789'
-    REPOSITORIES: 'owner/repo1,owner/repo2'
-    COMMIT_MSG: '🚀 Updated pinned PRs showcase'
+    ACTION_TYPE: 'course_list'
 ```
-
-### Filter by Date Range
-
-```yaml
-- uses: highlyavailable/github-readme-actions@main
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  with:
-    ACTION_TYPE: 'pinned_prs'
-    START_DATE: '2024-01-01'
-    END_DATE: '2024-12-31'
-    PR_STATE: 'merged'
-    MAX_LINES: 15
-```
-
-## 📊 Output Format
-
-### Pinned Pull Requests
-
-The action generates a clean, formatted list of your PRs:
-
-```markdown
-- 🟢 [Add new feature for user authentication](https://github.com/owner/repo/pull/123) - owner/repo | [Issue #45](https://github.com/owner/repo/issues/45)
-- 🟡 [Fix bug in payment processing](https://github.com/owner/repo/pull/124) - owner/repo
-- 🔴 [Update documentation for API endpoints](https://github.com/owner/repo/pull/125) - owner/repo
-```
-
-#### Status Indicators
-
-- 🟢 **Merged** - PR has been successfully merged
-- 🟡 **Open** - PR is currently open and under review
-- 🔴 **Closed** - PR was closed without merging
-
-## 🔧 Advanced Usage
 
 ### Multiple Actions in One Workflow
 
@@ -168,44 +125,45 @@ steps:
       ACTION_TYPE: 'pinned_prs'
       MAX_LINES: 5
   
-  # Future: Add more actions
-  # - uses: highlyavailable/github-readme-actions@main
-  #   env:
-  #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #   with:
-  #     ACTION_TYPE: 'new_action'
+  # Update course list
+  - uses: highlyavailable/github-readme-actions@main
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      ACTION_TYPE: 'course_list'
+      MAX_COURSES_PER_COLUMN: 10
 ```
 
-### Filtering Specific Repositories
+## 📊 Output Examples
 
-```yaml
-with:
-  ACTION_TYPE: 'pinned_prs'
-  REPOSITORIES: 'microsoft/vscode,facebook/react,google/tensorflow'
+### Pinned Pull Requests
+
+```markdown
+- 🟢 [Add new feature for user authentication](https://github.com/owner/repo/pull/123) - owner/repo
+- 🟡 [Fix bug in payment processing](https://github.com/owner/repo/pull/124) - owner/repo
+- 🔴 [Update documentation for API endpoints](https://github.com/owner/repo/pull/125) - owner/repo
 ```
 
-### Hiding Specific PRs
+### Course List
 
-```yaml
-with:
-  ACTION_TYPE: 'pinned_prs'
-  BLACKLIST: '123,456,789'  # Hide PRs #123, #456, and #789
-```
+| 🏫 **University of Wisconsin-Madison**<br/><sub>BS Computer Science & Data Science</sub> | 🐝 **Georgia Institute of Technology**<br/><sub>MS Computer Science</sub> |
+|---|---|
+| [CS577 Intro to Algorithms](https://pages.cs.wisc.edu/~shuchi/courses/787-F07/) | [CS6300 Software Development Process](https://omscs.gatech.edu/cs-6300-software-development-process) |
+| [CS564 Database Management Systems](https://pages.cs.wisc.edu/~paris/cs564-f21/) | [CS7632 Game AI](https://omscs.gatech.edu/cs-7632-game-ai) |
 
 ## 📚 Documentation
 
 ### For Users
 
-- **[Quick Start Guide](#-quick-start)** - Get up and running in minutes
-- **[Configuration Options](#-configuration-options)** - Complete reference for all inputs
-- **[Example Configurations](#-example-configurations)** - Common usage patterns
-- **[Examples](examples/)** - Ready-to-use workflow files
+* **[Pinned PRs Guide](docs/pinned-prs.md)** \- Complete guide for showcasing pull requests
+* **[Course List Guide](docs/course-list.md)** \- Complete guide for displaying education
+* **[Example Workflows](examples/)** \- Ready-to-use workflow files
 
 ### For Contributors & Developers
 
-- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to this project
-- **[Development Guide](DEVELOPMENT.md)** - Local development setup and workflow
-- **[Release Guide](RELEASE.md)** - Release process and versioning
+* **[Contributing Guide](CONTRIBUTING.md)** \- How to contribute to this project
+* **[Development Guide](DEVELOPMENT.md)** \- Local development setup and workflow
+* **[Release Guide](RELEASE.md)** \- Release process and versioning
 
 ### Quick Commands
 
@@ -232,15 +190,14 @@ Contributions are welcome! Please read the [Contributing Guide](CONTRIBUTING.md)
 6. Push to the branch (`git push origin feature/NewFeature`)
 7. Open a Pull Request
 
-
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Inspired by [jamesgeorge007/github-activity-readme](https://github.com/jamesgeorge007/github-activity-readme)
-- Built using GitHub Actions
+* Inspired by [jamesgeorge007/github-activity-readme](https://github.com/jamesgeorge007/github-activity-readme)
+* Built using GitHub Actions
 
 ## 📞 Support
 

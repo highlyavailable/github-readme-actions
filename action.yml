@@ -10,7 +10,7 @@ inputs:
     description: 'GitHub token for API access. Can be provided via inputs (with:) or environment variables (env:)'
     required: true
   ACTION_TYPE:
-    description: 'Type of action to perform (pinned_prs, coming soon: recent_commits, top_repos, etc.)'
+    description: 'Type of action to perform (pinned_prs, course_list, coming soon: recent_commits, top_repos, etc.)'
     required: false
     default: 'pinned_prs'
   GH_USERNAME:
@@ -63,6 +63,15 @@ inputs:
     description: '[pinned_prs] Sort PRs by (created, updated, popularity)'
     required: false
     default: 'updated'
+  
+  # Course List specific inputs
+  COURSE_DATA:
+    description: '[course_list] JSON string containing course data with institutions, degrees, and courses'
+    required: false
+  MAX_COURSES_PER_COLUMN:
+    description: '[course_list] Maximum number of courses to display per institution column'
+    required: false
+    default: '15'
 
 runs:
   using: 'node20'
