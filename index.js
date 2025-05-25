@@ -29,6 +29,7 @@ function getInputs() {
     
     // Course List specific inputs
     courseData: core.getInput('COURSE_DATA'),
+    courseDataFile: core.getInput('COURSE_DATA_FILE'),
     maxCoursesPerColumn: parseInt(core.getInput('MAX_COURSES_PER_COLUMN') || '15')
   };
 }

@@ -68,6 +68,9 @@ inputs:
   COURSE_DATA:
     description: '[course_list] JSON string containing course data with institutions, degrees, and courses'
     required: false
+  COURSE_DATA_FILE:
+    description: '[course_list] Path to JSON file containing course data. If not specified, looks for .github/course-data.json, course-data.json, .github/courses.json, or courses.json'
+    required: false
   MAX_COURSES_PER_COLUMN:
     description: '[course_list] Maximum number of courses to display per institution column'
     required: false

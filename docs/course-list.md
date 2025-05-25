@@ -60,7 +60,15 @@ jobs:
 | Input                    | Description                                                | Default | Required |
 | ------------------------ | ---------------------------------------------------------- | ------- | -------- |
 | COURSE\_DATA             | JSON string containing course data with institutions       | Sample data | ❌        |
+| COURSE\_DATA\_FILE       | Path to JSON file containing course data                   | Auto-detected | ❌        |
 | MAX\_COURSES\_PER\_COLUMN | Maximum number of courses to display per institution      | 15      | ❌        |
+
+**Note**: The action will look for course data in this priority order:
+
+1. `COURSE_DATA` input (JSON string)
+2. `COURSE_DATA_FILE` input (custom file path)
+3. Auto-detected files: `.github/course-data.json`, `course-data.json`, `.github/courses.json`, `courses.json`
+4. Sample data (fallback)
 
 ## 🎨 Course Data Format
 
@@ -71,7 +79,7 @@ The `COURSE_DATA` input expects a JSON string with the following structure:
   {
     "name": "University Name",
     "degree": "Degree Type (e.g., BS Computer Science)",
-    "icon": "🏫",
+    "icon": "🦡",
     "courses": [
       {
         "code": "CS101",
@@ -92,6 +100,54 @@ The `COURSE_DATA` input expects a JSON string with the following structure:
   - **code**: Course code/number (e.g., "CS577", "MATH340")
   - **name**: Full course name
   - **link**: URL to course page (optional)
+
+## 📁 File-Based Setup (Recommended)
+
+The easiest way to maintain your course data is to create a JSON file in your repository:
+
+### 1. Create Course Data File
+
+Create `.github/course-data.json` in your repository:
+
+```json
+[
+  {
+    "name": "Your University",
+    "degree": "Your Degree",
+    "icon": "🎓",
+    "courses": [
+      {
+        "code": "CS101",
+        "name": "Introduction to Computer Science",
+        "link": "https://example.edu/cs101"
+      }
+    ]
+  }
+]
+```
+
+### 2. Simple Workflow
+
+```yaml
+- uses: highlyavailable/github-readme-actions@main
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  with:
+    ACTION_TYPE: 'course_list'
+```
+
+The action will automatically find and use your `.github/course-data.json` file!
+
+### 3. Custom File Location
+
+```yaml
+- uses: highlyavailable/github-readme-actions@main
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  with:
+    ACTION_TYPE: 'course_list'
+    COURSE_DATA_FILE: 'my-education.json'
+```
 
 ## 🎨 Example Configurations
 
@@ -117,40 +173,41 @@ The `COURSE_DATA` input expects a JSON string with the following structure:
     COURSE_DATA: |
       [
         {
-          "name": "Stanford University",
-          "degree": "MS Computer Science",
-          "icon": "🌲",
+          "name": "University of Wisconsin-Madison",
+          "degree": "BS Computer Science & Data Science",
+          "icon": "🦡",
           "courses": [
             {
-              "code": "CS229",
-              "name": "Machine Learning",
-              "link": "https://cs229.stanford.edu/"
+              "code": "CS577",
+              "name": "Intro to Algorithms",
+              "link": "https://pages.cs.wisc.edu/~shuchi/courses/787-F07/"
             },
             {
-              "code": "CS231N",
-              "name": "Convolutional Neural Networks for Visual Recognition",
-              "link": "https://cs231n.stanford.edu/"
+              "code": "CS564",
+              "name": "Database Management Systems",
+              "link": "https://pages.cs.wisc.edu/~paris/cs564-f21/"
             },
             {
-              "code": "CS224N",
-              "name": "Natural Language Processing with Deep Learning",
-              "link": "https://web.stanford.edu/class/cs224n/"
+              "code": "CS540",
+              "name": "Artificial Intelligence",
+              "link": "https://pages.cs.wisc.edu/~dpage/cs540/"
             }
           ]
         },
         {
-          "name": "MIT",
-          "degree": "BS Electrical Engineering",
-          "icon": "🏛️",
+          "name": "Georgia Institute of Technology",
+          "degree": "MS Computer Science",
+          "icon": "🐝",
           "courses": [
             {
-              "code": "6.006",
-              "name": "Introduction to Algorithms"
+              "code": "CS6300",
+              "name": "Software Development Process",
+              "link": "https://omscs.gatech.edu/cs-6300-software-development-process"
             },
             {
-              "code": "6.034",
-              "name": "Artificial Intelligence",
-              "link": "https://ai6034.mit.edu/"
+              "code": "CS7632",
+              "name": "Game AI",
+              "link": "https://omscs.gatech.edu/cs-7632-game-ai"
             }
           ]
         }
@@ -173,7 +230,7 @@ The `COURSE_DATA` input expects a JSON string with the following structure:
 
 The action generates a clean, organized table showing your educational background:
 
-| 🏫 **University of Wisconsin-Madison**<br/><sub>BS Computer Science & Data Science</sub> | 🐝 **Georgia Institute of Technology**<br/><sub>MS Computer Science</sub> |
+| 🦡 **University of Wisconsin-Madison**<br/><sub>BS Computer Science & Data Science</sub> | 🐝 **Georgia Institute of Technology**<br/><sub>MS Computer Science</sub> |
 |---|---|
 | [CS577 Intro to Algorithms](https://pages.cs.wisc.edu/~shuchi/courses/787-F07/) | [CS6300 Software Development Process](https://omscs.gatech.edu/cs-6300-software-development-process) |
 | [CS564 Database Management Systems](https://pages.cs.wisc.edu/~paris/cs564-f21/) | [CS7632 Game AI](https://omscs.gatech.edu/cs-7632-game-ai) |
@@ -194,19 +251,11 @@ The action generates a clean, organized table showing your educational backgroun
 
 ```json
 {
-  "name": "Harvard University",
-  "icon": "🏛️",
-  "degree": "PhD Computer Science"
+  "name": "University of Wisconsin-Madison",
+  "icon": "🦡",
+  "degree": "BS Computer Science & Data Science"
 }
 ```
-
-Popular institution icons:
-- 🏫 Generic university
-- 🌲 Stanford (tree theme)
-- 🐝 Georgia Tech (Yellow Jackets)
-- 🏛️ Harvard, MIT (classical architecture)
-- 🐻 UC Berkeley (Golden Bears)
-- 🌊 UC San Diego (ocean theme)
 
 ### Organizing by Time Period
 
@@ -222,11 +271,3 @@ You can organize institutions chronologically or by importance in your JSON data
 
 - [Basic Usage](../examples/basic-course-list.yml) - Simple setup with sample data
 - [Advanced Configuration](../examples/advanced-course-list.yml) - Custom course data and settings
-
-## 💡 Tips
-
-1. **Keep it Current**: Update your course data as you complete new courses
-2. **Highlight Key Courses**: Put your most relevant courses first in each institution
-3. **Use Meaningful Links**: Link to course pages that showcase the curriculum
-4. **Balance Detail**: Don't overwhelm with too many courses - focus on the most relevant ones
-5. **Update Regularly**: Set up the workflow to run weekly to keep your profile fresh 

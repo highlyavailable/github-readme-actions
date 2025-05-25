@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Your University Name",
+    "degree": "Your Degree (e.g., BS Computer Science)",
+    "icon": "🎓",
+    "courses": [
+      {
+        "code": "CS101",
+        "name": "Introduction to Computer Science",
+        "link": "https://example.edu/cs101"
+      },
+      {
+        "code": "CS102",
+        "name": "Data Structures",
+        "link": "https://example.edu/cs102"
+      },
+      {
+        "code": "CS201",
+        "name": "Algorithms"
+      }
+    ]
+  },
+  {
+    "name": "Another Institution (Optional)",
+    "degree": "Graduate Degree",
+    "icon": "🏛️",
+    "courses": [
+      {
+        "code": "CS501",
+        "name": "Advanced Topics",
+        "link": "https://grad-school.edu/cs501"
+      }
+    ]
+  }
+] 

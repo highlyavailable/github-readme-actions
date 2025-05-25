@@ -1,0 +1,24 @@
+name: Update README with Course List (File-Based)
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Simple file-based approach - automatically finds .github/course-data.json
+      - uses: highlyavailable/github-readme-actions@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          ACTION_TYPE: 'course_list'
+          MAX_COURSES_PER_COLUMN: '10'
+          COMMIT_MSG: '🎓 Updated education and coursework' 

@@ -16,9 +16,9 @@ Automatically showcase your most important pull requests across repositories.
 
 ### 🎓 Course List
 
-Display your educational background with a clean, organized table of college courses and institutions.
+Display your educational background with a clean, organized table of college courses and institutions. Simply create a `.github/course-data.json` file in your repository!
 
-**[📖 Full Documentation](docs/course-list.md)** | **[📚 Examples](examples/)**
+**[📖 Full Documentation](docs/course-list.md)** | **[📚 Examples](examples/)** | **[📄 Template](examples/course-data-template.json)**
 
 ## 🚀 Quick Start
 
@@ -181,3 +181,20 @@ If you have any questions or run into issues, please [open an issue](https://git
 ---
 
 ⭐ If you find this action helpful, please consider giving it a star!
+
+## 🎓 My Courses
+
+<!--START_SECTION:github-readme-actions-course_list-->
+| 🦡 **University of Wisconsin-Madison**<br/><sub>BS Computer Science & Data Science</sub> | 🐝 **Georgia Institute of Technology**<br/><sub>MS Computer Science</sub> |
+|---|---|
+| [CS577 Intro to Algorithms](https://pages.cs.wisc.edu/~shuchi/courses/787-F07/) | [CS6300 Software Development Process](https://omscs.gatech.edu/cs-6300-software-development-process) |
+| [CS564 Database Management Systems](https://pages.cs.wisc.edu/~paris/cs564-f21/) | [CS7632 Game AI](https://omscs.gatech.edu/cs-7632-game-ai) |
+| [CS540 Artificial Intelligence](https://pages.cs.wisc.edu/~dpage/cs540/) | [CS6400 Database Systems Concepts and Design](https://omscs.gatech.edu/cs-6400-database-systems-concepts-and-design) |
+| [MATH541 Modern Algebra II](https://www.math.wisc.edu/~anderson/541F08/) | [CS6250 Computer Networks](https://omscs.gatech.edu/cs-6250-computer-networks) |
+| [MATH540 Modern Algebra I](https://www.math.wisc.edu/~anderson/540F08/) | [CS7646 Machine Learning for Trading](https://omscs.gatech.edu/cs-7646-machine-learning-trading) |
+| [CS537 Intro to Operating Systems](https://pages.cs.wisc.edu/~remzi/Classes/537/Spring2018/) | [CS7637 Knowledge-Based Artificial Intelligence](https://omscs.gatech.edu/cs-7637-knowledge-based-artificial-intelligence-cognitive-systems) |
+| [CS524 Optimization](https://pages.cs.wisc.edu/~ferris/cs524/) |  |
+| [CS506 Software Engineering](https://pages.cs.wisc.edu/~cs506/) |  |
+| [STAT436 Statistical Data Visualization](https://pages.cs.wisc.edu/~sscheidegger/436/) |  |
+| [CS400 Java Programming III](https://pages.cs.wisc.edu/~cs400/) |  |
+<!--END_SECTION:github-readme-actions-course_list-->
