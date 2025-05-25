@@ -78,13 +78,10 @@ jobs:
           fi
       
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          release_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
           body: |
             ## Changes
             
@@ -103,58 +100,27 @@ jobs:
             ## What's Changed
             
             See the [README](https://github.com/highlyavailable/github-readme-actions#readme) for full documentation.
+          files: |
+            dist/index.js
+            dist/index.js.map
+            dist/licenses.txt
           draft: false
           prerelease: false
-      
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/index.js
-          asset_name: index.js
-          asset_content_type: application/javascript
-
-  publish-marketplace:
-    name: Publish to Marketplace
-    needs: release
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: make install
-      
-      - name: Build
-        run: make build
-      
-      - name: Publish to Marketplace
-        uses: actions/publish-action@v0.2.2
-        with:
-          source-tag: ${{ github.ref_name }}
-          slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
 
   update-major-tag:
     name: Update Major Version Tag
     needs: release
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Update major version tag
         run: |
