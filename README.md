@@ -62,7 +62,7 @@ The action will run automatically based on your schedule, or you can trigger it 
 
 | Input | Description | Default | Required |
 |-------|-------------|---------|----------|
-| `GITHUB_TOKEN` | GitHub token for API access | - | ✅ |
+| `GITHUB_TOKEN` | GitHub token for API access (can be provided via `with:` or `env:`) | - | ✅ |
 | `ACTION_TYPE` | Type of action (`pinned_prs`, more coming soon) | `pinned_prs` | ❌ |
 | `GH_USERNAME` | GitHub username to fetch data for | Repository owner | ❌ |
 | `TARGET_FILE` | File to update | `README.md` | ❌ |
@@ -79,7 +79,7 @@ The action will run automatically based on your schedule, or you can trigger it 
 | `START_DATE` | Start date for filtering (YYYY-MM-DD) | - | ❌ |
 | `END_DATE` | End date for filtering (YYYY-MM-DD) | - | ❌ |
 | `BLACKLIST` | Comma-separated PR numbers to exclude | - | ❌ |
-| `REPOSITORIES` | Comma-separated list of repos (owner/repo) | All user repos | ❌ |
+| `REPOSITORIES` | Comma-separated list of repos (owner/repo) | Searches all PRs across GitHub | ❌ |
 | `INCLUDE_DRAFT` | Include draft PRs | `false` | ❌ |
 | `SORT_BY` | Sort PRs by (`created`, `updated`, `popularity`) | `updated` | ❌ |
 
@@ -88,10 +88,17 @@ The action will run automatically based on your schedule, or you can trigger it 
 ### Basic Pinned PRs
 
 ```yaml
+# Option 1: Token via environment (recommended)
 - uses: highlyavailable/github-readme-actions@main
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   with:
+    ACTION_TYPE: 'pinned_prs'
+
+# Option 2: Token via inputs
+- uses: highlyavailable/github-readme-actions@main
+  with:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     ACTION_TYPE: 'pinned_prs'
 ```
 

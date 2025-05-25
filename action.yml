@@ -7,7 +7,7 @@ branding:
 
 inputs:
   GITHUB_TOKEN:
-    description: 'GitHub token for API access'
+    description: 'GitHub token for API access. Can be provided via inputs (with:) or environment variables (env:)'
     required: true
   ACTION_TYPE:
     description: 'Type of action to perform (pinned_prs, coming soon: recent_commits, top_repos, etc.)'
@@ -53,7 +53,7 @@ inputs:
     description: '[pinned_prs] Comma-separated list of PR numbers to exclude'
     required: false
   REPOSITORIES:
-    description: '[pinned_prs] Comma-separated list of repositories to include (owner/repo format). If empty, includes all user repositories'
+    description: '[pinned_prs] Comma-separated list of repositories to include (owner/repo format). If empty, searches all PRs across GitHub using the search API'
     required: false
   INCLUDE_DRAFT:
     description: '[pinned_prs] Include draft pull requests'

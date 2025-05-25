@@ -8,7 +8,7 @@ const { executePinnedPRsAction } = require('./src/actions/pinned-prs');
  */
 function getInputs() {
   return {
-    githubToken: core.getInput('GITHUB_TOKEN') || process.env.GITHUB_TOKEN,
+    githubToken: core.getInput('GITHUB_TOKEN') || process.env.GITHUB_TOKEN || process.env.INPUT_GITHUB_TOKEN,
     actionType: core.getInput('ACTION_TYPE') || 'pinned_prs',
     username: core.getInput('GH_USERNAME') || github.context.repo.owner,
     targetFile: core.getInput('TARGET_FILE') || 'README.md',
