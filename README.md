@@ -81,6 +81,7 @@ The action will run automatically based on your schedule, or you can trigger it 
 | COMMIT\_EMAIL | Committer email                                                 | 41898282+github-actions\[bot\]@users.noreply.github.com | ❌        |
 
 For action-specific configuration options, see the detailed documentation:
+
 - **[Pinned PRs Configuration](docs/pinned-prs.md#-configuration-options)**
 - **[Course List Configuration](docs/course-list.md#-configuration-options)**
 
@@ -129,15 +130,15 @@ steps:
 
 ### For Users
 
-* **[Pinned PRs Guide](docs/pinned-prs.md)** \- Complete guide for showcasing pull requests
-* **[Course List Guide](docs/course-list.md)** \- Complete guide for displaying education
-* **[Example Workflows](examples/)** \- Ready-to-use workflow files
+- **[Pinned PRs Guide](docs/pinned-prs.md)** \- Complete guide for showcasing pull requests
+- **[Course List Guide](docs/course-list.md)** \- Complete guide for displaying education
+- **[Example Workflows](examples/)** \- Ready-to-use workflow files
 
 ### For Contributors & Developers
 
-* **[Contributing Guide](CONTRIBUTING.md)** \- How to contribute to this project
-* **[Development Guide](DEVELOPMENT.md)** \- Local development setup and workflow
-* **[Release Guide](RELEASE.md)** \- Release process and versioning
+- **[Contributing Guide](CONTRIBUTING.md)** \- How to contribute to this project
+- **[Development Guide](DEVELOPMENT.md)** \- Local development setup and workflow
+- **[Release Guide](RELEASE.md)** \- Release process and versioning
 
 ### Quick Commands
 
@@ -170,8 +171,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-* Inspired by [jamesgeorge007/github-activity-readme](https://github.com/jamesgeorge007/github-activity-readme)
-* Built using GitHub Actions
+- Inspired by [jamesgeorge007/github-activity-readme](https://github.com/jamesgeorge007/github-activity-readme)
+- Built using GitHub Actions
 
 ## 📞 Support
 
