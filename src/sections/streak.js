@@ -51,7 +51,10 @@ async function render(ctx) {
 
   if (!contributions || !contributions.contributionCalendar) {
     return {
-      content: emptyState(renderCfg.empty_state || 'Contribution data unavailable.'),
+      content: emptyState(
+        renderCfg.empty_state ||
+          'Streak unavailable. Needs GraphQL access — supply a fine-grained PAT as `github_token` (see docs/tokens.md).'
+      ),
       metadata: { current: 0, longest: 0 }
     };
   }

@@ -56,7 +56,7 @@ describe('streak', () => {
   test('renders empty state when graphql fails', async () => {
     const octokit = { graphql: jest.fn(async () => { throw new Error('forbidden'); }) };
     const { content, metadata } = await section.render(ctx({ octokit }));
-    expect(content).toContain('Contribution data unavailable');
+    expect(content).toContain('Streak unavailable');
     expect(metadata.current).toBe(0);
   });
 });

@@ -38,6 +38,6 @@ describe('commit_heatmap', () => {
   test('graceful fallback when graphql returns null', async () => {
     const octokit = { graphql: jest.fn(async () => ({ user: null })) };
     const { content } = await section.render(ctx({ octokit }));
-    expect(content).toContain('Contributions data unavailable');
+    expect(content).toContain('Contributions unavailable');
   });
 });

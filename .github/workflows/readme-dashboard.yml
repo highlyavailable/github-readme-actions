@@ -19,10 +19,6 @@ jobs:
         with:
           github_token: ${{ secrets.DASHBOARD_PAT || secrets.GITHUB_TOKEN }}
           username: highlyavailable
-          sections: command_center, commit_heatmap, streak, velocity_chart, open_prs, response_inbox, review_inbox, recent_activity, merged_prs, stats, stale_prs, failing_ci, ready_to_merge
-          max_rows: 8
-          activity_days: 21
+          sections: command_center
           stale_days: 21
-          command_center_layout: kpis, velocity, ready_to_merge, failing_ci, response_inbox, review_inbox
           command_center_rows: 5
-          viz_style: mermaid
