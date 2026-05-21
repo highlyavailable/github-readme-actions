@@ -47,7 +47,7 @@ describe('command_center', () => {
     const { content, metadata } = await section.render(ctx({ octokit }));
     expect(content).toContain('### Command Center');
     expect(content).toContain('[`octocat`](https://github.com/octocat)');
-    expect(content).toContain('**This week** 7 opened · 2 merged · 0 reviewed');
+    expect(content).toMatch(/\*\*This week\*\* 7 opened.*2 merged.*0 reviewed/);
     expect(content).toContain('velocity');
     expect(content).toContain('**Inbox**');
     expect(content).toContain('awaiting reply');

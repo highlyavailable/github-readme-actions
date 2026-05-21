@@ -132,7 +132,13 @@ function loadConfig() {
       },
       command_center: {
         layout: readList('command_center_layout'),
-        per_block_rows: readInt('command_center_rows', 5)
+        per_block_rows: readInt('command_center_rows', 5),
+        orgs: readList('command_center_orgs'),
+        disable_pat_warning: readBool('disable_pat_warning', false),
+        stale_days: readInt('stale_days', 14)
+      },
+      open_prs: {
+        show_ci: readBool('open_prs_show_ci', false)
       }
     }
   };

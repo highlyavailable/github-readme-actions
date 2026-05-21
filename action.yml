@@ -93,12 +93,23 @@ inputs:
     required: false
     default: '12'
   command_center_layout:
-    description: '[command_center] Comma-separated list of blocks. Available: kpis, velocity, open_prs, stale_prs, failing_ci, ready_to_merge, response_inbox, review_inbox. Default: kpis,velocity,open_prs,response_inbox,review_inbox.'
+    description: '[command_center] Comma-separated list of blocks. Available: hero, needs_attention, open_prs, stale_prs, failing_ci, ready_to_merge, response_inbox, review_inbox. Default: hero,needs_attention,open_prs,response_inbox,review_inbox.'
     required: false
   command_center_rows:
     description: '[command_center] Per-block row cap for embedded tables.'
     required: false
     default: '5'
+  command_center_orgs:
+    description: '[command_center] Comma-separated GitHub orgs to render separate sub-dashboards for. Each org gets its own hero + needs_attention + tables, scoped via `org:<name>` in queries. Empty means a single global view.'
+    required: false
+  disable_pat_warning:
+    description: '[command_center] Suppress the PAT-missing banner even when the action detects a bot token.'
+    required: false
+    default: 'false'
+  open_prs_show_ci:
+    description: '[open_prs] When true, include per-PR CI status in the State column. Adds 1 REST call per PR.'
+    required: false
+    default: 'false'
   viz_style:
     description: 'Default visualization style for chart sections: mermaid (default), unicode, or both. Per-section override goes in config_file.'
     required: false

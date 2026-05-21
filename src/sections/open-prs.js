@@ -9,17 +9,47 @@ function buildQuery(username, shared) {
   return parts.join(' ');
 }
 
+function ciTag(ciStatus, render) {
+  if (ciStatus === 'failing') return render.tag('ci_failing');
+  if (ciStatus === 'passing') return render.tag('ci_passing');
+  if (ciStatus === 'pending') return render.tag('ci_pending');
+  return '';
+}
+
 const COLUMNS = {
   pr: { header: 'PR', render: (r) => link(r.title, r.html_url) },
   ref: { header: 'Ref', render: (r) => prRef(r.owner, r.repo, r.number) },
   state: {
     header: 'State',
-    render: (r, render) => (r.draft ? render.tag('draft') : render.tag('open'))
+    render: (r, render) => {
+      const base = r.draft ? render.tag('draft') : render.tag('open');
+      if (r.ciStatus) return `${base} · ${ciTag(r.ciStatus, render)}`;
+      return base;
+    }
   },
   comments: { header: 'Comments', render: (r) => String(r.comments || 0) },
   updated: { header: 'Updated', render: (r, render) => render.date(r.updated_at) },
   created: { header: 'Created', render: (r, render) => render.date(r.created_at) }
 };
+
+async function fetchCiStatus(octokit, owner, repo, number) {
+  try {
+    const { data: pr } = await octokit.rest.pulls.get({ owner, repo, pull_number: number });
+    if (!pr.head?.sha) return null;
+    const { data: checks } = await octokit.rest.checks.listForRef({
+      owner, repo, ref: pr.head.sha, per_page: 100
+    });
+    if (!checks.total_count) return null;
+    const runs = checks.check_runs;
+    if (runs.some((c) => c.conclusion === 'failure' || c.conclusion === 'timed_out' || c.conclusion === 'cancelled')) {
+      return 'failing';
+    }
+    if (runs.some((c) => c.status === 'in_progress' || c.status === 'queued')) return 'pending';
+    return 'passing';
+  } catch (e) {
+    return null;
+  }
+}
 
 const SORTS = {
   updated_desc: (a, b) => new Date(b.updated_at) - new Date(a.updated_at),
@@ -28,7 +58,7 @@ const SORTS = {
 };
 
 async function render(ctx) {
-  const { octokit, username, shared, render: renderCfg } = ctx;
+  const { octokit, username, shared, config, render: renderCfg } = ctx;
   const items = await paginateSearch(octokit, buildQuery(username, shared), {
     sort: 'updated',
     order: 'desc'
@@ -44,6 +74,15 @@ async function render(ctx) {
   rows.sort(sort);
 
   const limited = rows.slice(0, shared.maxRows);
+
+  // Optional: fetch CI status per PR (opt-in via config.show_ci).
+  if (config?.show_ci) {
+    await Promise.all(
+      limited.map(async (row) => {
+        row.ciStatus = await fetchCiStatus(octokit, row.owner, row.repo, row.number);
+      })
+    );
+  }
   if (limited.length === 0) {
     return { content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState || "No data."), metadata: { count: 0 } };
   }

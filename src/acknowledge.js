@@ -13,6 +13,7 @@
 
 const ACK_LINE_REGEX = /^- \[x\][^\n]*?\[`([\w.-]+\/[\w.-]+)#(\d+)`\][^\n]*$/gm;
 const FP_REGEX = /<!--ack:fp=([A-Za-z0-9_-]+)-->/;
+const SNOOZE_REGEX = /<!--snooze:until=(\d{4}-\d{2}-\d{2})-->/;
 
 function ackKey(owner, repo, number) {
   return `${owner}/${repo}#${number}`;
@@ -36,9 +37,18 @@ function parseAcknowledged(sectionContent) {
   while ((m = ACK_LINE_REGEX.exec(sectionContent)) !== null) {
     const ref = `${m[1]}#${m[2]}`;
     const fpMatch = m[0].match(FP_REGEX);
-    acked.set(ref, { fingerprint: fpMatch ? fpMatch[1] : null });
+    const snoozeMatch = m[0].match(SNOOZE_REGEX);
+    acked.set(ref, {
+      fingerprint: fpMatch ? fpMatch[1] : null,
+      snoozeUntil: snoozeMatch ? snoozeMatch[1] : null
+    });
   }
   return acked;
+}
+
+function isSnoozeActive(entry, today = new Date().toISOString().slice(0, 10)) {
+  if (!entry || !entry.snoozeUntil) return false;
+  return today < entry.snoozeUntil;
 }
 
 function isStillAcknowledged(acked, ref, currentFingerprint) {
@@ -56,32 +66,56 @@ function checklistLine({ acked, body, fingerprint: fp }) {
 function renderChecklist({
   heading,
   items, // [{ ref, body, fingerprint }]
-  acked, // Map<ref, {fingerprint}>
-  emptyState
+  acked, // Map<ref, {fingerprint, snoozeUntil}>
+  emptyState,
+  today = new Date().toISOString().slice(0, 10)
 }) {
   const active = [];
   const ackedItems = [];
+  const snoozedItems = [];
+
   for (const item of items) {
+    const entry = acked.get(item.ref);
     const isAcked = isStillAcknowledged(acked, item.ref, item.fingerprint);
-    const line = checklistLine({ acked: isAcked, body: item.body, fingerprint: item.fingerprint });
-    if (isAcked) ackedItems.push(line);
-    else active.push(line);
+    const isSnoozed = isAcked && isSnoozeActive(entry, today);
+
+    if (isSnoozed) {
+      const body = `${item.body} _(until ${entry.snoozeUntil})_`;
+      snoozedItems.push(
+        `- [x] ${body} <!--ack:fp=${item.fingerprint}--><!--snooze:until=${entry.snoozeUntil}-->`
+      );
+    } else if (isAcked) {
+      ackedItems.push(checklistLine({ acked: true, body: item.body, fingerprint: item.fingerprint }));
+    } else {
+      active.push(checklistLine({ acked: false, body: item.body, fingerprint: item.fingerprint }));
+    }
   }
 
   const headerCount = active.length;
   const ackedCount = ackedItems.length;
-  const headerLabel = ackedCount
-    ? `${heading} (${headerCount}${headerCount === 0 ? '' : ''}${ackedCount ? ` · ${ackedCount} acknowledged` : ''})`
-    : `${heading} (${headerCount})`;
+  const snoozedCount = snoozedItems.length;
+  const sub = [];
+  if (ackedCount) sub.push(`${ackedCount} acknowledged`);
+  if (snoozedCount) sub.push(`${snoozedCount} snoozed`);
+  const headerLabel = sub.length ? `${heading} (${headerCount} · ${sub.join(' · ')})` : `${heading} (${headerCount})`;
 
   const out = [`#### ${headerLabel}`, ''];
 
   if (active.length) {
     out.push(active.join('\n'));
-  } else if (ackedCount === 0) {
+  } else if (ackedCount === 0 && snoozedCount === 0) {
     out.push(emptyState || '_All clear._');
   } else {
-    out.push('_All active items acknowledged._');
+    out.push('_All active items handled._');
+  }
+
+  if (snoozedItems.length) {
+    out.push('');
+    out.push(`<details><summary>Snoozed (${snoozedItems.length}) — auto-resurfaces on the date shown</summary>`);
+    out.push('');
+    out.push(snoozedItems.join('\n'));
+    out.push('');
+    out.push('</details>');
   }
 
   if (ackedItems.length) {
@@ -101,6 +135,7 @@ module.exports = {
   fingerprint,
   parseAcknowledged,
   isStillAcknowledged,
+  isSnoozeActive,
   renderChecklist,
   checklistLine
 };

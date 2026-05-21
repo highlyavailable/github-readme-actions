@@ -17,8 +17,8 @@ describe('acknowledge', () => {
 `;
     const acked = parseAcknowledged(content);
     expect(acked.size).toBe(2);
-    expect(acked.get('acme/api#200')).toEqual({ fingerprint: 'def' });
-    expect(acked.get('acme/cli#42')).toEqual({ fingerprint: null });
+    expect(acked.get('acme/api#200')).toEqual({ fingerprint: 'def', snoozeUntil: null });
+    expect(acked.get('acme/cli#42')).toEqual({ fingerprint: null, snoozeUntil: null });
     expect(acked.has('acme/api#100')).toBe(false);
   });
 
@@ -73,7 +73,7 @@ describe('acknowledge', () => {
     const items = [{ ref: 'a/b#1', fingerprint: 'fp', body: 'done' }];
     const acked = new Map([['a/b#1', { fingerprint: 'fp' }]]);
     const out = renderChecklist({ heading: 'Test', items, acked, emptyState: '_none_' });
-    expect(out).toContain('_All active items acknowledged._');
+    expect(out).toContain('_All active items handled._');
   });
 
   test('renderChecklist empty + nothing acknowledged uses emptyState', () => {
