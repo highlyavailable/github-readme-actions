@@ -29,33 +29,34 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-05-21 05:22 UTC_
+> _Updated 2026-05-21 05:35 UTC_
 >
-> **This week** 7 opened · 2 merged · 0 reviewed · velocity `▁▁▁▁▂▁▁▁▁▁▁█` 0.7/wk
+> **This week** 7 opened (↑7) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▁▂▁▁▁▁▁▁█` 0.7/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 1 awaiting reply · 🔵 0 review requests
+>
+> **Aging** 🟢 1 0–3d · 🟡 6 3–7d · 🟠 0 1–2w · 🔴 1 2w+
 
 #### Needs attention (3)
 
-| Why | PR | Ref |
-| --- | --- | --- |
-| 🔴 CI failing | [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) |
-| 🔴 CI failing | [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) |
-| 🔴 CI failing | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) |
+- [ ] 🔴 CI failing — [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) <!--ack:fp=lqwt2w-->
+- [ ] 🔴 CI failing — [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) — [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) <!--ack:fp=x8dy61-->
+- [ ] 🔴 CI failing — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=1iv1cd8-->
 
 #### Open pull requests (3)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | 🟡 open | 1 | 6h |
-| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 🟡 open | 14 | 8h |
+| [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | 🟡 open | 1 | 7h |
+| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 🟡 open | 14 | 9h |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 16h |
 
 #### Awaiting your reply (1)
 
-| PR | Ref | Last reply | Age |
-| --- | --- | --- | --- |
-| [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | [@CLAassistant](https://github.com/CLAassistant) | 5d |
+- [ ] [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) — [@CLAassistant](https://github.com/CLAassistant) 5d<br>&nbsp;&nbsp;_> [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/tempo…_ <!--ack:fp=1diil55-->
+
+---
+_[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
 <!--readme-actions:command_center:end-->
 
 ## Quickstart
