@@ -28,7 +28,34 @@ Each section is a self-contained markdown block, addressed by a comment marker p
 This README dogfoods the action. The block below is a single `command_center` section — one marker pair, full dashboard inside. Regenerated every 6 hours by [.github/workflows/readme-dashboard.yml](.github/workflows/readme-dashboard.yml).
 
 <!--readme-actions:command_center:start-->
-_Pending first scheduled run._
+> ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
+> _Updated 2026-05-21 05:08 UTC_
+>
+> **This week** 7 opened · 2 merged · 0 reviewed · velocity `▁▁▁▁▂▁▁▁▁▁▁█` 0.7/wk
+>
+> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 1 awaiting reply · 🔵 0 review requests
+
+#### Needs attention (3)
+
+| Why | PR | Ref |
+| --- | --- | --- |
+| 🔴 CI failing | [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) |
+| 🔴 CI failing | [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) |
+| 🔴 CI failing | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) |
+
+#### Open pull requests (3)
+
+| PR | Ref | State | Comments | Updated |
+| --- | --- | --- | --- | --- |
+| [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | 🟡 open | 1 | 6h |
+| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 🟡 open | 14 | 8h |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 15h |
+
+#### Awaiting your reply (1)
+
+| PR | Ref | Last reply | Age |
+| --- | --- | --- | --- |
+| [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | [@CLAassistant](https://github.com/CLAassistant) | 5d |
 <!--readme-actions:command_center:end-->
 
 ## Quickstart
