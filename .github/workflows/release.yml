@@ -84,22 +84,19 @@ jobs:
           name: ${{ steps.version.outputs.version }}
           body: |
             ## Changes
-            
+
             ${{ steps.changelog.outputs.changelog }}
-            
+
             ## Installation
-            
+
             ```yaml
             - uses: highlyavailable/github-readme-actions@${{ steps.version.outputs.version }}
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                ACTION_TYPE: 'pinned_prs'
+                github_token: ${{ secrets.DASHBOARD_PAT }}
+                sections: open_prs, response_inbox, review_inbox, recent_activity
             ```
-            
-            ## What's Changed
-            
-            See the [README](https://github.com/highlyavailable/github-readme-actions#readme) for full documentation.
+
+            See the [README](https://github.com/highlyavailable/github-readme-actions#readme) and [docs/configuration.md](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/configuration.md) for full documentation.
           files: |
             dist/index.js
             dist/index.js.map

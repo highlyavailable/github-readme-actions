@@ -1,0 +1,22 @@
+name: Readme dashboard
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: highlyavailable/github-readme-actions@v2
+        with:
+          github_token: ${{ secrets.DASHBOARD_PAT }}
+          sections: open_prs, response_inbox, review_inbox, recent_activity, merged_prs, stats
+          max_rows: 15
+          activity_days: 21
+          merged_window_days: 180
+          stats_periods: week, month, quarter, year

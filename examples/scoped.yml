@@ -1,0 +1,24 @@
+name: Readme dashboard (scoped)
+
+# Restrict the dashboard to a specific allowlist of repositories.
+# Useful for org-level dashboards or when you only want OSS activity surfaced.
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: highlyavailable/github-readme-actions@v2
+        with:
+          github_token: ${{ secrets.DASHBOARD_PAT }}
+          sections: open_prs, response_inbox, merged_prs
+          repositories: acme/api, acme/cli, acme/sdk
+          exclude_repositories: acme/legacy
+          max_rows: 20

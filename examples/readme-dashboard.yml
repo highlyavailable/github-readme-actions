@@ -1,0 +1,40 @@
+# Example .github/readme-dashboard.yml — drop this in your repo to control how each
+# dashboard section renders. Inline `with:` inputs always win over this file.
+
+defaults:
+  date_format: relative          # relative | absolute | both
+  status_labels:
+    merged: "[merged]"
+    open: "[open]"
+    closed: "[closed]"
+    draft: "[draft]"
+
+sections:
+  open_prs:
+    style: table                 # table | list | compact
+    columns: [pr, ref, state, updated]
+    sort: updated_desc           # updated_desc | created_desc | comments_desc
+    empty_state: "Inbox zero."
+
+  response_inbox:
+    style: list
+    columns: [pr, last_reply, age]
+
+  review_inbox:
+    style: table
+    columns: [pr, ref, author, updated]
+
+  recent_activity:
+    group_by: repo               # repo | none
+    show_kind: true
+
+  merged_prs:
+    style: table
+    columns: [pr, ref, merged_date]
+
+  stats:
+    style: compact               # table | list | compact
+
+  pinned_prs:
+    style: list
+    columns: [state, pr, ref]

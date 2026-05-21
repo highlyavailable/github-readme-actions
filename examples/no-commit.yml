@@ -1,0 +1,35 @@
+name: Readme dashboard (no auto-commit)
+
+# Render the dashboard but hand off the commit to your own step.
+# Useful when you want to sign commits, open a PR instead of pushing to main,
+# or batch the dashboard update with other automated edits.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: dashboard
+        uses: highlyavailable/github-readme-actions@v2
+        with:
+          github_token: ${{ secrets.DASHBOARD_PAT }}
+          sections: open_prs, response_inbox, review_inbox
+          commit: false
+
+      - name: Open PR with the dashboard update
+        if: steps.dashboard.outputs.updated == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'chore: refresh readme dashboard'
+          title: 'Refresh readme dashboard'
+          branch: chore/refresh-readme-dashboard
+          base: main

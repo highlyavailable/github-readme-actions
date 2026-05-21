@@ -1,118 +1,116 @@
-# Migration Guide
+# Migrating from v1 to v2
 
-## Migrating from `github-pinned-pr-readme` to `github-readme-actions`
+v2 is a clean break. The action moved from a single-purpose pinned-PR generator to a multi-section contributor dashboard. Input names, marker format, and the action's identity all changed.
 
-This guide helps you migrate from the old single-purpose action to the new modular platform.
+## What changed
 
-## 🔄 **Required Changes**
+| Area | v1 | v2 |
+|---|---|---|
+| Action ref | `highlyavailable/github-readme-actions@v1` | `highlyavailable/github-readme-actions@v2` |
+| Input names | `SCREAMING_SNAKE_CASE` | `lowercase_snake_case` |
+| Action selector | `ACTION_TYPE: pinned_prs` | `sections: pinned_prs[, ...]` |
+| Markers | `<!--START_SECTION:github-readme-actions-pinned_prs-->` | `<!--readme-actions:<name>:start-->` |
+| Token via env | `env: GITHUB_TOKEN: ...` | Same, plus `with: github_token: ...` |
+| Commit message default | `🚀 Update README with GitHub actions` | `chore: update readme dashboard` |
 
-### 1. **Update Repository Reference**
-```yaml
-# OLD
-- uses: highlyavailable/github-pinned-pr-readme@v1
+## Step-by-step
 
-# NEW  
-- uses: highlyavailable/github-readme-actions@v1
+### 1. Bump the action ref
+
+```diff
+- - uses: highlyavailable/github-readme-actions@v1
++ - uses: highlyavailable/github-readme-actions@v2
 ```
 
-### 2. **Add ACTION_TYPE Parameter**
+### 2. Rename inputs
+
+Use the [configuration reference](docs/configuration.md) as the canonical map. Common renames for v1 `pinned_prs` users:
+
+| v1 input | v2 input |
+|---|---|
+| `ACTION_TYPE` | _(replaced by `sections`)_ |
+| `GH_USERNAME` | `username` |
+| `TARGET_FILE` | `target_file` |
+| `COMMIT_MSG` | `commit_message` |
+| `COMMIT_NAME` | `commit_name` |
+| `COMMIT_EMAIL` | `commit_email` |
+| `MAX_LINES` | `max_rows` |
+| `PR_STATE` | `pinned_prs_state` |
+| `START_DATE` | `pinned_prs_start_date` |
+| `END_DATE` | `pinned_prs_end_date` |
+| `BLACKLIST` | `pinned_prs_blacklist` |
+| `REPOSITORIES` | `repositories` |
+| `INCLUDE_DRAFT` | `include_drafts` |
+| `SORT_BY` | `pinned_prs_sort_by` |
+
+### 3. Replace `ACTION_TYPE` with `sections`
+
+```diff
+- with:
+-   ACTION_TYPE: pinned_prs
++ with:
++   sections: pinned_prs
+```
+
+### 4. Markers — leave them alone (or upgrade)
+
+The v1 markers still work for `pinned_prs`. If you want to use the new namespaced format, swap to:
+
+```diff
+- <!--START_SECTION:github-readme-actions-pinned_prs-->
+- <!--END_SECTION:github-readme-actions-pinned_prs-->
++ <!--readme-actions:pinned_prs:start-->
++ <!--readme-actions:pinned_prs:end-->
+```
+
+All new sections (`open_prs`, `response_inbox`, etc.) must use the new format.
+
+### 5. Provision a fine-grained PAT
+
+v1 worked acceptably with the default `GITHUB_TOKEN` because pinned-PR usage was already limited. v2's dashboard sections rely on cross-repo search. Issue a fine-grained PAT — full guide in [docs/tokens.md](docs/tokens.md) — and store it as `DASHBOARD_PAT`:
+
+```diff
+- env:
+-   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++ with:
++   github_token: ${{ secrets.DASHBOARD_PAT }}
+```
+
+## Before / after
+
+**v1 workflow:**
+
 ```yaml
-# NEW - Required parameter
 - uses: highlyavailable/github-readme-actions@v1
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   with:
-    ACTION_TYPE: 'pinned_prs'  # ← Add this line
-    # ... your existing parameters
+    ACTION_TYPE: pinned_prs
+    MAX_LINES: 5
+    PR_STATE: merged
 ```
 
-### 3. **Update README Section Comments**
-```markdown
-<!-- OLD -->
-<!--START_SECTION:pinned-prs-->
-<!--END_SECTION:pinned-prs-->
+**v2 equivalent (pinned-only):**
 
-<!-- NEW -->
-<!--START_SECTION:github-readme-actions-pinned_prs-->
-<!--END_SECTION:github-readme-actions-pinned_prs-->
-```
-
-## 📝 **Complete Migration Example**
-
-### Before (Old Action)
 ```yaml
-name: Update Pinned PRs
-on:
-  schedule:
-    - cron: '0 */6 * * *'
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: highlyavailable/github-pinned-pr-readme@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          MAX_LINES: 5
-          PR_STATE: 'all'
+- uses: highlyavailable/github-readme-actions@v2
+  with:
+    github_token: ${{ secrets.DASHBOARD_PAT }}
+    sections: pinned_prs
+    max_rows: 5
+    pinned_prs_state: merged
 ```
 
-### After (New Action)
+**v2, upgraded to the full dashboard:**
+
 ```yaml
-name: Update README
-on:
-  schedule:
-    - cron: '0 */6 * * *'
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: highlyavailable/github-readme-actions@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          ACTION_TYPE: 'pinned_prs'  # ← New required parameter
-          MAX_LINES: 5
-          PR_STATE: 'all'
+- uses: highlyavailable/github-readme-actions@v2
+  with:
+    github_token: ${{ secrets.DASHBOARD_PAT }}
+    sections: open_prs, response_inbox, review_inbox, recent_activity, merged_prs
+    max_rows: 10
 ```
 
-## ✅ **Migration Checklist**
+## Rollback
 
-- [ ] Update workflow file with new repository name
-- [ ] Add `ACTION_TYPE: 'pinned_prs'` parameter
-- [ ] Update README section comments
-- [ ] Test the workflow
-- [ ] Verify output format
-
-## 🆕 **New Features Available**
-
-The new modular architecture brings:
-
-- **Future Action Types**: Ready for `recent_commits`, `top_repos`, etc.
-- **Better Error Handling**: Improved logging and error messages
-- **Enhanced Filtering**: More precise control over PR selection
-- **Consistent API**: Standardized input/output format
-
-## 🐛 **Troubleshooting**
-
-### Common Issues
-
-1. **"Could not find section comments"**
-   - Update your README section comments to the new format
-
-2. **"Unknown action type"**
-   - Make sure you added `ACTION_TYPE: 'pinned_prs'`
-
-3. **"No PRs found"**
-   - Check your filtering parameters (PR_STATE, START_DATE, etc.)
-
-## 📞 **Support**
-
-If you encounter issues during migration:
-1. Check this migration guide
-2. Review the [README](README.md) for full documentation
-3. Open an issue with your workflow configuration 
+v1 is still tagged and reachable at `highlyavailable/github-readme-actions@v1`. The two versions can coexist in separate workflow files if you want to test v2 incrementally.

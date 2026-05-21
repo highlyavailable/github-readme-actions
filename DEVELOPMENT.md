@@ -1,288 +1,107 @@
-# Development Guide
+# Development
 
-This guide covers the development workflow for the GitHub Pinned PR Readme action.
-
-## 🛠️ Development Setup
-
-### Prerequisites
-- Node.js 18+ 
-- npm
-- Git
-- Make (usually pre-installed on macOS/Linux)
-
-### Initial Setup
-```bash
-# Clone the repository
-git clone https://github.com/highlyavailable/github-readme-actions.git
-cd github-readme-actions
-
-# Install dependencies
-make install
-
-# Run development workflow
-make dev
-```
-
-## 📋 Available Commands
-
-### Quick Reference
-```bash
-make help           # Show all available commands
-make dev            # Full development workflow (install, lint, test, build)
-make ci             # Run CI pipeline
-make check          # Run all checks (lint, test, build, git status)
-make status         # Show project status
-```
-
-### Development Commands
-```bash
-make install        # Install dependencies (npm ci)
-make install-dev    # Install dependencies for development (npm install)
-make clean          # Clean build artifacts and node_modules
-```
-
-### Testing Commands
-```bash
-make test           # Run tests
-make test-watch     # Run tests in watch mode
-make test-coverage  # Run tests with coverage report
-make test-action    # Test the action locally (requires GITHUB_TOKEN)
-```
-
-### Code Quality Commands
-```bash
-make lint           # Run ESLint
-make lint-fix       # Run ESLint and fix issues automatically
-```
-
-### Build Commands
-```bash
-make build          # Build the distribution (creates dist/index.js)
-```
-
-### Release Commands
-```bash
-make version-patch  # Bump patch version (1.0.0 -> 1.0.1)
-make version-minor  # Bump minor version (1.0.0 -> 1.1.0)  
-make version-major  # Bump major version (1.0.0 -> 2.0.0)
-make release-check  # Check if ready for release
-```
-
-### Utility Commands
-```bash
-make all            # Clean, install, and run all checks
-make git-clean      # Clean git repository (reset to HEAD)
-make docs           # Show documentation info
-```
-
-## 🔄 Development Workflow
-
-### Daily Development
-```bash
-# Start development
-make dev
-
-# Make changes to code
-# ...
-
-# Test changes
-make test
-
-# Check everything before committing
-make check
-```
-
-### Before Committing
-```bash
-# Run full checks
-make check
-
-# If checks pass, commit your changes
-git add .
-git commit -m "Your commit message"
-```
-
-### Testing Locally
-```bash
-# Set up environment
-export GITHUB_TOKEN=your_github_token
-
-# Test the action
-make test-action
-```
-
-## 🧪 Testing Strategy
-
-### Unit Tests
-- Located in `test/` directory
-- Use Jest framework
-- Mock external dependencies
-- Run with `make test`
-
-### Integration Testing
-- Test with real GitHub API (requires token)
-- Use `make test-action` for local testing
-- Verify in real repositories before releasing
-
-### CI Testing
-- Automated on every push/PR
-- Runs lint, test, build pipeline
-- Ensures code quality and functionality
-
-## 🏗️ Build Process
-
-The build process uses `@vercel/ncc` to compile the Node.js code into a single file:
-
-```bash
-make build
-```
-
-This creates:
-- `dist/index.js` - Main compiled file
-- `dist/index.js.map` - Source map
-- `dist/licenses.txt` - License information
-
-## 📦 Release Process
-
-### Automated Release (Recommended)
-```bash
-# 1. Prepare release
-make release-check
-
-# 2. Bump version
-make version-patch  # or version-minor/version-major
-
-# 3. Commit changes
-git add .
-git commit -m "Release v$(node -e "console.log(require('./package.json').version)")"
-git push origin main
-
-# 4. Create release via GitHub Actions UI
-# Go to Actions -> Release -> Run workflow
-```
-
-### Manual Release
-```bash
-# Create and push tag
-git tag v1.0.0
-git push origin v1.0.0
-
-# GitHub Actions will handle the rest
-```
-
-## 🔍 Debugging
-
-### Common Issues
-
-1. **Build Failures**
-   ```bash
-   make clean
-   make install
-   make build
-   ```
-
-2. **Test Failures**
-   ```bash
-   make test-coverage  # See detailed coverage
-   npm run test -- --verbose  # Verbose test output
-   ```
-
-3. **Lint Errors**
-   ```bash
-   make lint-fix  # Auto-fix issues
-   ```
-
-### Local Action Testing
-```bash
-# Test with minimal setup
-export GITHUB_TOKEN=your_token
-export INPUT_GH_USERNAME=your_username
-export INPUT_MAX_LINES=3
-node index.js
-```
-
-## 📁 Project Structure
+## Layout
 
 ```
 github-readme-actions/
-├── 📄 index.js              # Main action logic
-├── 📄 action.yml            # GitHub Action metadata
-├── 📄 package.json          # Dependencies and scripts
-├── 📄 Makefile              # Development commands
-├── 📁 .github/workflows/    # CI/CD workflows
-├── 📁 test/                 # Test files
-├── 📁 dist/                 # Built distribution (auto-generated)
-├── 📁 examples/             # Usage examples
-└── 📚 Documentation files
+  action.yml              GitHub Action metadata + input schema
+  index.js                Orchestrator: load config, render sections, write file, commit
+  src/
+    config.js             Input parsing + validation
+    github.js             Octokit factory + shared API helpers
+    render.js             Markdown rendering primitives (tables, links, status tags, age)
+    readme.js             Marker-based block replacement
+    git.js                Commit + push when running in CI
+    sections/
+      index.js            Section registry
+      open-prs.js         Each section is a self-contained module with a render(ctx) fn
+      response-inbox.js
+      review-inbox.js
+      recent-activity.js
+      merged-prs.js
+      stats.js
+      pinned-prs.js
+  test/
+    helpers.js            mockOctokit + ctx test helpers
+    render.test.js        Pure rendering primitives
+    readme.test.js        Marker replacement
+    config.test.js        Input parsing + validation
+    sections/             One test file per section
+  docs/                   User-facing documentation
+  examples/               Copy-pasteable workflow files
+  dist/                   Built bundle (committed; runs in CI)
 ```
 
-## 🎯 Best Practices
+## Commands
 
-### Code Style
-- Use ESLint configuration
-- Follow existing patterns
-- Add JSDoc comments for functions
-- Keep functions small and focused
+| Command | What it does |
+|---|---|
+| `make install` | `npm ci` |
+| `make test` | Run the jest suite |
+| `make test-watch` | Jest in watch mode |
+| `make test-coverage` | Jest with coverage |
+| `make lint` | Run eslint |
+| `make lint-fix` | Run eslint with `--fix` |
+| `make build` | Bundle `index.js` into `dist/` with `@vercel/ncc` |
+| `make ci` | Lint, test, build, and verify there are no uncommitted changes |
+| `make test-action` | Run the action locally against the real GitHub API (needs `GITHUB_TOKEN`) |
 
-### Testing
-- Write tests for new features
-- Mock external dependencies
-- Test error conditions
-- Maintain good coverage
+## Section contract
 
-### Git Workflow
-- Use descriptive commit messages
-- Keep commits atomic
-- Run `make check` before committing
-- Use conventional commit format
+A section is an object with this shape:
 
-### Documentation
-- Update README for new features
-- Add examples for complex usage
-- Document breaking changes
-- Keep CHANGELOG updated
-
-## 🚀 Performance Tips
-
-### Development Speed
-```bash
-# Use watch mode for rapid testing
-make test-watch
-
-# Use lint-fix for quick cleanup
-make lint-fix
-
-# Use dev command for full workflow
-make dev
+```js
+{
+  name: 'open_prs',
+  title: 'Open Pull Requests',
+  async render(ctx) {
+    return { content: '...', metadata: { count: 0 } };
+  }
+}
 ```
 
-### CI Optimization
-- The Makefile optimizes CI by combining commands
-- Build artifacts are cached between steps
-- Dependencies are cached by GitHub Actions
+`ctx` is `{ octokit, username, shared, config }`:
 
-## 📞 Getting Help
+- `octokit` — an `@actions/github` octokit instance
+- `username` — the dashboard subject
+- `shared` — global tuning: `maxRows`, `includeDrafts`, `repositories`, `excludeRepositories`
+- `config` — section-specific config drawn from `action.yml` inputs and shaped in `src/config.js`
 
-- Check `make help` for available commands
-- Review error messages carefully
-- Check GitHub Actions logs for CI issues
-- Open issues for bugs or questions
+Return:
 
-## 🎉 Contributing
+- `content` — the markdown body that goes between the section's markers (no headings; the user supplies those in their README)
+- `metadata` — flat object surfaced as workflow outputs (`<section>_<key>`)
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
+## Rendering rules
 
-Quick contribution workflow:
+Use the helpers in [src/render.js](src/render.js): `link`, `mono`, `statusTag`, `table`, `bulletList`, `age`, `prRef`, `emptyState`. They handle markdown escaping and produce consistent output across sections.
+
+## Testing
+
+Each section has a dedicated test under `test/sections/<name>.test.js`. Use:
+
+```js
+const { mockOctokit, searchItem, ctx } = require('../helpers');
+```
+
+`mockOctokit` returns a stub with `rest.search.issuesAndPullRequests`, `rest.issues.listComments`, `rest.pulls.listReviewComments`, and `rest.pulls.listReviews`. `searchItem` builds search-API-shaped fixtures. `ctx` produces a fully-populated section context.
+
+## Building the bundle
+
+The action runs `dist/index.js` in GitHub-hosted runners, not your source. Run `make build` after any change to `index.js` or `src/`, and commit the regenerated `dist/`. CI fails if `dist/` is out of date.
+
+## Local action run
+
 ```bash
-# 1. Fork and clone
-# 2. Create feature branch
-git checkout -b feature/your-feature
+export GITHUB_TOKEN=ghp_...
+export INPUT_USERNAME=highlyavailable
+export INPUT_SECTIONS=open_prs,review_inbox
+export INPUT_TARGET_FILE=/tmp/README-test.md
+make test-action
+```
 
-# 3. Develop with Makefile
-make dev
+You'll need a `/tmp/README-test.md` with the relevant `<!--readme-actions:...-->` markers.
 
-# 4. Test thoroughly
-make check
+## Release
 
-# 5. Submit PR
-``` 
+See [RELEASE.md](RELEASE.md).

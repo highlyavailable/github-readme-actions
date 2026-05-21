@@ -1,101 +1,99 @@
 const core = require('@actions/core');
-const github = require('@actions/github');
-const { updateReadme } = require('./src/utils/readme-updater');
-const { executePinnedPRsAction } = require('./src/actions/pinned-prs');
 
-/**
- * Get input parameters with defaults
- */
-function getInputs() {
-  return {
-    githubToken: core.getInput('GITHUB_TOKEN') || process.env.GITHUB_TOKEN || process.env.INPUT_GITHUB_TOKEN,
-    actionType: core.getInput('ACTION_TYPE') || 'pinned_prs',
-    username: core.getInput('GH_USERNAME') || github.context.repo.owner,
-    targetFile: core.getInput('TARGET_FILE') || 'README.md',
-    commitMsg: core.getInput('COMMIT_MSG') || '🚀 Update README with GitHub actions',
-    commitName: core.getInput('COMMIT_NAME') || 'github-actions[bot]',
-    commitEmail: core.getInput('COMMIT_EMAIL') || '41898282+github-actions[bot]@users.noreply.github.com',
-    
-    // Pinned PRs specific inputs
-    maxLines: parseInt(core.getInput('MAX_LINES') || '5'),
-    prState: core.getInput('PR_STATE') || 'all',
-    startDate: core.getInput('START_DATE'),
-    endDate: core.getInput('END_DATE'),
-    blacklist: core.getInput('BLACKLIST'),
-    repositories: core.getInput('REPOSITORIES'),
-    includeDraft: core.getInput('INCLUDE_DRAFT') === 'true',
-    sortBy: core.getInput('SORT_BY') || 'updated'
-  };
-}
+const { loadConfig, validate } = require('./src/config');
+const { createClient } = require('./src/github');
+const { get: getSection, REGISTRY } = require('./src/sections');
+const { readTarget, applyUpdates, writeIfChanged } = require('./src/readme');
+const { commitAndPush } = require('./src/git');
+const { loadFile, resolveAll } = require('./src/render-config');
 
-
-
-/**
- * Execute the appropriate action based on action type
- */
-async function executeAction(octokit, inputs) {
-  switch (inputs.actionType) {
-    case 'pinned_prs':
-      return await executePinnedPRsAction(octokit, inputs);
-    
-    // Future action types can be added here
-    // case 'recent_commits':
-    //   return await executeRecentCommitsAction(octokit, inputs);
-    // case 'top_repos':
-    //   return await executeTopReposAction(octokit, inputs);
-    
-    default:
-      throw new Error(`Unknown action type: ${inputs.actionType}. Supported types: pinned_prs`);
+function buildSectionMeta(names) {
+  const meta = {};
+  for (const name of names) {
+    const section = REGISTRY[name];
+    if (!section) continue;
+    meta[name] = {
+      defaultStyle: section.defaultStyle,
+      defaultColumns: section.defaultColumns,
+      defaultEmptyState: section.defaultEmptyState,
+      defaultSort: section.defaultSort,
+      availableColumns: section.availableColumns
+    };
   }
+  return meta;
 }
 
-/**
- * Main function
- */
+async function renderSections(cfg, octokit) {
+  const updates = [];
+  const failed = [];
+  const fileConfig = loadFile(cfg.configFile);
+  const resolved = resolveAll({
+    fileConfig,
+    inline: cfg.inlineRender,
+    sectionMeta: buildSectionMeta(cfg.sections),
+    sectionNames: cfg.sections
+  });
+
+  for (const name of cfg.sections) {
+    const section = getSection(name);
+    if (!section) {
+      failed.push(name);
+      continue;
+    }
+    try {
+      core.info(`Rendering ${name}`);
+      const ctx = {
+        octokit,
+        username: cfg.username,
+        shared: cfg.shared,
+        config: cfg.sectionConfig[name] || {},
+        render: resolved.sections[name]
+      };
+      const result = await section.render(ctx);
+      updates.push({ name, content: result.content, metadata: result.metadata });
+      if (result.metadata) {
+        for (const [k, v] of Object.entries(result.metadata)) {
+          core.setOutput(`${name}_${k}`, v);
+        }
+      }
+    } catch (err) {
+      core.warning(`Section ${name} failed: ${err.message}`);
+      failed.push(name);
+    }
+  }
+  return { updates, failed };
+}
+
 async function main() {
   try {
-    const inputs = getInputs();
-    
-    if (!inputs.githubToken) {
-      throw new Error('GITHUB_TOKEN is required');
+    const cfg = loadConfig();
+    validate(cfg);
+
+    const octokit = createClient(cfg.githubToken);
+    core.info(`Building dashboard for ${cfg.username} — sections: ${cfg.sections.join(', ')}`);
+
+    const { updates, failed } = await renderSections(cfg, octokit);
+
+    const original = readTarget(cfg.targetFile);
+    const { content, rendered, missing } = applyUpdates(original, updates);
+    if (missing.length) {
+      core.warning(
+        `Missing markers in ${cfg.targetFile} for: ${missing.join(', ')}. ` +
+          `Add <!--readme-actions:<name>:start--><!--readme-actions:<name>:end--> pairs.`
+      );
     }
-    
-    const octokit = github.getOctokit(inputs.githubToken);
-    
-    core.info(`Executing action: ${inputs.actionType} for user: ${inputs.username}`);
-    
-    // Execute the appropriate action
-    const result = await executeAction(octokit, inputs);
-    
-    // Update README with the result
-    const updated = await updateReadme(
-      result.content,
-      result.startComment,
-      result.endComment,
-      inputs.targetFile,
-      inputs
-    );
-    
-    // Set outputs
-    core.setOutput('updated', updated);
-    core.setOutput('action_type', inputs.actionType);
-    
-    // Set action-specific outputs
-    if (result.metadata) {
-      Object.keys(result.metadata).forEach(key => {
-        core.setOutput(key, result.metadata[key]);
-      });
-    }
-    
-    core.info(`Successfully completed ${inputs.actionType} action`);
-    
-  } catch (error) {
-    core.setFailed(error.message);
+
+    const updated = writeIfChanged(cfg.targetFile, original, content);
+    core.setOutput('updated', String(updated));
+    core.setOutput('sections_rendered', rendered.join(','));
+    core.setOutput('sections_failed', failed.concat(missing).join(','));
+
+    if (updated) commitAndPush(cfg, cfg.targetFile);
+  } catch (err) {
+    core.setFailed(err.message);
   }
 }
 
-if (require.main === module) {
-  main();
-}
+if (require.main === module) main();
 
-module.exports = { main }; 
+module.exports = { main };

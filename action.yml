@@ -1,69 +1,111 @@
-name: 'GitHub README Actions'
-description: 'A collection of GitHub Actions to automatically update your README with dynamic content'
+name: 'GitHub README Dashboard'
+description: 'OSS contributor dashboard generator. Maintains live activity, review, and bookkeeping sections in any markdown file.'
 author: 'Peter Bryant'
 branding:
   icon: 'activity'
   color: 'blue'
 
 inputs:
-  GITHUB_TOKEN:
-    description: 'GitHub token for API access. Can be provided via inputs (with:) or environment variables (env:)'
+  github_token:
+    description: 'GitHub token for API access. A fine-grained PAT with repo:read and pull-requests:read is required for cross-repo visibility. The default GITHUB_TOKEN is limited to the current repository.'
     required: true
-  ACTION_TYPE:
-    description: 'Type of action to perform (pinned_prs, coming soon: recent_commits, top_repos, etc.)'
-    required: false
-    default: 'pinned_prs'
-  GH_USERNAME:
-    description: 'GitHub username to fetch data for'
+  username:
+    description: 'GitHub username to build the dashboard for. Defaults to the repository owner.'
     required: false
     default: ${{ github.repository_owner }}
-  TARGET_FILE:
-    description: 'Target file to update'
+  sections:
+    description: 'Comma-separated list of dashboard sections to render. Available: open_prs, response_inbox, review_inbox, recent_activity, merged_prs, stats, pinned_prs.'
+    required: false
+    default: 'open_prs,response_inbox,review_inbox,recent_activity'
+  target_file:
+    description: 'Markdown file to update.'
     required: false
     default: 'README.md'
-  COMMIT_MSG:
-    description: 'Commit message for the update'
+  commit_message:
+    description: 'Commit message for the update.'
     required: false
-    default: '🚀 Update README with GitHub actions'
-  COMMIT_NAME:
-    description: 'Name of the committer'
+    default: 'chore: update readme dashboard'
+  commit_name:
+    description: 'Committer name.'
     required: false
     default: 'github-actions[bot]'
-  COMMIT_EMAIL:
-    description: 'Email of the committer'
+  commit_email:
+    description: 'Committer email.'
     required: false
     default: '41898282+github-actions[bot]@users.noreply.github.com'
-  
-  # Pinned PRs specific inputs
-  MAX_LINES:
-    description: '[pinned_prs] Maximum number of PRs to display'
+  commit:
+    description: 'Whether the action should commit and push changes. Set to false to let downstream steps handle the commit.'
     required: false
-    default: '5'
-  PR_STATE:
-    description: '[pinned_prs] Filter PRs by state (open, closed, merged, all)'
+    default: 'true'
+  config_file:
+    description: 'Path to a YAML file with per-section rendering config (style, columns, status labels, date format, empty state). Inline inputs win over the file. Missing file is treated as empty config.'
     required: false
-    default: 'all'
-  START_DATE:
-    description: '[pinned_prs] Start date for PR filtering (YYYY-MM-DD)'
+    default: '.github/readme-dashboard.yml'
+  status_labels:
+    description: 'JSON object overriding status tag text. Example: {"merged":"merged","open":"open","draft":"wip"}. Overrides values from config_file.'
     required: false
-  END_DATE:
-    description: '[pinned_prs] End date for PR filtering (YYYY-MM-DD)'
+  date_format:
+    description: 'How dates are rendered: relative (default), absolute (YYYY-MM-DD), or both.'
     required: false
-  BLACKLIST:
-    description: '[pinned_prs] Comma-separated list of PR numbers to exclude'
+    default: 'relative'
+
+  # Section tuning (shared across sections)
+  max_rows:
+    description: 'Default cap on rows rendered per section.'
     required: false
-  REPOSITORIES:
-    description: '[pinned_prs] Comma-separated list of repositories to include (owner/repo format). If empty, searches all PRs across GitHub using the search API'
-    required: false
-  INCLUDE_DRAFT:
-    description: '[pinned_prs] Include draft pull requests'
+    default: '10'
+  include_drafts:
+    description: 'Include draft pull requests in PR-based sections.'
     required: false
     default: 'false'
-  SORT_BY:
-    description: '[pinned_prs] Sort PRs by (created, updated, popularity)'
+  repositories:
+    description: 'Comma-separated owner/repo list to scope every section to. Empty means all repos visible to the token.'
+    required: false
+  exclude_repositories:
+    description: 'Comma-separated owner/repo list to exclude from every section.'
+    required: false
+
+  # Section-specific tuning
+  activity_days:
+    description: '[recent_activity] Days of comment history to include.'
+    required: false
+    default: '14'
+  merged_window_days:
+    description: '[merged_prs] Look-back window in days for merged PRs.'
+    required: false
+    default: '90'
+  stats_periods:
+    description: '[stats] Comma-separated periods to report. Any of: week, month, quarter, year.'
+    required: false
+    default: 'week,month,year'
+
+  # pinned_prs (kept from v1 for back-compat)
+  pinned_prs_state:
+    description: '[pinned_prs] Filter PRs by state: open, closed, merged, all.'
+    required: false
+    default: 'all'
+  pinned_prs_start_date:
+    description: '[pinned_prs] Start date for PR filtering (YYYY-MM-DD).'
+    required: false
+  pinned_prs_end_date:
+    description: '[pinned_prs] End date for PR filtering (YYYY-MM-DD).'
+    required: false
+  pinned_prs_blacklist:
+    description: '[pinned_prs] Comma-separated PR numbers to exclude.'
+    required: false
+  pinned_prs_sort_by:
+    description: '[pinned_prs] Sort key: created, updated, popularity.'
     required: false
     default: 'updated'
 
+outputs:
+  updated:
+    description: 'true if the target file was modified.'
+  sections_rendered:
+    description: 'Comma-separated list of sections that rendered successfully.'
+  sections_failed:
+    description: 'Comma-separated list of sections that failed to render.'
+
 runs:
   using: 'node20'
-  main: 'dist/index.js' 
+  main: 'dist/index.js'
