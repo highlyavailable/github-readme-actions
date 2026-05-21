@@ -85,7 +85,8 @@ function ctx(overrides = {}) {
       ...(overrides.shared || {})
     },
     config: overrides.config || {},
-    render: renderCfg(overrides.render || {})
+    render: renderCfg(overrides.render || {}),
+    existing: overrides.existing || ''
   };
 }
 

@@ -107,6 +107,29 @@ sections:
 | `command_center_week_merged` | PRs merged in the last 7 days |
 | `command_center_week_reviewed` | PRs you reviewed in the last 7 days |
 
+## Acknowledge checkboxes
+
+`Needs attention` and `Awaiting your reply` render as GitHub task lists. Each row is an interactive checkbox you can tick directly in the rendered README on GitHub.com:
+
+```
+#### Needs attention (2 · 1 acknowledged)
+
+- [ ] 🔴 CI failing — [add retry logic](url) — [`acme/api#412`](url) <!--ack:fp=8x2hk1-->
+- [ ] 🟠 stale 28d — [docs: refresh](url) — [`acme/api#380`](url) <!--ack:fp=qw4n9p-->
+
+<details><summary>Acknowledged (1) — uncheck to re-surface</summary>
+
+- [x] 🟢 ready to merge — [feat: rate limit](url) — [`acme/api#420`](url) <!--ack:fp=pe5jq7-->
+
+</details>
+```
+
+When you tick a box in the GitHub UI, GitHub commits the change. On the next dashboard run, the action reads the existing README and preserves your acks — checked items move into the collapsed "Acknowledged" block. The action does this per-section, keyed on PR ref.
+
+**Auto-resurfacing**: each row carries a hidden `<!--ack:fp=...-->` fingerprint derived from the row's underlying state (e.g. last-reply timestamp). If the state changes after you ack — someone replies again, CI flips — the fingerprint stops matching and the row pops back into the active list automatically.
+
+**To un-acknowledge**: open the collapsed details block, uncheck the box, GitHub commits the change. The next run re-promotes it.
+
 ## How it works
 
 The composite calls the same `render(ctx)` functions used by individual sections, but only uses them for accurate counts and the drill-down tables. The hero builds its own KPI line from cheap count-only search queries (one per metric), plus a 12-week velocity bucket for the inline sparkline. The `needs_attention` table re-queries the underlying search to keep titles + refs handy in a unified shape.

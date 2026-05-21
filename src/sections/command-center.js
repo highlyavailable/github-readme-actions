@@ -5,8 +5,9 @@ const stalePrs = require('./stale-prs');
 const failingCi = require('./failing-ci');
 const readyToMerge = require('./ready-to-merge');
 const { paginateSearch, repoFullName } = require('../github');
-const { link, prRef, table, age } = require('../render');
+const { link, prRef, age, userLink } = require('../render');
 const { unicodeSparkline, bucketByWeek } = require('../viz');
+const { ackKey, fingerprint, parseAcknowledged, renderChecklist } = require('../acknowledge');
 
 const DEFAULT_LAYOUT = [
   'hero',           // blockquote with KPIs + inline sparkline + status pills
@@ -93,31 +94,74 @@ function subsectionBlock(title, count, content) {
   return `#### ${title} (${count})\n\n${content}`;
 }
 
+async function fetchAwaitingReplyItems(ctx, perRows) {
+  // Reuse the response_inbox fetch path, but capture the enriched items so
+  // we can render them as a checklist (response_inbox.render only returns
+  // markdown content).
+  const username = ctx.username;
+  const scope = (ctx.shared.repositories || []).map((r) => ` repo:${r}`).join('') +
+    (ctx.shared.excludeRepositories || []).map((r) => ` -repo:${r}`).join('');
+  const prs = await paginateSearch(
+    ctx.octokit,
+    `type:pr author:${username} is:open${ctx.shared.includeDrafts ? '' : ' -draft:true'}${scope}`,
+    { sort: 'updated', order: 'desc' }
+  ).catch(() => []);
+
+  const enriched = [];
+  for (const pr of prs) {
+    const full = repoFullName(pr);
+    const [owner, repo] = full.split('/');
+    if (!owner || !repo) continue;
+    const [issueComments, reviewComments, reviews] = await Promise.all([
+      ctx.octokit.rest.issues.listComments({ owner, repo, issue_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => []),
+      ctx.octokit.rest.pulls.listReviewComments({ owner, repo, pull_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => []),
+      ctx.octokit.rest.pulls.listReviews({ owner, repo, pull_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => [])
+    ]);
+    const events = [];
+    for (const c of issueComments) events.push({ user: c.user?.login, at: c.created_at });
+    for (const c of reviewComments) events.push({ user: c.user?.login, at: c.created_at });
+    for (const r of reviews) if (r.submitted_at) events.push({ user: r.user?.login, at: r.submitted_at });
+    if (events.length === 0) continue;
+    events.sort((a, b) => new Date(b.at) - new Date(a.at));
+    const last = events[0];
+    if (!last.user || last.user === username) continue;
+    enriched.push({ pr, owner, repo, lastUser: last.user, lastAt: last.at });
+  }
+  enriched.sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt));
+  return enriched.slice(0, perRows);
+}
+
 async function render(ctx) {
-  const { config } = ctx;
+  const { config, existing } = ctx;
   const layout = config?.layout && config.layout.length ? config.layout : DEFAULT_LAYOUT;
   const perBlockRows = config?.per_block_rows || 5;
+  const acked = parseAcknowledged(existing || '');
 
   // Fetch everything in parallel.
   const [
     weekStats,
     velocity,
     openPrsResult,
-    responseInboxResult,
     reviewInboxResult,
     readyResult,
     failingResult,
-    staleResult
+    staleResult,
+    awaitingItems
   ] = await Promise.all([
     fetchWeekStats(ctx).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
     fetchVelocity(ctx).catch(() => ({ buckets: [], total: 0, average: '0.0' })),
     openPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
-    responseInbox.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
     reviewInbox.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
     readyToMerge.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
     failingCi.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
-    stalePrs.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } }))
+    stalePrs.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
+    fetchAwaitingReplyItems(ctx, perBlockRows)
   ]);
+
+  // Bridge: also call responseInbox.render so per-section metadata still works,
+  // but we'll render our own checklist from awaitingItems.
+  const responseInboxResult = await responseInbox.render(subCtx(ctx, perBlockRows))
+    .catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } }));
 
   const counts = {
     ready: readyResult.metadata?.count || 0,
@@ -127,12 +171,11 @@ async function render(ctx) {
     review: reviewInboxResult.metadata?.count || 0
   };
 
-  // Attach lightweight "items" arrays for the Needs Attention table by re-fetching
-  // a minimal payload. We avoid changing the existing sections' return shape by
-  // doing a one-shot search query here for the unified view.
-  const [needsItems] = await Promise.all([
-    buildNeedsAttentionItems(ctx, { failingCount: counts.failing, staleCount: counts.stale, readyCount: counts.ready }, perBlockRows)
-  ]);
+  const needsItems = await buildNeedsAttentionItems(
+    ctx,
+    { failingCount: counts.failing, staleCount: counts.stale, readyCount: counts.ready },
+    perBlockRows
+  );
 
   const blocks = [];
 
@@ -140,14 +183,14 @@ async function render(ctx) {
     if (block === 'hero') {
       blocks.push(buildHero(ctx, weekStats, velocity, counts));
     } else if (block === 'needs_attention') {
-      const na = renderNeedsAttentionTable(needsItems, perBlockRows);
+      const na = renderNeedsAttentionChecklist(needsItems, acked, perBlockRows);
       if (na) blocks.push(na);
     } else if (block === 'open_prs') {
       const sub = subsectionBlock('Open pull requests', openPrsResult.metadata?.count, openPrsResult.content);
       if (sub) blocks.push(sub);
     } else if (block === 'response_inbox') {
-      const sub = subsectionBlock('Awaiting your reply', counts.awaiting, responseInboxResult.content);
-      if (sub) blocks.push(sub);
+      const aw = renderAwaitingReplyChecklist(awaitingItems, acked);
+      if (aw) blocks.push(aw);
     } else if (block === 'review_inbox') {
       const sub = subsectionBlock('Pending review requests', counts.review, reviewInboxResult.content);
       if (sub) blocks.push(sub);
@@ -178,7 +221,8 @@ async function render(ctx) {
       stale_count: counts.stale,
       week_opened: weekStats.opened,
       week_merged: weekStats.merged,
-      week_reviewed: weekStats.reviewed
+      week_reviewed: weekStats.reviewed,
+      acknowledged_count: acked.size
     }
   };
 }
@@ -246,14 +290,12 @@ async function buildNeedsAttentionItems(ctx, { failingCount, staleCount, readyCo
   return items;
 }
 
-function renderNeedsAttentionTable(items, perRows) {
+function renderNeedsAttentionChecklist(items, acked, perRows) {
   if (!items.length) return null;
-  // Dedup by PR number+repo (in case the same PR appears in multiple lists).
-  // First-seen wins, so ordering reflects query priority.
   const seen = new Set();
   const deduped = [];
   for (const item of items) {
-    const key = `${item.owner}/${item.repo}#${item.number}`;
+    const key = ackKey(item.owner, item.repo, item.number);
     if (seen.has(key)) continue;
     seen.add(key);
     deduped.push(item);
@@ -266,15 +308,34 @@ function renderNeedsAttentionTable(items, perRows) {
     return tag;
   };
 
-  const rows = deduped.slice(0, perRows).map((item) => [
-    why(item.tag, item),
-    link(item.title, item.url),
-    prRef(item.owner, item.repo, item.number)
-  ]);
+  const checklistItems = deduped.slice(0, perRows).map((item) => ({
+    ref: ackKey(item.owner, item.repo, item.number),
+    fingerprint: fingerprint(`${item.tag}|${item.updated_at}`),
+    body: `${why(item.tag, item)} — ${link(item.title, item.url)} — ${prRef(item.owner, item.repo, item.number)}`
+  }));
 
-  if (!rows.length) return null;
-  const md = table(['Why', 'PR', 'Ref'], rows);
-  return `#### Needs attention (${deduped.length})\n\n${md}`;
+  return renderChecklist({
+    heading: 'Needs attention',
+    items: checklistItems,
+    acked,
+    emptyState: '_Nothing needs attention._'
+  });
+}
+
+function renderAwaitingReplyChecklist(items, acked) {
+  if (!items.length) return null;
+  const checklistItems = items.map(({ pr, owner, repo, lastUser, lastAt }) => ({
+    ref: ackKey(owner, repo, pr.number),
+    fingerprint: fingerprint(`${lastUser}|${lastAt}`),
+    body: `${link(pr.title, pr.html_url)} — ${prRef(owner, repo, pr.number)} — last reply ${userLink(lastUser)} ${age(lastAt)}`
+  }));
+
+  return renderChecklist({
+    heading: 'Awaiting your reply',
+    items: checklistItems,
+    acked,
+    emptyState: '_No threads waiting on you._'
+  });
 }
 
 module.exports = {

@@ -89,4 +89,97 @@ describe('command_center', () => {
     expect(content).toContain('Open pull requests');
     expect(content).not.toContain('Awaiting your reply');
   });
+
+  test('needs_attention is rendered as checklist with checkboxes', async () => {
+    const octokit = {
+      rest: {
+        search: {
+          issuesAndPullRequests: jest.fn(async ({ per_page }) => {
+            if (per_page === 1) {
+              return { data: { total_count: 0, items: [] } };
+            }
+            // failing_ci & stale_prs & ready_to_merge all search open PRs
+            return {
+              data: {
+                total_count: 1,
+                items: [
+                  searchItem({
+                    number: 7,
+                    title: 'Broken PR',
+                    repository_url: 'https://api.github.com/repos/acme/api'
+                  })
+                ]
+              }
+            };
+          })
+        },
+        issues: { listComments: jest.fn(async () => ({ data: [] })) },
+        pulls: {
+          get: jest.fn(async () => ({ data: { head: { sha: 'x' }, mergeable: true } })),
+          listReviewComments: jest.fn(async () => ({ data: [] })),
+          listReviews: jest.fn(async () => ({ data: [] }))
+        },
+        checks: {
+          listForRef: jest.fn(async () => ({
+            data: { total_count: 1, check_runs: [{ name: 'tests', conclusion: 'failure' }] }
+          }))
+        }
+      }
+    };
+    const { content } = await section.render(ctx({ octokit }));
+    expect(content).toContain('#### Needs attention');
+    expect(content).toMatch(/- \[ \] .*Broken PR/);
+    expect(content).toContain('<!--ack:fp=');
+  });
+
+  test('acknowledged items persist when fingerprint matches', async () => {
+    const octokit = {
+      rest: {
+        search: {
+          issuesAndPullRequests: jest.fn(async ({ per_page }) => {
+            if (per_page === 1) return { data: { total_count: 0, items: [] } };
+            return {
+              data: {
+                total_count: 1,
+                items: [
+                  searchItem({
+                    number: 7,
+                    title: 'Stable PR',
+                    updated_at: '2026-05-10T00:00:00Z',
+                    repository_url: 'https://api.github.com/repos/acme/api'
+                  })
+                ]
+              }
+            };
+          })
+        },
+        issues: { listComments: jest.fn(async () => ({ data: [] })) },
+        pulls: {
+          get: jest.fn(async () => ({ data: { head: { sha: 'x' }, mergeable: true } })),
+          listReviewComments: jest.fn(async () => ({ data: [] })),
+          listReviews: jest.fn(async () => ({ data: [] }))
+        },
+        checks: {
+          listForRef: jest.fn(async () => ({
+            data: { total_count: 1, check_runs: [{ name: 'tests', conclusion: 'failure' }] }
+          }))
+        }
+      }
+    };
+
+    // First render to compute the fingerprint
+    const first = await section.render(ctx({ octokit }));
+    const fpMatch = first.content.match(/<!--ack:fp=([A-Za-z0-9_-]+)-->/);
+    expect(fpMatch).not.toBeNull();
+
+    // Now simulate the user having checked the box (existing content has [x])
+    const existingContent = first.content.replace(
+      /- \[ \] (.*<!--ack:fp=[A-Za-z0-9_-]+-->)/,
+      '- [x] $1'
+    );
+    const second = await section.render(ctx({ octokit, existing: existingContent }));
+    expect(second.content).toContain(`- [x] `);
+    expect(second.content).toContain('<details><summary>Acknowledged');
+    expect(second.metadata.acknowledged_count).toBeGreaterThan(0);
+  });
 });

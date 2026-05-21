@@ -27,6 +27,13 @@ function findSection(source, sectionName) {
   return null;
 }
 
+function extractSectionContent(source, sectionName) {
+  const match = findSection(source, sectionName);
+  if (!match) return '';
+  const start = match.startIdx + match.start.length;
+  return source.substring(start, match.endIdx).trim();
+}
+
 function replaceSection(source, sectionName, content) {
   const match = findSection(source, sectionName);
   if (!match) return { source, replaced: false };
@@ -70,6 +77,7 @@ module.exports = {
   markersFor,
   legacyMarkersFor,
   findSection,
+  extractSectionContent,
   replaceSection,
   applyUpdates,
   readTarget,
