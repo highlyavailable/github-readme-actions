@@ -8,7 +8,14 @@ const KNOWN_SECTIONS = [
   'recent_activity',
   'merged_prs',
   'stats',
-  'pinned_prs'
+  'pinned_prs',
+  'stale_prs',
+  'failing_ci',
+  'ready_to_merge',
+  'velocity_chart',
+  'commit_heatmap',
+  'streak',
+  'command_center'
 ];
 
 function readBool(name, fallback) {
@@ -77,7 +84,8 @@ function loadConfig() {
     inlineRender: {
       defaults: {
         date_format: core.getInput('date_format') || null,
-        status_labels: readJson('status_labels')
+        status_labels: readJson('status_labels'),
+        viz_style: core.getInput('viz_style') || null
       },
       sections: {}
     },
@@ -109,6 +117,22 @@ function loadConfig() {
           .map((n) => parseInt(n, 10))
           .filter((n) => Number.isFinite(n)),
         sortBy: core.getInput('pinned_prs_sort_by') || 'updated'
+      },
+      stale_prs: {
+        staleDays: readInt('stale_days', 14)
+      },
+      velocity_chart: {
+        weeks: readInt('velocity_weeks', 12)
+      },
+      commit_heatmap: {
+        months: readInt('heatmap_months', 12)
+      },
+      streak: {
+        months: readInt('heatmap_months', 12)
+      },
+      command_center: {
+        layout: readList('command_center_layout'),
+        per_block_rows: readInt('command_center_rows', 5)
       }
     }
   };

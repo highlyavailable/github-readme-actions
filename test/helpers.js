@@ -53,7 +53,7 @@ function renderCfg(overrides = {}) {
     date_format: overrides.date_format || 'relative',
     status_labels: { ...DEFAULT_LABELS, ...(overrides.status_labels || {}) },
     sort: overrides.sort || null,
-    extras: overrides.extras || {}
+    extras: { viz_style: 'mermaid', ...(overrides.extras || {}) }
   };
 }
 

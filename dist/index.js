@@ -34148,7 +34148,14 @@ const KNOWN_SECTIONS = [
   'recent_activity',
   'merged_prs',
   'stats',
-  'pinned_prs'
+  'pinned_prs',
+  'stale_prs',
+  'failing_ci',
+  'ready_to_merge',
+  'velocity_chart',
+  'commit_heatmap',
+  'streak',
+  'command_center'
 ];
 
 function readBool(name, fallback) {
@@ -34217,7 +34224,8 @@ function loadConfig() {
     inlineRender: {
       defaults: {
         date_format: core.getInput('date_format') || null,
-        status_labels: readJson('status_labels')
+        status_labels: readJson('status_labels'),
+        viz_style: core.getInput('viz_style') || null
       },
       sections: {}
     },
@@ -34249,6 +34257,22 @@ function loadConfig() {
           .map((n) => parseInt(n, 10))
           .filter((n) => Number.isFinite(n)),
         sortBy: core.getInput('pinned_prs_sort_by') || 'updated'
+      },
+      stale_prs: {
+        staleDays: readInt('stale_days', 14)
+      },
+      velocity_chart: {
+        weeks: readInt('velocity_weeks', 12)
+      },
+      commit_heatmap: {
+        months: readInt('heatmap_months', 12)
+      },
+      streak: {
+        months: readInt('heatmap_months', 12)
+      },
+      command_center: {
+        layout: readList('command_center_layout'),
+        per_block_rows: readInt('command_center_rows', 5)
       }
     }
   };
@@ -34500,6 +34524,8 @@ function pickKnown(value, allowed) {
   return allowed.includes(value) ? value : null;
 }
 
+const KNOWN_VIZ_STYLES = ['mermaid', 'unicode', 'both'];
+
 function mergeDefaults(fileConfig, inlineDefaults) {
   const file = fileConfig.defaults || {};
   return {
@@ -34513,7 +34539,11 @@ function mergeDefaults(fileConfig, inlineDefaults) {
       ...DEFAULT_LABELS,
       ...(file.status_labels || {}),
       ...(inlineDefaults.status_labels || {})
-    }
+    },
+    viz_style:
+      pickKnown(inlineDefaults.viz_style, KNOWN_VIZ_STYLES) ||
+      pickKnown(file.viz_style, KNOWN_VIZ_STYLES) ||
+      'mermaid'
   };
 }
 
@@ -34555,6 +34585,11 @@ function resolveSection(name, defaultsResolved, fileSection, inlineSection, sect
 
   const sort = inline.sort || file.sort || meta.defaultSort || null;
 
+  const viz_style =
+    pickKnown(inline.viz_style, KNOWN_VIZ_STYLES) ||
+    pickKnown(file.viz_style, KNOWN_VIZ_STYLES) ||
+    defaultsResolved.viz_style;
+
   return {
     style,
     columns,
@@ -34562,7 +34597,7 @@ function resolveSection(name, defaultsResolved, fileSection, inlineSection, sect
     date_format,
     status_labels,
     sort,
-    extras: { ...file, ...inline }
+    extras: { ...file, ...inline, viz_style }
   };
 }
 
@@ -34723,6 +34758,333 @@ module.exports = {
 
 /***/ }),
 
+/***/ 81:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const openPrs = __nccwpck_require__(918);
+const responseInbox = __nccwpck_require__(5930);
+const reviewInbox = __nccwpck_require__(5361);
+const stalePrs = __nccwpck_require__(101);
+const failingCi = __nccwpck_require__(3031);
+const readyToMerge = __nccwpck_require__(5174);
+const velocityChart = __nccwpck_require__(5066);
+const stats = __nccwpck_require__(2749);
+const DEFAULT_LAYOUT = ['kpis', 'velocity', 'open_prs', 'response_inbox', 'review_inbox'];
+
+const KNOWN_BLOCKS = {
+  kpis: 'KPI header',
+  velocity: 'Velocity chart',
+  open_prs: 'Top open PRs',
+  stale_prs: 'Stale PRs',
+  failing_ci: 'Failing CI',
+  ready_to_merge: 'Ready to merge',
+  response_inbox: 'Response inbox',
+  review_inbox: 'Review inbox'
+};
+
+const SUB_RENDERERS = {
+  open_prs: openPrs,
+  stale_prs: stalePrs,
+  failing_ci: failingCi,
+  ready_to_merge: readyToMerge,
+  response_inbox: responseInbox,
+  review_inbox: reviewInbox,
+  velocity_chart: velocityChart
+};
+
+function subCtx(ctx, maxRows) {
+  return {
+    ...ctx,
+    shared: { ...ctx.shared, maxRows },
+    config: ctx.config,
+    render: ctx.render
+  };
+}
+
+async function renderKpis(ctx) {
+  // Get a single-period stats snapshot.
+  const statsCtx = { ...ctx, config: { periods: ['week'] } };
+  const statsResult = await stats.render(statsCtx);
+  return statsResult.content;
+}
+
+async function renderHeader(ctx, kpis) {
+  const now = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
+  return [`> **Command Center** — ${ctx.username} · _Updated ${now}_`, '', kpis].join('\n');
+}
+
+async function renderSubsection(name, ctx, perBlockRows) {
+  const renderer = SUB_RENDERERS[name];
+  if (!renderer) return null;
+  try {
+    const result = await renderer.render(subCtx(ctx, perBlockRows));
+    return {
+      title: renderer.title || KNOWN_BLOCKS[name] || name,
+      content: result.content,
+      metadata: result.metadata || {}
+    };
+  } catch (err) {
+    return {
+      title: KNOWN_BLOCKS[name] || name,
+      content: `_Failed to render: ${err.message}_`,
+      metadata: { error: err.message }
+    };
+  }
+}
+
+function renderFooter(metadata) {
+  const parts = [];
+  for (const [key, count] of Object.entries(metadata)) {
+    if (typeof count === 'number') parts.push(`${key.replace(/_/g, ' ')}: ${count}`);
+  }
+  if (!parts.length) return '';
+  return `\n---\n_${parts.join(' · ')}_`;
+}
+
+async function render(ctx) {
+  const { config } = ctx;
+  const layout = config?.layout && config.layout.length ? config.layout : DEFAULT_LAYOUT;
+  const perBlockRows = config?.per_block_rows || 5;
+
+  const blocks = [];
+  const aggregateMeta = {};
+
+  for (const block of layout) {
+    if (block === 'kpis') {
+      const kpis = await renderKpis(ctx);
+      blocks.push(await renderHeader(ctx, kpis));
+    } else if (block === 'velocity') {
+      try {
+        const v = await velocityChart.render(subCtx(ctx, perBlockRows));
+        blocks.push(`#### Velocity\n\n${v.content}`);
+      } catch (err) {
+        blocks.push(`#### Velocity\n\n_Failed to render: ${err.message}_`);
+      }
+    } else if (SUB_RENDERERS[block]) {
+      const sub = await renderSubsection(block, ctx, perBlockRows);
+      if (sub) {
+        blocks.push(`#### ${sub.title}\n\n${sub.content}`);
+        if (sub.metadata?.count !== undefined) {
+          aggregateMeta[`${block}_count`] = sub.metadata.count;
+        }
+      }
+    }
+  }
+
+  blocks.push(renderFooter(aggregateMeta));
+
+  return {
+    content: blocks.filter(Boolean).join('\n\n'),
+    metadata: aggregateMeta
+  };
+}
+
+module.exports = {
+  name: 'command_center',
+  title: 'Command Center',
+  defaultStyle: 'composite',
+  defaultColumns: null,
+  defaultEmptyState: 'No data available.',
+  availableColumns: {},
+  defaultLayout: DEFAULT_LAYOUT,
+  knownBlocks: KNOWN_BLOCKS,
+  render
+};
+
+
+/***/ }),
+
+/***/ 4284:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { unicodeHeatmap } = __nccwpck_require__(412);
+const { emptyState } = __nccwpck_require__(9121);
+
+const QUERY = `
+  query($login: String!, $from: DateTime, $to: DateTime) {
+    user(login: $login) {
+      contributionsCollection(from: $from, to: $to) {
+        totalContributions
+        contributionCalendar {
+          weeks {
+            contributionDays {
+              contributionCount
+              date
+              weekday
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+async function fetchContributions(octokit, username, months) {
+  const to = new Date();
+  const from = new Date(to.getTime() - months * 30 * 86400 * 1000);
+  try {
+    const data = await octokit.graphql(QUERY, {
+      login: username,
+      from: from.toISOString(),
+      to: to.toISOString()
+    });
+    return data.user?.contributionsCollection || null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function toWeeks(calendar) {
+  return calendar.weeks.map((week) =>
+    week.contributionDays.map((d) => ({
+      date: d.date,
+      count: d.contributionCount,
+      // GitHub returns weekday 0=Sun..6=Sat; convert to 0=Mon..6=Sun for nicer layout.
+      weekday: (d.weekday + 6) % 7
+    }))
+  );
+}
+
+async function render(ctx) {
+  const { octokit, username, config, render: renderCfg } = ctx;
+  const months = config?.months || 12;
+  const contributions = await fetchContributions(octokit, username, months);
+
+  if (!contributions || !contributions.contributionCalendar) {
+    return {
+      content: emptyState(renderCfg.empty_state || 'Contributions data unavailable. Token may lack GraphQL permission.'),
+      metadata: { count: 0 }
+    };
+  }
+
+  const weeks = toWeeks(contributions.contributionCalendar);
+  const total = contributions.totalContributions;
+  const heatmap = unicodeHeatmap(weeks);
+
+  const content = [
+    `**${total.toLocaleString()} contributions** in the last ${months} months`,
+    '',
+    heatmap
+  ].join('\n');
+
+  return {
+    content,
+    metadata: { count: total, months }
+  };
+}
+
+module.exports = {
+  name: 'commit_heatmap',
+  title: 'Contribution Heatmap',
+  defaultStyle: 'unicode',
+  defaultColumns: null,
+  defaultEmptyState: 'No contributions data.',
+  availableColumns: {},
+  render,
+  // exposed for streak.js to reuse the same fetch
+  fetchContributions
+};
+
+
+/***/ }),
+
+/***/ 3031:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = __nccwpck_require__(9121);
+
+function buildQuery(username, shared) {
+  const parts = [`type:pr`, `author:${username}`, `is:open`];
+  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
+  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
+  if (!shared.includeDrafts) parts.push('-draft:true');
+  return parts.join(' ');
+}
+
+async function fetchHeadSha(octokit, owner, repo, number) {
+  try {
+    const { data } = await octokit.rest.pulls.get({ owner, repo, pull_number: number });
+    return data.head?.sha || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function fetchChecks(octokit, owner, repo, sha) {
+  if (!sha) return { failing: false, failed: [], total: 0 };
+  try {
+    const { data } = await octokit.rest.checks.listForRef({ owner, repo, ref: sha, per_page: 100 });
+    const failed = data.check_runs.filter((c) => c.conclusion === 'failure' || c.conclusion === 'timed_out' || c.conclusion === 'cancelled');
+    return { failing: failed.length > 0, failed, total: data.total_count };
+  } catch (e) {
+    return { failing: false, failed: [], total: 0 };
+  }
+}
+
+const COLUMNS = {
+  pr: { header: 'PR', render: (r) => link(r.title, r.html_url) },
+  ref: { header: 'Ref', render: (r) => prRef(r.owner, r.repo, r.number) },
+  failed_checks: { header: 'Failing', render: (r) => `${r.failed.length} check${r.failed.length === 1 ? '' : 's'}` },
+  failed_names: {
+    header: 'Failing checks',
+    render: (r) => r.failed.slice(0, 3).map((c) => `\`${c.name}\``).join(', ') + (r.failed.length > 3 ? ` +${r.failed.length - 3}` : '')
+  },
+  updated: { header: 'Updated', render: (r, render) => render.date(r.updated_at) },
+  state: { header: 'State', render: (r, render) => render.tag('ci_failing') }
+};
+
+async function render(ctx) {
+  const { octokit, username, shared, render: renderCfg } = ctx;
+  const items = await paginateSearch(octokit, buildQuery(username, shared), {
+    sort: 'updated',
+    order: 'desc'
+  });
+
+  const enriched = [];
+  for (const item of items) {
+    const full = repoFullName(item);
+    const [owner, repo] = full.split('/');
+    if (!owner || !repo) continue;
+    const sha = await fetchHeadSha(octokit, owner, repo, item.number);
+    const checks = await fetchChecks(octokit, owner, repo, sha);
+    if (!checks.failing) continue;
+    enriched.push({ ...item, owner, repo, failed: checks.failed });
+  }
+
+  if (enriched.length === 0) {
+    return {
+      content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState),
+      metadata: { count: 0 }
+    };
+  }
+
+  const limited = enriched.slice(0, shared.maxRows);
+  const tag = makeStatusTag(renderCfg.status_labels);
+  const renderHelpers = { tag, date: (iso) => formatDate(iso, renderCfg.date_format) };
+  const columns = renderCfg.columns || module.exports.defaultColumns;
+  const headers = columns.map((c) => COLUMNS[c].header);
+  const cells = limited.map((row) => columns.map((c) => COLUMNS[c].render(row, renderHelpers)));
+
+  return {
+    content: renderRows({ style: renderCfg.style, headers, rows: cells }),
+    metadata: { count: enriched.length }
+  };
+}
+
+module.exports = {
+  name: 'failing_ci',
+  title: 'Failing CI',
+  defaultStyle: 'table',
+  defaultColumns: ['pr', 'ref', 'failed_names', 'updated'],
+  defaultEmptyState: 'No PRs with failing CI.',
+  availableColumns: COLUMNS,
+  render
+};
+
+
+/***/ }),
+
 /***/ 2470:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -34733,6 +35095,13 @@ const recentActivity = __nccwpck_require__(5045);
 const mergedPrs = __nccwpck_require__(2006);
 const stats = __nccwpck_require__(2749);
 const pinnedPrs = __nccwpck_require__(6576);
+const stalePrs = __nccwpck_require__(101);
+const failingCi = __nccwpck_require__(3031);
+const readyToMerge = __nccwpck_require__(5174);
+const velocityChart = __nccwpck_require__(5066);
+const commitHeatmap = __nccwpck_require__(4284);
+const streak = __nccwpck_require__(5090);
+const commandCenter = __nccwpck_require__(81);
 
 const REGISTRY = {
   [openPrs.name]: openPrs,
@@ -34741,7 +35110,14 @@ const REGISTRY = {
   [recentActivity.name]: recentActivity,
   [mergedPrs.name]: mergedPrs,
   [stats.name]: stats,
-  [pinnedPrs.name]: pinnedPrs
+  [pinnedPrs.name]: pinnedPrs,
+  [stalePrs.name]: stalePrs,
+  [failingCi.name]: failingCi,
+  [readyToMerge.name]: readyToMerge,
+  [velocityChart.name]: velocityChart,
+  [commitHeatmap.name]: commitHeatmap,
+  [streak.name]: streak,
+  [commandCenter.name]: commandCenter
 };
 
 function get(name) {
@@ -34986,6 +35362,108 @@ module.exports = {
   defaultStyle: 'list',
   defaultColumns: ['state', 'pr', 'ref'],
   defaultEmptyState: 'No pinned pull requests.',
+  availableColumns: COLUMNS,
+  render
+};
+
+
+/***/ }),
+
+/***/ 5174:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = __nccwpck_require__(9121);
+
+function buildQuery(username, shared) {
+  const parts = [`type:pr`, `author:${username}`, `is:open`, `review:approved`];
+  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
+  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
+  if (!shared.includeDrafts) parts.push('-draft:true');
+  return parts.join(' ');
+}
+
+async function fetchHeadShaAndMergeable(octokit, owner, repo, number) {
+  try {
+    const { data } = await octokit.rest.pulls.get({ owner, repo, pull_number: number });
+    return { sha: data.head?.sha || null, mergeable: data.mergeable !== false };
+  } catch (e) {
+    return { sha: null, mergeable: true };
+  }
+}
+
+async function fetchChecks(octokit, owner, repo, sha) {
+  if (!sha) return { allGreen: true };
+  try {
+    const { data } = await octokit.rest.checks.listForRef({ owner, repo, ref: sha, per_page: 100 });
+    if (data.total_count === 0) return { allGreen: true };
+    const blocking = data.check_runs.filter(
+      (c) =>
+        c.conclusion === 'failure' ||
+        c.conclusion === 'timed_out' ||
+        c.conclusion === 'cancelled' ||
+        c.status === 'in_progress' ||
+        c.status === 'queued'
+    );
+    return { allGreen: blocking.length === 0 };
+  } catch (e) {
+    return { allGreen: true };
+  }
+}
+
+const COLUMNS = {
+  pr: { header: 'PR', render: (r) => link(r.title, r.html_url) },
+  ref: { header: 'Ref', render: (r) => prRef(r.owner, r.repo, r.number) },
+  state: { header: 'Status', render: (r, render) => render.tag('approved') },
+  approved_age: { header: 'Approved', render: (r, render) => render.date(r.updated_at) },
+  comments: { header: 'Comments', render: (r) => String(r.comments || 0) }
+};
+
+async function render(ctx) {
+  const { octokit, username, shared, render: renderCfg } = ctx;
+  const items = await paginateSearch(octokit, buildQuery(username, shared), {
+    sort: 'updated',
+    order: 'desc'
+  });
+
+  const ready = [];
+  for (const item of items) {
+    const full = repoFullName(item);
+    const [owner, repo] = full.split('/');
+    if (!owner || !repo) continue;
+    const { sha, mergeable } = await fetchHeadShaAndMergeable(octokit, owner, repo, item.number);
+    if (!mergeable) continue;
+    const { allGreen } = await fetchChecks(octokit, owner, repo, sha);
+    if (!allGreen) continue;
+    ready.push({ ...item, owner, repo });
+  }
+
+  if (ready.length === 0) {
+    return {
+      content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState),
+      metadata: { count: 0 }
+    };
+  }
+
+  const limited = ready.slice(0, shared.maxRows);
+  const tag = makeStatusTag(renderCfg.status_labels);
+  const renderHelpers = { tag, date: (iso) => formatDate(iso, renderCfg.date_format) };
+  const columns = renderCfg.columns || module.exports.defaultColumns;
+  const headers = columns.map((c) => COLUMNS[c].header);
+  const cells = limited.map((row) => columns.map((c) => COLUMNS[c].render(row, renderHelpers)));
+
+  return {
+    content: renderRows({ style: renderCfg.style, headers, rows: cells }),
+    metadata: { count: ready.length }
+  };
+}
+
+module.exports = {
+  name: 'ready_to_merge',
+  title: 'Ready to Merge',
+  defaultStyle: 'table',
+  defaultColumns: ['pr', 'ref', 'state', 'comments'],
+  defaultEmptyState: 'No PRs ready to merge.',
   availableColumns: COLUMNS,
   render
 };
@@ -35256,6 +35734,87 @@ module.exports = {
 
 /***/ }),
 
+/***/ 101:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = __nccwpck_require__(9121);
+
+function isoDaysAgo(days, now = Date.now()) {
+  return new Date(now - days * 86400000).toISOString().slice(0, 10);
+}
+
+function buildQuery(username, shared, staleDays) {
+  const parts = [
+    `type:pr`,
+    `author:${username}`,
+    `is:open`,
+    `updated:<${isoDaysAgo(staleDays)}`
+  ];
+  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
+  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
+  if (!shared.includeDrafts) parts.push('-draft:true');
+  return parts.join(' ');
+}
+
+const COLUMNS = {
+  pr: { header: 'PR', render: (r) => link(r.title, r.html_url) },
+  ref: { header: 'Ref', render: (r) => prRef(r.owner, r.repo, r.number) },
+  state: {
+    header: 'State',
+    render: (r, render) => (r.draft ? render.tag('draft') : render.tag('open'))
+  },
+  updated: { header: 'Last activity', render: (r, render) => render.date(r.updated_at) },
+  comments: { header: 'Comments', render: (r) => String(r.comments || 0) },
+  created: { header: 'Opened', render: (r, render) => render.date(r.created_at) }
+};
+
+async function render(ctx) {
+  const { octokit, username, shared, config, render: renderCfg } = ctx;
+  const staleDays = config?.staleDays || 14;
+  const items = await paginateSearch(octokit, buildQuery(username, shared, staleDays), {
+    sort: 'updated',
+    order: 'asc'
+  });
+
+  if (items.length === 0) {
+    return {
+      content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState),
+      metadata: { count: 0, stale_days: staleDays }
+    };
+  }
+
+  const rows = items.slice(0, shared.maxRows).map((item) => {
+    const full = repoFullName(item);
+    const [owner, repo] = full.split('/');
+    return { ...item, owner, repo };
+  });
+
+  const tag = makeStatusTag(renderCfg.status_labels);
+  const renderHelpers = { tag, date: (iso) => formatDate(iso, renderCfg.date_format) };
+  const columns = renderCfg.columns || module.exports.defaultColumns;
+  const headers = columns.map((c) => COLUMNS[c].header);
+  const cells = rows.map((row) => columns.map((c) => COLUMNS[c].render(row, renderHelpers)));
+
+  return {
+    content: renderRows({ style: renderCfg.style, headers, rows: cells }),
+    metadata: { count: items.length, stale_days: staleDays }
+  };
+}
+
+module.exports = {
+  name: 'stale_prs',
+  title: 'Stale Pull Requests',
+  defaultStyle: 'table',
+  defaultColumns: ['pr', 'ref', 'updated', 'comments'],
+  defaultEmptyState: 'No stale pull requests.',
+  availableColumns: COLUMNS,
+  render
+};
+
+
+/***/ }),
+
 /***/ 2749:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -35349,6 +35908,352 @@ module.exports = {
   defaultEmptyState: 'No activity data.',
   availableColumns: {},
   render
+};
+
+
+/***/ }),
+
+/***/ 5090:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { fetchContributions } = __nccwpck_require__(4284);
+const { emptyState, table } = __nccwpck_require__(9121);
+
+function flattenDays(calendar) {
+  const days = [];
+  for (const week of calendar.weeks) {
+    for (const d of week.contributionDays) {
+      days.push({ date: d.date, count: d.contributionCount });
+    }
+  }
+  days.sort((a, b) => a.date.localeCompare(b.date));
+  return days;
+}
+
+function computeCurrentStreak(days, now = new Date()) {
+  const today = now.toISOString().slice(0, 10);
+  let streak = 0;
+  for (let i = days.length - 1; i >= 0; i -= 1) {
+    const d = days[i];
+    if (d.date > today) continue;
+    if (d.count > 0) streak += 1;
+    else break;
+  }
+  return streak;
+}
+
+function computeLongestStreak(days) {
+  let longest = 0;
+  let current = 0;
+  for (const d of days) {
+    if (d.count > 0) {
+      current += 1;
+      if (current > longest) longest = current;
+    } else {
+      current = 0;
+    }
+  }
+  return longest;
+}
+
+function activePercent(days) {
+  if (days.length === 0) return 0;
+  const active = days.filter((d) => d.count > 0).length;
+  return Math.round((active / days.length) * 100);
+}
+
+async function render(ctx) {
+  const { octokit, username, config, render: renderCfg } = ctx;
+  const months = config?.months || 12;
+  const contributions = await fetchContributions(octokit, username, months);
+
+  if (!contributions || !contributions.contributionCalendar) {
+    return {
+      content: emptyState(renderCfg.empty_state || 'Contribution data unavailable.'),
+      metadata: { current: 0, longest: 0 }
+    };
+  }
+
+  const days = flattenDays(contributions.contributionCalendar);
+  const current = computeCurrentStreak(days);
+  const longest = computeLongestStreak(days);
+  const pct = activePercent(days);
+  const total = contributions.totalContributions;
+
+  const style = renderCfg.style || 'compact';
+  let content;
+  if (style === 'table') {
+    content = table(
+      ['Metric', 'Value'],
+      [
+        ['Current streak', `${current} day${current === 1 ? '' : 's'}`],
+        ['Longest streak', `${longest} day${longest === 1 ? '' : 's'}`],
+        ['Active days', `${pct}% of last ${months} months`],
+        ['Total contributions', total.toLocaleString()]
+      ]
+    );
+  } else if (style === 'list') {
+    content = [
+      `- **Current streak**: ${current} day${current === 1 ? '' : 's'}`,
+      `- **Longest streak**: ${longest} day${longest === 1 ? '' : 's'}`,
+      `- **Active days**: ${pct}% of last ${months} months`,
+      `- **Total contributions**: ${total.toLocaleString()}`
+    ].join('\n');
+  } else {
+    content = `**${current}d** current · **${longest}d** longest · **${pct}%** active days · **${total.toLocaleString()}** contributions (last ${months} months)`;
+  }
+
+  return {
+    content,
+    metadata: { current, longest, active_percent: pct, total }
+  };
+}
+
+module.exports = {
+  name: 'streak',
+  title: 'Contribution Streak',
+  defaultStyle: 'compact',
+  defaultColumns: null,
+  defaultEmptyState: 'No streak data.',
+  availableColumns: {},
+  render
+};
+
+
+/***/ }),
+
+/***/ 5066:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { paginateSearch } = __nccwpck_require__(6474);
+const { renderSparkline } = __nccwpck_require__(412);
+const { emptyState } = __nccwpck_require__(9121);
+
+function isoDaysAgo(days, now = Date.now()) {
+  return new Date(now - days * 86400000).toISOString().slice(0, 10);
+}
+
+function buildQuery(username, shared, weeks) {
+  const parts = [`type:pr`, `author:${username}`, `created:>=${isoDaysAgo(weeks * 7)}`];
+  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
+  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
+  return parts.join(' ');
+}
+
+function bucketWeeks(items, weeks, nowMs = Date.now()) {
+  const buckets = new Array(weeks).fill(0);
+  const weekMs = 7 * 86400 * 1000;
+  const startMs = nowMs - weeks * weekMs;
+  for (const item of items) {
+    const t = new Date(item.created_at).getTime();
+    if (!Number.isFinite(t) || t < startMs || t > nowMs) continue;
+    const idx = Math.min(weeks - 1, Math.floor((t - startMs) / weekMs));
+    buckets[idx] += 1;
+  }
+  return buckets;
+}
+
+function weekLabels(weeks, nowMs = Date.now()) {
+  const out = [];
+  for (let i = weeks - 1; i >= 0; i -= 1) {
+    const d = new Date(nowMs - i * 7 * 86400 * 1000);
+    out.push(d.toISOString().slice(5, 10));
+  }
+  return out;
+}
+
+async function render(ctx) {
+  const { octokit, username, shared, config, render: renderCfg } = ctx;
+  const weeks = config?.weeks || 12;
+  const items = await paginateSearch(octokit, buildQuery(username, shared, weeks), {
+    sort: 'created',
+    order: 'desc'
+  });
+
+  if (items.length === 0) {
+    return {
+      content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState),
+      metadata: { count: 0, weeks }
+    };
+  }
+
+  const buckets = bucketWeeks(items, weeks);
+  const labels = weekLabels(weeks);
+  const avg = (buckets.reduce((a, b) => a + b, 0) / weeks).toFixed(1);
+
+  const chart = renderSparkline({
+    style: renderCfg.extras.viz_style,
+    title: `PRs opened per week (last ${weeks} weeks) — avg ${avg}/wk`,
+    labels,
+    values: buckets,
+    yAxisLabel: 'PRs'
+  });
+
+  return {
+    content: chart,
+    metadata: { count: items.length, weeks, average: avg }
+  };
+}
+
+module.exports = {
+  name: 'velocity_chart',
+  title: 'Velocity',
+  defaultStyle: 'mermaid',
+  defaultColumns: null,
+  defaultEmptyState: 'No PRs in the velocity window.',
+  availableColumns: {},
+  render
+};
+
+
+/***/ }),
+
+/***/ 412:
+/***/ ((module) => {
+
+const UNICODE_BLOCKS = ['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
+const HEATMAP_LEVELS = ['·', '░', '▒', '▓', '█'];
+
+const KNOWN_VIZ_STYLES = ['mermaid', 'unicode', 'both'];
+
+function pickStyle(style) {
+  return KNOWN_VIZ_STYLES.includes(style) ? style : 'mermaid';
+}
+
+function unicodeSparkline(values) {
+  if (!values.length) return '';
+  const max = Math.max(...values, 1);
+  return values
+    .map((v) => {
+      const idx = Math.min(
+        UNICODE_BLOCKS.length - 1,
+        Math.round((v / max) * (UNICODE_BLOCKS.length - 1))
+      );
+      return UNICODE_BLOCKS[idx];
+    })
+    .join('');
+}
+
+function mermaidLineChart({ title, labels, values, yAxisLabel = 'Count' }) {
+  if (!values.length) return '';
+  const max = Math.max(...values, 1);
+  const yMax = Math.ceil(max * 1.1);
+  const labelList = labels.map((l) => `"${String(l).replace(/"/g, '')}"`).join(', ');
+  const valueList = values.join(', ');
+  return [
+    '```mermaid',
+    'xychart-beta',
+    `    title "${title}"`,
+    `    x-axis [${labelList}]`,
+    `    y-axis "${yAxisLabel}" 0 --> ${yMax}`,
+    `    line [${valueList}]`,
+    '```'
+  ].join('\n');
+}
+
+function mermaidBarChart({ title, labels, values, yAxisLabel = 'Count' }) {
+  if (!values.length) return '';
+  const max = Math.max(...values, 1);
+  const yMax = Math.ceil(max * 1.1);
+  const labelList = labels.map((l) => `"${String(l).replace(/"/g, '')}"`).join(', ');
+  const valueList = values.join(', ');
+  return [
+    '```mermaid',
+    'xychart-beta',
+    `    title "${title}"`,
+    `    x-axis [${labelList}]`,
+    `    y-axis "${yAxisLabel}" 0 --> ${yMax}`,
+    `    bar [${valueList}]`,
+    '```'
+  ].join('\n');
+}
+
+function renderSparkline({ style, title, labels, values, yAxisLabel }) {
+  const picked = pickStyle(style);
+  const unicode = unicodeSparkline(values);
+  const mermaid = mermaidLineChart({ title, labels, values, yAxisLabel });
+  if (picked === 'unicode') return unicode;
+  if (picked === 'both') return `${mermaid}\n\n_Fallback:_ \`${unicode}\``;
+  return mermaid;
+}
+
+function renderBarChart({ style, title, labels, values, yAxisLabel }) {
+  const picked = pickStyle(style);
+  const mermaid = mermaidBarChart({ title, labels, values, yAxisLabel });
+  if (picked === 'unicode' || picked === 'both') {
+    const max = Math.max(...values, 1);
+    const lines = labels.map((label, i) => {
+      const width = Math.round((values[i] / max) * 20);
+      const bar = '█'.repeat(width).padEnd(20, ' ');
+      return `\`${label.padEnd(24)}\` \`${bar}\` ${values[i]}`;
+    });
+    const unicode = lines.join('\n');
+    if (picked === 'unicode') return unicode;
+    return `${mermaid}\n\n<details><summary>Plain-text fallback</summary>\n\n${unicode}\n\n</details>`;
+  }
+  return mermaid;
+}
+
+function levelFor(count, levels = HEATMAP_LEVELS) {
+  if (count === 0) return levels[0];
+  if (count <= 2) return levels[1];
+  if (count <= 5) return levels[2];
+  if (count <= 10) return levels[3];
+  return levels[4];
+}
+
+function unicodeHeatmap(weeks) {
+  // weeks: array of arrays of { date, count }. Each inner array is up to 7 days (Sun-Sat).
+  if (!weeks.length) return '';
+  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const lines = [];
+  for (let day = 0; day < 7; day += 1) {
+    const cells = weeks.map((week) => {
+      const cell = week.find((d) => d.weekday === day);
+      return cell ? levelFor(cell.count) : ' ';
+    });
+    lines.push(`${dayLabels[day]} ${cells.join('')}`);
+  }
+  return ['```text', ...lines, '```', '', '_Legend: `·` 0 · `░` 1–2 · `▒` 3–5 · `▓` 6–10 · `█` 10+_'].join('\n');
+}
+
+function bucketByWeek(timestamps, weeks, nowMs = Date.now()) {
+  const buckets = new Array(weeks).fill(0);
+  const weekMs = 7 * 86400 * 1000;
+  const startMs = nowMs - weeks * weekMs;
+  for (const ts of timestamps) {
+    const t = new Date(ts).getTime();
+    if (!Number.isFinite(t) || t < startMs || t > nowMs) continue;
+    const idx = Math.min(weeks - 1, Math.floor((t - startMs) / weekMs));
+    buckets[idx] += 1;
+  }
+  return buckets;
+}
+
+function weekLabels(weeks, nowMs = Date.now()) {
+  // Oldest first. Each label is the ISO date of the week's Monday.
+  const out = [];
+  for (let i = weeks - 1; i >= 0; i -= 1) {
+    const d = new Date(nowMs - i * 7 * 86400 * 1000);
+    out.push(d.toISOString().slice(5, 10)); // MM-DD
+  }
+  return out;
+}
+
+module.exports = {
+  KNOWN_VIZ_STYLES,
+  UNICODE_BLOCKS,
+  HEATMAP_LEVELS,
+  pickStyle,
+  unicodeSparkline,
+  mermaidLineChart,
+  mermaidBarChart,
+  renderSparkline,
+  renderBarChart,
+  unicodeHeatmap,
+  bucketByWeek,
+  weekLabels,
+  levelFor
 };
 
 

@@ -5,6 +5,13 @@ const recentActivity = require('./recent-activity');
 const mergedPrs = require('./merged-prs');
 const stats = require('./stats');
 const pinnedPrs = require('./pinned-prs');
+const stalePrs = require('./stale-prs');
+const failingCi = require('./failing-ci');
+const readyToMerge = require('./ready-to-merge');
+const velocityChart = require('./velocity-chart');
+const commitHeatmap = require('./commit-heatmap');
+const streak = require('./streak');
+const commandCenter = require('./command-center');
 
 const REGISTRY = {
   [openPrs.name]: openPrs,
@@ -13,7 +20,14 @@ const REGISTRY = {
   [recentActivity.name]: recentActivity,
   [mergedPrs.name]: mergedPrs,
   [stats.name]: stats,
-  [pinnedPrs.name]: pinnedPrs
+  [pinnedPrs.name]: pinnedPrs,
+  [stalePrs.name]: stalePrs,
+  [failingCi.name]: failingCi,
+  [readyToMerge.name]: readyToMerge,
+  [velocityChart.name]: velocityChart,
+  [commitHeatmap.name]: commitHeatmap,
+  [streak.name]: streak,
+  [commandCenter.name]: commandCenter
 };
 
 function get(name) {

@@ -41,6 +41,12 @@ These apply to every section that renders rows or filters by repository.
 | `pinned_prs_end_date` | `pinned_prs` | _(none)_ | `YYYY-MM-DD` upper bound on `created`. |
 | `pinned_prs_blacklist` | `pinned_prs` | _(none)_ | Comma-separated PR numbers to exclude. |
 | `pinned_prs_sort_by` | `pinned_prs` | `updated` | One of `created`, `updated`, `popularity`. |
+| `stale_days` | `stale_prs` | `14` | Inactivity threshold in days. |
+| `velocity_weeks` | `velocity_chart` | `12` | Weeks plotted. |
+| `heatmap_months` | `commit_heatmap`, `streak` | `12` | Months of GraphQL contribution history. |
+| `command_center_layout` | `command_center` | _(see docs)_ | Comma-separated list of blocks inside the composite. |
+| `command_center_rows` | `command_center` | `5` | Per-block row cap inside the composite. |
+| `viz_style` | global | `mermaid` | Visualization style for chart sections: `mermaid`, `unicode`, `both`. |
 
 ## Markers
 

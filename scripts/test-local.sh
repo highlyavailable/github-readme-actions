@@ -20,7 +20,7 @@ if [[ -z "${GITHUB_TOKEN:-}" ]]; then
 fi
 
 USERNAME="${1:-${USER:-octocat}}"
-SECTIONS="${SECTIONS:-open_prs,response_inbox,review_inbox,recent_activity,merged_prs,stats}"
+SECTIONS="${SECTIONS:-command_center,commit_heatmap,streak,velocity_chart,open_prs,response_inbox,review_inbox,recent_activity,merged_prs,stats,stale_prs,failing_ci,ready_to_merge}"
 MAX_ROWS="${MAX_ROWS:-5}"
 ACTIVITY_DAYS="${ACTIVITY_DAYS:-14}"
 CONFIG_FILE="${CONFIG_FILE:-.github/readme-dashboard.yml}"
@@ -30,6 +30,22 @@ TARGET="${TARGET:-/tmp/readme-dashboard-test.md}"
 cat > "$TARGET" <<MARKER
 # Local test render for $USERNAME
 
+## Command center
+<!--readme-actions:command_center:start-->
+<!--readme-actions:command_center:end-->
+
+## Contribution heatmap
+<!--readme-actions:commit_heatmap:start-->
+<!--readme-actions:commit_heatmap:end-->
+
+## Streak
+<!--readme-actions:streak:start-->
+<!--readme-actions:streak:end-->
+
+## Velocity
+<!--readme-actions:velocity_chart:start-->
+<!--readme-actions:velocity_chart:end-->
+
 ## Stats
 <!--readme-actions:stats:start-->
 <!--readme-actions:stats:end-->
@@ -37,6 +53,18 @@ cat > "$TARGET" <<MARKER
 ## Open PRs
 <!--readme-actions:open_prs:start-->
 <!--readme-actions:open_prs:end-->
+
+## Stale PRs
+<!--readme-actions:stale_prs:start-->
+<!--readme-actions:stale_prs:end-->
+
+## Failing CI
+<!--readme-actions:failing_ci:start-->
+<!--readme-actions:failing_ci:end-->
+
+## Ready to merge
+<!--readme-actions:ready_to_merge:start-->
+<!--readme-actions:ready_to_merge:end-->
 
 ## Response inbox
 <!--readme-actions:response_inbox:start-->
@@ -66,6 +94,8 @@ INPUT_TARGET_FILE="$TARGET" \
 INPUT_MAX_ROWS="$MAX_ROWS" \
 INPUT_ACTIVITY_DAYS="$ACTIVITY_DAYS" \
 INPUT_CONFIG_FILE="$CONFIG_FILE" \
+INPUT_STALE_DAYS="${STALE_DAYS:-21}" \
+INPUT_VIZ_STYLE="${VIZ_STYLE:-mermaid}" \
 INPUT_COMMIT=false \
 node index.js
 

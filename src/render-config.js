@@ -38,6 +38,8 @@ function pickKnown(value, allowed) {
   return allowed.includes(value) ? value : null;
 }
 
+const KNOWN_VIZ_STYLES = ['mermaid', 'unicode', 'both'];
+
 function mergeDefaults(fileConfig, inlineDefaults) {
   const file = fileConfig.defaults || {};
   return {
@@ -51,7 +53,11 @@ function mergeDefaults(fileConfig, inlineDefaults) {
       ...DEFAULT_LABELS,
       ...(file.status_labels || {}),
       ...(inlineDefaults.status_labels || {})
-    }
+    },
+    viz_style:
+      pickKnown(inlineDefaults.viz_style, KNOWN_VIZ_STYLES) ||
+      pickKnown(file.viz_style, KNOWN_VIZ_STYLES) ||
+      'mermaid'
   };
 }
 
@@ -93,6 +99,11 @@ function resolveSection(name, defaultsResolved, fileSection, inlineSection, sect
 
   const sort = inline.sort || file.sort || meta.defaultSort || null;
 
+  const viz_style =
+    pickKnown(inline.viz_style, KNOWN_VIZ_STYLES) ||
+    pickKnown(file.viz_style, KNOWN_VIZ_STYLES) ||
+    defaultsResolved.viz_style;
+
   return {
     style,
     columns,
@@ -100,7 +111,7 @@ function resolveSection(name, defaultsResolved, fileSection, inlineSection, sect
     date_format,
     status_labels,
     sort,
-    extras: { ...file, ...inline }
+    extras: { ...file, ...inline, viz_style }
   };
 }
 

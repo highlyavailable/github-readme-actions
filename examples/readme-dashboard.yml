@@ -3,18 +3,38 @@
 
 defaults:
   date_format: relative          # relative | absolute | both
+  viz_style: mermaid             # mermaid | unicode | both
   status_labels:
     merged: "[merged]"
     open: "[open]"
     closed: "[closed]"
     draft: "[draft]"
+    approved: "[approved]"
+    ci_failing: "[ci:failing]"
 
 sections:
+  # Composite "app window" — single block, full dashboard inside
+  command_center:
+    layout: [kpis, velocity, ready_to_merge, failing_ci, response_inbox, review_inbox]
+    per_block_rows: 5
+
+  # Standalone inbox sections
   open_prs:
-    style: table                 # table | list | compact
+    style: table
     columns: [pr, ref, state, updated]
-    sort: updated_desc           # updated_desc | created_desc | comments_desc
+    sort: updated_desc
     empty_state: "Inbox zero."
+
+  stale_prs:
+    style: table
+    columns: [pr, ref, updated, comments]
+
+  failing_ci:
+    style: table
+    columns: [pr, ref, failed_names, updated]
+
+  ready_to_merge:
+    style: list
 
   response_inbox:
     style: list
@@ -25,15 +45,26 @@ sections:
     columns: [pr, ref, author, updated]
 
   recent_activity:
-    group_by: repo               # repo | none
+    group_by: repo
     show_kind: true
 
   merged_prs:
     style: table
     columns: [pr, ref, merged_date]
 
+  # Visualizations
+  velocity_chart:
+    viz_style: mermaid
+
+  commit_heatmap:
+    viz_style: unicode
+
+  streak:
+    style: compact
+
+  # Headers / stats
   stats:
-    style: compact               # table | list | compact
+    style: compact
 
   pinned_prs:
     style: list

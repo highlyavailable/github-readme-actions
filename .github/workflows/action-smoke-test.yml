@@ -32,6 +32,9 @@ jobs:
           cat > /tmp/test-readme.md <<'MD'
           # Smoke test
 
+          <!--readme-actions:command_center:start-->
+          <!--readme-actions:command_center:end-->
+
           <!--readme-actions:open_prs:start-->
           <!--readme-actions:open_prs:end-->
 
@@ -52,6 +55,24 @@ jobs:
 
           <!--readme-actions:pinned_prs:start-->
           <!--readme-actions:pinned_prs:end-->
+
+          <!--readme-actions:stale_prs:start-->
+          <!--readme-actions:stale_prs:end-->
+
+          <!--readme-actions:failing_ci:start-->
+          <!--readme-actions:failing_ci:end-->
+
+          <!--readme-actions:ready_to_merge:start-->
+          <!--readme-actions:ready_to_merge:end-->
+
+          <!--readme-actions:velocity_chart:start-->
+          <!--readme-actions:velocity_chart:end-->
+
+          <!--readme-actions:commit_heatmap:start-->
+          <!--readme-actions:commit_heatmap:end-->
+
+          <!--readme-actions:streak:start-->
+          <!--readme-actions:streak:end-->
           MD
 
       - name: Render every section

@@ -14,7 +14,7 @@ inputs:
     required: false
     default: ${{ github.repository_owner }}
   sections:
-    description: 'Comma-separated list of dashboard sections to render. Available: open_prs, response_inbox, review_inbox, recent_activity, merged_prs, stats, pinned_prs.'
+    description: 'Comma-separated list of dashboard sections to render. Available: open_prs, response_inbox, review_inbox, recent_activity, merged_prs, stats, pinned_prs, stale_prs, failing_ci, ready_to_merge, velocity_chart, commit_heatmap, streak, command_center.'
     required: false
     default: 'open_prs,response_inbox,review_inbox,recent_activity'
   target_file:
@@ -78,6 +78,31 @@ inputs:
     description: '[stats] Comma-separated periods to report. Any of: week, month, quarter, year.'
     required: false
     default: 'week,month,year'
+
+  # v2.1 sections
+  stale_days:
+    description: '[stale_prs] Days of inactivity before a PR is considered stale.'
+    required: false
+    default: '14'
+  velocity_weeks:
+    description: '[velocity_chart] Number of weeks to plot.'
+    required: false
+    default: '12'
+  heatmap_months:
+    description: '[commit_heatmap, streak] Months of contribution history to include.'
+    required: false
+    default: '12'
+  command_center_layout:
+    description: '[command_center] Comma-separated list of blocks. Available: kpis, velocity, open_prs, stale_prs, failing_ci, ready_to_merge, response_inbox, review_inbox. Default: kpis,velocity,open_prs,response_inbox,review_inbox.'
+    required: false
+  command_center_rows:
+    description: '[command_center] Per-block row cap for embedded tables.'
+    required: false
+    default: '5'
+  viz_style:
+    description: 'Default visualization style for chart sections: mermaid (default), unicode, or both. Per-section override goes in config_file.'
+    required: false
+    default: 'mermaid'
 
   # pinned_prs (kept from v1 for back-compat)
   pinned_prs_state:
