@@ -191,11 +191,23 @@ v2 is a clean break: input names are lowercase snake_case, the marker format cha
 ## Development
 
 ```bash
-make install   # install deps
-make test      # run jest suite
-make ci        # lint, test, build
-make build     # rebuild dist/
+make install      # install deps
+make test         # run jest suite (57 unit tests, no network)
+make ci           # lint, test, build, verify dist/ is fresh
+make build        # rebuild dist/
 ```
+
+### Try it against real data
+
+```bash
+export GITHUB_TOKEN=ghp_yourFineGrainedPAT
+make test-render                    # renders for highlyavailable
+USERNAME=octocat make test-render   # render for a different user
+```
+
+`test-render` invokes [scripts/test-local.sh](scripts/test-local.sh), which writes a scratch file under `/tmp/` (never your real README) and prints the rendered markdown. Set `SECTIONS`, `MAX_ROWS`, `ACTIVITY_DAYS`, or `CONFIG_FILE` to override.
+
+Pull requests are also smoke-tested by [.github/workflows/action-smoke-test.yml](.github/workflows/action-smoke-test.yml), which runs the action end-to-end with `GITHUB_TOKEN`.
 
 Architecture, section authoring guide, and release process: [DEVELOPMENT.md](DEVELOPMENT.md).
 Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md).

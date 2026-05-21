@@ -1,0 +1,68 @@
+name: Action smoke test
+
+# Verifies the action runs end-to-end on every PR by rendering against a
+# scratch markdown file. Uses GITHUB_TOKEN, so cross-repo sections will be
+# empty — the point is to catch crashes, schema mistakes, and marker bugs.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Seed scratch README with every marker
+        run: |
+          cat > /tmp/test-readme.md <<'MD'
+          # Smoke test
+
+          <!--readme-actions:open_prs:start-->
+          <!--readme-actions:open_prs:end-->
+
+          <!--readme-actions:response_inbox:start-->
+          <!--readme-actions:response_inbox:end-->
+
+          <!--readme-actions:review_inbox:start-->
+          <!--readme-actions:review_inbox:end-->
+
+          <!--readme-actions:recent_activity:start-->
+          <!--readme-actions:recent_activity:end-->
+
+          <!--readme-actions:merged_prs:start-->
+          <!--readme-actions:merged_prs:end-->
+
+          <!--readme-actions:stats:start-->
+          <!--readme-actions:stats:end-->
+
+          <!--readme-actions:pinned_prs:start-->
+          <!--readme-actions:pinned_prs:end-->
+          MD
+
+      - name: Render every section
+        uses: ./
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ github.repository_owner }}
+          sections: open_prs, response_inbox, review_inbox, recent_activity, merged_prs, stats, pinned_prs
+          target_file: /tmp/test-readme.md
+          commit: false
+          max_rows: 3
+
+      - name: Show rendered output
+        run: cat /tmp/test-readme.md

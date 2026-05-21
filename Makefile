@@ -68,6 +68,12 @@ test-action: ## Run the action locally (requires GITHUB_TOKEN + INPUT_* envs)
 	fi
 	node index.js
 
+test-render: ## Render against the real API to a scratch file (GITHUB_TOKEN=... make test-render)
+	@if [ -z "$$GITHUB_TOKEN" ]; then \
+		echo "GITHUB_TOKEN is required. Use a fine-grained PAT \(docs/tokens.md\)."; exit 1; \
+	fi
+	./scripts/test-local.sh $${USERNAME:-highlyavailable}
+
 all: clean install check ## Clean, install, run checks
 
 status: ## Show project status
