@@ -78,23 +78,40 @@ sections:
 
 ## Status labels
 
-Defaults (each is a key in `status_labels`):
+Defaults are functional colored indicators (signal, not decoration). Each is a key in `status_labels`:
 
-| Key | Default |
-|---|---|
-| `merged` | `[merged]` |
-| `open` | `[open]` |
-| `closed` | `[closed]` |
-| `draft` | `[draft]` |
-| `review_requested` | `[review-requested]` |
-| `changes_requested` | `[changes-requested]` |
-| `approved` | `[approved]` |
-| `conflicts` | `[conflicts]` |
-| `ci_failing` | `[ci:failing]` |
-| `ci_passing` | `[ci:passing]` |
-| `ci_pending` | `[ci:pending]` |
+| Key | Default | Where it shows up |
+|---|---|---|
+| `merged` | `🟢 merged` | pinned_prs |
+| `open` | `🟡 open` | open_prs, pinned_prs |
+| `closed` | `🔴 closed` | pinned_prs |
+| `draft` | `⚪ draft` | open_prs, pinned_prs |
+| `review_requested` | `🔵 review-requested` | command_center inbox pills |
+| `changes_requested` | `🟠 changes-requested` | (future) |
+| `approved` | `🟢 approved` | ready_to_merge |
+| `conflicts` | `🔴 conflicts` | (future) |
+| `ci_failing` | `🔴 failing` | failing_ci |
+| `ci_passing` | `🟢 passing` | (future) |
+| `ci_pending` | `🟡 pending` | (future) |
+| `stale` | `🟠 stale` | command_center needs attention |
+| `ready` | `🟢 ready` | command_center inbox pills |
 
-Override individual keys; unspecified keys keep their defaults. Want emojis? Set `merged: "✅"`. Want SCREAMING text? Set `open: "OPEN"`. Want no brackets? Set `draft: "draft"`. Whatever fits your README.
+Override individual keys; unspecified keys keep their defaults. Prefer plain text? Set `merged: "[merged]"`. Want all-caps? Set `open: "OPEN"`. Use whatever palette your README needs.
+
+To go fully monochrome:
+
+```yaml
+defaults:
+  status_labels:
+    merged: "[merged]"
+    open: "[open]"
+    closed: "[closed]"
+    draft: "[draft]"
+    approved: "[approved]"
+    ci_failing: "[ci:failing]"
+    stale: "[stale]"
+    ready: "[ready]"
+```
 
 ## Date format
 

@@ -1,8 +1,6 @@
 # command_center
 
-A composite "app window" section: one marker pair, one block, but inside is a full dashboard widget with a header, KPIs, a velocity chart, and one or more drill-down tables.
-
-Use when you want a single distinctive block at the top of your README, instead of stacking many individual sections.
+A composite "app window" section: one marker pair, one block, dense by design. Output is grouped, color-coded, and deep-linked so it reads at a glance.
 
 ## Marker
 
@@ -14,108 +12,103 @@ Use when you want a single distinctive block at the top of your README, instead 
 ## Output
 
 ```
-> **Command Center** — octocat · _Updated 2026-05-21 14:30 UTC_
+> ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
+> _Updated 2026-05-21 04:41 UTC_
+>
+> **This week** 7 opened · 2 merged · 0 reviewed · velocity `▁▁▁▁▂▁▁▁▁▁▁▇` 0.7/wk
+>
+> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 3 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 
-| Period | Opened | Merged | Reviewed |
-|---|---|---|---|
-| Week | 7 | 2 | 5 |
+#### Needs attention (4)
 
-#### Velocity
+| Why | PR | Ref |
+|---|---|---|
+| 🔴 CI failing | [gcp: migrate Pub/Sub...](url) | [`redpanda-data/connect#4432`](url) |
+| 🟠 stale 28d | [docs: refresh guide](url) | [`acme/api#380`](url) |
+| 🟢 ready to merge | [feat: rate limit](url) | [`acme/api#420`](url) |
 
-```mermaid
-xychart-beta
-    title "PRs opened per week (last 12 weeks) — avg 4.3/wk"
-    ...
-```
-
-#### Open Pull Requests
+#### Open pull requests (8)
 
 | PR | Ref | State | Comments | Updated |
 |---|---|---|---|---|
-| [add retry logic](...) | `acme/api#412` | [open] | 3 | 2h |
-| ... (5 rows max) |
+| [add retry logic](url) | [`acme/api#412`](url) | 🟡 open | 3 | 2h |
 
-#### Response Inbox
+#### Awaiting your reply (1)
 
 | PR | Ref | Last reply | Age |
 |---|---|---|---|
-| ... (5 rows max) |
-
-#### Review Inbox
-
-| PR | Ref | Author | Updated |
-|---|---|---|---|
-| ... (5 rows max) |
-
----
-_open prs count: 7 · response inbox count: 3 · review inbox count: 1_
+| [add retry logic](url) | [`acme/api#412`](url) | [@CLAassistant](https://github.com/CLAassistant) | 5d |
 ```
 
-## How it works
-
-`command_center` is a *composite* section. Internally it calls the same `render(ctx)` functions used by individual sections (`open_prs`, `response_inbox`, etc.) — the data, formatting, and configuration are all shared, so there's no duplicated logic and one config change updates both the standalone section and the composite.
-
-Each embedded block uses a smaller `maxRows` (controlled by `command_center_rows`) so the composite stays compact.
+The hero is a single blockquote: heading, timestamp, KPI line, inbox pills. The velocity sparkline lives inline in the KPI line — no big chart, just signal. Empty subsections are dropped automatically.
 
 ## Inputs
 
 | Input | Default | Effect |
 |---|---|---|
-| `command_center_layout` | `kpis,velocity,open_prs,response_inbox,review_inbox` | Comma-separated list of blocks in order. |
+| `command_center_layout` | `hero,needs_attention,open_prs,response_inbox,review_inbox` | Comma-separated list of blocks in order. |
 | `command_center_rows` | `5` | Per-block row cap for embedded tables. |
+| `stale_days` | `14` | Threshold used by the `needs_attention` and `stale_prs` blocks. |
 
 ## Available blocks
 
 | Block | What it renders |
 |---|---|
-| `kpis` | Header line + a week-period stats table |
-| `velocity` | Velocity chart (Mermaid or Unicode per `viz_style`) |
+| `hero` | Blockquote: heading, timestamp, KPI line + inline sparkline, inbox pills |
+| `needs_attention` | Unified table combining failing CI + stale + ready-to-merge PRs |
 | `open_prs` | Top open PRs table |
-| `stale_prs` | Stale PRs table |
-| `failing_ci` | Failing CI table |
-| `ready_to_merge` | Ready-to-merge table |
-| `response_inbox` | Response inbox table |
-| `review_inbox` | Review inbox table |
+| `stale_prs` | Stale PRs table (standalone, separate from `needs_attention`) |
+| `failing_ci` | Failing CI table (standalone) |
+| `ready_to_merge` | Ready-to-merge table (standalone) |
+| `response_inbox` | Awaiting-your-reply table |
+| `review_inbox` | Pending-review-requests table |
+
+Each subsection is automatically suppressed when its data is empty.
 
 ## Example layouts
 
-**Maintainer-focused:**
+**Default — recommended for most users:**
 
 ```yaml
 sections:
   command_center:
-    layout: [kpis, ready_to_merge, failing_ci, stale_prs]
-    per_block_rows: 8
+    layout: [hero, needs_attention, open_prs, response_inbox, review_inbox]
+    per_block_rows: 5
 ```
 
-**Activity-focused:**
+**Maintainer focus — only show what needs action:**
 
 ```yaml
 sections:
   command_center:
-    layout: [kpis, velocity, response_inbox, review_inbox]
+    layout: [hero, needs_attention]
+    per_block_rows: 10
 ```
 
-**Minimal:**
+**Inbox-only — drop the open-PR drilldown:**
 
 ```yaml
 sections:
   command_center:
-    layout: [kpis, open_prs]
-    per_block_rows: 3
+    layout: [hero, response_inbox, review_inbox]
 ```
 
 ## Outputs
 
-Composite-level outputs aggregate the embedded sections:
-
 | Output | Description |
 |---|---|
-| `command_center_open_prs_count` | Open PR count from the embedded block. |
-| `command_center_response_inbox_count` | Response inbox count. |
-| `command_center_review_inbox_count` | Review inbox count. |
-| (per block) | One `_count` output per embedded block that produced one. |
+| `command_center_open_prs_count` | Open PR count |
+| `command_center_awaiting_reply_count` | Threads waiting on you |
+| `command_center_review_requests_count` | Pending review requests |
+| `command_center_ready_count` | Approved + mergeable PRs |
+| `command_center_failing_count` | PRs with failing CI |
+| `command_center_stale_count` | PRs untouched past `stale_days` |
+| `command_center_week_opened` | PRs opened in the last 7 days |
+| `command_center_week_merged` | PRs merged in the last 7 days |
+| `command_center_week_reviewed` | PRs you reviewed in the last 7 days |
 
-## Cost
+## How it works
 
-Same as running each embedded section individually — no extra requests. Use `command_center` instead of stacking the same sections to get the composite header, footer, and formatting consistency.
+The composite calls the same `render(ctx)` functions used by individual sections, but only uses them for accurate counts and the drill-down tables. The hero builds its own KPI line from cheap count-only search queries (one per metric), plus a 12-week velocity bucket for the inline sparkline. The `needs_attention` table re-queries the underlying search to keep titles + refs handy in a unified shape.
+
+Everything runs in parallel, so total wall time is roughly `max(individual section time)` — no additive cost over running the same sections standalone.

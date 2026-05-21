@@ -43,7 +43,23 @@ function mockOctokit({ searchItems = [], totalCount } = {}) {
 
 const NOW = new Date('2026-05-20T12:00:00Z').getTime();
 
-const { DEFAULT_LABELS } = require('../src/render-config');
+// Plain bracket labels for tests; the production defaults are colored icons,
+// but tests assert on stable, easy-to-grep strings.
+const PLAIN_LABELS = {
+  merged: '[merged]',
+  open: '[open]',
+  closed: '[closed]',
+  draft: '[draft]',
+  review_requested: '[review-requested]',
+  changes_requested: '[changes-requested]',
+  approved: '[approved]',
+  conflicts: '[conflicts]',
+  ci_failing: '[ci:failing]',
+  ci_passing: '[ci:passing]',
+  ci_pending: '[ci:pending]',
+  stale: '[stale]',
+  ready: '[ready]'
+};
 
 function renderCfg(overrides = {}) {
   return {
@@ -51,7 +67,7 @@ function renderCfg(overrides = {}) {
     columns: overrides.columns || null,
     empty_state: overrides.empty_state || null,
     date_format: overrides.date_format || 'relative',
-    status_labels: { ...DEFAULT_LABELS, ...(overrides.status_labels || {}) },
+    status_labels: { ...PLAIN_LABELS, ...(overrides.status_labels || {}) },
     sort: overrides.sort || null,
     extras: { viz_style: 'mermaid', ...(overrides.extras || {}) }
   };

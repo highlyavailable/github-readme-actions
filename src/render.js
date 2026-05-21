@@ -95,7 +95,17 @@ function formatDate(iso, mode = 'relative', nowMs = Date.now()) {
 }
 
 function prRef(owner, repo, number) {
-  return mono(`${owner}/${repo}#${number}`);
+  return `[\`${owner}/${repo}#${number}\`](https://github.com/${owner}/${repo}/pull/${number})`;
+}
+
+function userLink(username) {
+  if (!username) return '';
+  const u = String(username).replace(/^@/, '');
+  return `[@${u}](https://github.com/${u})`;
+}
+
+function repoLink(owner, repo) {
+  return `[\`${owner}/${repo}\`](https://github.com/${owner}/${repo})`;
 }
 
 function emptyState(message) {
@@ -115,6 +125,8 @@ module.exports = {
   formatDate,
   isoDate,
   prRef,
+  userLink,
+  repoLink,
   emptyState,
   escapeText
 };

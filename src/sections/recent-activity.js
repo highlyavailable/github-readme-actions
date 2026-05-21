@@ -1,5 +1,5 @@
 const { paginateSearch, repoFullName, isPullRequest } = require('../github');
-const { link, emptyState, mono, formatDate, renderRows } = require('../render');
+const { link, emptyState, formatDate, renderRows, repoLink } = require('../render');
 
 function isoDaysAgo(days, now = Date.now()) {
   const d = new Date(now - days * 86400000);
@@ -30,7 +30,9 @@ function renderGrouped(items, maxRows, renderCfg) {
   const showKind = renderCfg.extras.show_kind !== false;
   for (const [repo, repoItems] of grouped) {
     if (remaining <= 0) break;
-    lines.push(`**${mono(repo)}** — ${repoItems.length} thread${repoItems.length === 1 ? '' : 's'}`);
+    const [rOwner, rName] = repo.split('/');
+    const repoMark = rOwner && rName ? repoLink(rOwner, rName) : `\`${repo}\``;
+    lines.push(`**${repoMark}** — ${repoItems.length} thread${repoItems.length === 1 ? '' : 's'}`);
     const shown = repoItems.slice(0, Math.min(5, remaining));
     for (const item of shown) {
       const kind = showKind ? (isPullRequest(item) ? 'PR' : 'issue') : null;
@@ -49,10 +51,11 @@ function renderFlat(items, maxRows, renderCfg) {
   const headers = ['Thread', 'Repo', 'Updated'];
   const rows = items.slice(0, maxRows).map((item) => {
     const repo = repoFullName(item);
+    const [rOwner, rName] = repo.split('/');
     const kind = isPullRequest(item) ? 'PR' : 'issue';
     return [
       `${link(item.title, item.html_url)} (${kind})`,
-      mono(repo),
+      rOwner && rName ? repoLink(rOwner, rName) : `\`${repo}\``,
       formatDate(item.updated_at, renderCfg.date_format)
     ];
   });

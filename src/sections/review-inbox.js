@@ -1,5 +1,5 @@
 const { paginateSearch, repoFullName } = require('../github');
-const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = require('../render');
+const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate, userLink } = require('../render');
 
 function buildQuery(username, shared) {
   const parts = [`type:pr`, `is:open`, `review-requested:${username}`];
@@ -11,7 +11,7 @@ function buildQuery(username, shared) {
 const COLUMNS = {
   pr: { header: 'PR', render: (r) => link(r.title, r.html_url) },
   ref: { header: 'Ref', render: (r) => prRef(r.owner, r.repo, r.number) },
-  author: { header: 'Author', render: (r) => `@${r.user?.login || 'unknown'}` },
+  author: { header: 'Author', render: (r) => userLink(r.user?.login || 'unknown') },
   updated: { header: 'Updated', render: (r, render) => render.date(r.updated_at) },
   created: { header: 'Created', render: (r, render) => render.date(r.created_at) }
 };

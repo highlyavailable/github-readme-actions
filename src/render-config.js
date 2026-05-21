@@ -6,17 +6,19 @@ const KNOWN_STYLES = ['table', 'list', 'compact'];
 const KNOWN_DATE_FORMATS = ['relative', 'absolute', 'both'];
 
 const DEFAULT_LABELS = {
-  merged: '[merged]',
-  open: '[open]',
-  closed: '[closed]',
-  draft: '[draft]',
-  review_requested: '[review-requested]',
-  changes_requested: '[changes-requested]',
-  approved: '[approved]',
-  conflicts: '[conflicts]',
-  ci_failing: '[ci:failing]',
-  ci_passing: '[ci:passing]',
-  ci_pending: '[ci:pending]'
+  merged: '🟢 merged',
+  open: '🟡 open',
+  closed: '🔴 closed',
+  draft: '⚪ draft',
+  review_requested: '🔵 review-requested',
+  changes_requested: '🟠 changes-requested',
+  approved: '🟢 approved',
+  conflicts: '🔴 conflicts',
+  ci_failing: '🔴 failing',
+  ci_passing: '🟢 passing',
+  ci_pending: '🟡 pending',
+  stale: '🟠 stale',
+  ready: '🟢 ready'
 };
 
 function loadFile(filePath) {

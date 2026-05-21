@@ -1,5 +1,5 @@
 const { paginateSearch, repoFullName } = require('../github');
-const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = require('../render');
+const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate, userLink } = require('../render');
 
 function buildQuery(username, shared) {
   const parts = [`type:pr`, `author:${username}`, `is:open`];
@@ -40,7 +40,7 @@ async function lastActivity(octokit, owner, repo, number, username) {
 const COLUMNS = {
   pr: { header: 'PR', render: (r) => link(r.title, r.html_url) },
   ref: { header: 'Ref', render: (r) => prRef(r.owner, r.repo, r.number) },
-  last_reply: { header: 'Last reply', render: (r) => `@${r.lastUser}` },
+  last_reply: { header: 'Last reply', render: (r) => userLink(r.lastUser) },
   age: { header: 'Age', render: (r, render) => render.date(r.lastAt) },
   updated: { header: 'Updated', render: (r, render) => render.date(r.updated_at) }
 };

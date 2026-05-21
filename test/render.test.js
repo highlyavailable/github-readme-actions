@@ -29,8 +29,8 @@ describe('render helpers', () => {
     expect(mono('a`b')).toBe('`a\\`b`');
   });
 
-  test('statusTag known and unknown values', () => {
-    expect(statusTag('merged')).toBe('[merged]');
+  test('statusTag uses colored defaults', () => {
+    expect(statusTag('merged')).toBe('🟢 merged');
     expect(statusTag('mystery')).toBe('[mystery]');
   });
 
@@ -55,8 +55,10 @@ describe('render helpers', () => {
     expect(age('2024-05-20T12:00:00Z', NOW)).toBe('2y');
   });
 
-  test('prRef formats owner/repo#num', () => {
-    expect(prRef('acme', 'widgets', 42)).toBe('`acme/widgets#42`');
+  test('prRef links to the PR URL', () => {
+    expect(prRef('acme', 'widgets', 42)).toBe(
+      '[`acme/widgets#42`](https://github.com/acme/widgets/pull/42)'
+    );
   });
 
   test('emptyState wraps in italics', () => {
@@ -66,7 +68,7 @@ describe('render helpers', () => {
   test('makeStatusTag honors overrides and falls back to defaults', () => {
     const tag = makeStatusTag({ merged: 'merged!', custom: 'CUSTOM' });
     expect(tag('merged')).toBe('merged!');
-    expect(tag('open')).toBe('[open]');
+    expect(tag('open')).toBe('🟡 open');
     expect(tag('custom')).toBe('CUSTOM');
     expect(tag('unknown')).toBe('[unknown]');
   });
