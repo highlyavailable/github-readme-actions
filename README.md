@@ -29,13 +29,13 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-05-23 00:40 UTC_
+> _Updated 2026-05-23 06:56 UTC_
 >
-> **This week** 7 opened (↑2) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▂▁▁▁▁▁▁▁█` 0.7/wk
+> **This week** 7 opened (↑2) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▃▁▁▁▁▁▁█▆` 0.7/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
-> **Aging** 🟢 0 0–3d · 🟡 7 3–7d · 🟠 0 1–2w · 🔴 1 2w+
+> **Aging** 🟢 0 0–3d · 🟡 3 3–7d · 🟠 4 1–2w · 🔴 1 2w+
 
 #### Needs attention (3)
 
