@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-05-24 18:23 UTC_
+> _Updated 2026-05-25 00:42 UTC_
 >
-> **This week** 2 opened (↓4) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▂▁▁▁▁▁▁█▂` 0.7/wk
+> **This week** 1 opened (↓6) · 2 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▂▁▁▁▁▁▁█▂` 0.7/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
@@ -47,13 +47,13 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | 🟡 open | 3 | 2d |
-| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 🟡 open | 14 | 3d |
+| [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | 🟡 open | 3 | 3d |
+| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 🟡 open | 14 | 4d |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 4d |
 
 #### Awaiting your reply (1)
 
-- [ ] [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) — [@chaptersix](https://github.com/chaptersix) 2d<br>&nbsp;&nbsp;_> >While verifying with -race, the corrected test surfaced a real data race in initCommand: concurren…_ <!--ack:fp=vono1r-->
+- [ ] [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) — [@chaptersix](https://github.com/chaptersix) 3d<br>&nbsp;&nbsp;_> >While verifying with -race, the corrected test surfaced a real data race in initCommand: concurren…_ <!--ack:fp=vono1r-->
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
