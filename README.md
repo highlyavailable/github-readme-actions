@@ -29,31 +29,34 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-05-27 13:11 UTC_
+> _Updated 2026-05-27 18:48 UTC_
 >
 > **This week** 0 opened (↓7) · 0 merged (↓2) · 0 reviewed (=) · velocity `▁▁▁▂▁▁▁▁▁▁█▁` 0.7/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 2 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 1 ready · 🔴 1 failing · 🟠 0 stale · 🟡 3 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 7 1–2w · 🔴 1 2w+
+>
+> _Since last update (5h ago): +1 awaiting._
 
 #### Needs attention (3)
 
-- [ ] 🔴 CI failing — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=320a6b-->
+- [ ] 🟢 ready to merge — [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) — [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) <!--ack:fp=159pmbn-->
+- [ ] 🟢 ready to merge — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=ds2l7i-->
 - [ ] 🔴 CI failing — [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) <!--ack:fp=1m1m1ge-->
-- [ ] 🔴 CI failing — [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) — [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) <!--ack:fp=x8dy61-->
 
 #### Open pull requests (3)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 10h |
+| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 🟡 open | 14 | 5h |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 16h |
 | [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | 🟡 open | 3 | 5d |
-| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 🟡 open | 14 | 6d |
 
-#### Awaiting your reply (2)
+#### Awaiting your reply (3)
 
-- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 10h <!--ack:fp=1j34u42-->
+- [ ] [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) — [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) — [@Hipska](https://github.com/Hipska) 5h <!--ack:fp=78fwge-->
+- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 16h <!--ack:fp=1j34u42-->
 - [ ] [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) — [@chaptersix](https://github.com/chaptersix) 5d<br>&nbsp;&nbsp;_> >While verifying with -race, the corrected test surfaced a real data race in initCommand: concurren…_ <!--ack:fp=vono1r-->
 
 ---
