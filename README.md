@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-02 00:48 UTC_
+> _Updated 2026-06-02 07:39 UTC_
 >
 > **This week** 0 opened (=) · 1 merged (=) · 0 reviewed (=) · velocity `▁▁▂▁▁▁▁▁▁█▁▁` 0.7/wk
 >
@@ -46,12 +46,12 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 5d |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 6d |
 | [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | 🟡 open | 3 | 11d |
 
 #### Awaiting your reply (2)
 
-- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 5d <!--ack:fp=1j34u42-->
+- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 6d <!--ack:fp=1j34u42-->
 - [ ] [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) — [@chaptersix](https://github.com/chaptersix) 11d<br>&nbsp;&nbsp;_> >While verifying with -race, the corrected test surfaced a real data race in initCommand: concurren…_ <!--ack:fp=vono1r-->
 
 ---
