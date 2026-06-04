@@ -29,30 +29,29 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-03 19:20 UTC_
+> _Updated 2026-06-04 00:53 UTC_
 >
-> **This week** 0 opened (=) · 1 merged (↑1) · 0 reviewed (=) · velocity `▁▁▂▁▁▁▁▁▁█▁▁` 0.7/wk
+> **This week** 0 opened (=) · 1 merged (=) · 0 reviewed (=) · velocity `▁▁▂▁▁▁▁▁▁█▁▁` 0.7/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 2 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 8 2w+
+>
+> _Since last update (5h ago): -1 awaiting._
 
-#### Needs attention (2)
+#### Needs attention (1)
 
 - [ ] 🔴 CI failing — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=320a6b-->
-- [ ] 🔴 CI failing — [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) <!--ack:fp=1m1m1ge-->
 
-#### Open pull requests (2)
+#### Open pull requests (1)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 7d |
-| [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) | [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) | 🟡 open | 3 | 12d |
 
-#### Awaiting your reply (2)
+#### Awaiting your reply (1)
 
 - [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 7d <!--ack:fp=1j34u42-->
-- [ ] [Run concurrent dev server starts as parallel subtests](https://github.com/temporalio/cli/pull/1026) — [`temporalio/cli#1026`](https://github.com/temporalio/cli/pull/1026) — [@chaptersix](https://github.com/chaptersix) 12d<br>&nbsp;&nbsp;_> >While verifying with -race, the corrected test surfaced a real data race in initCommand: concurren…_ <!--ack:fp=vono1r-->
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
