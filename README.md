@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-05 00:45 UTC_
+> _Updated 2026-06-05 07:30 UTC_
 >
-> **This week** 0 opened (=) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▁▂▁▁▁▁▁▁█▁▁` 0.7/wk
+> **This week** 0 opened (=) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▂▁▁▁▁▁▁▁█▁▁` 0.7/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
@@ -45,11 +45,11 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 8d |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 9d |
 
 #### Awaiting your reply (1)
 
-- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 8d <!--ack:fp=1j34u42-->
+- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 9d <!--ack:fp=1j34u42-->
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
