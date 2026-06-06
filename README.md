@@ -29,28 +29,31 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-06 07:05 UTC_
+> _Updated 2026-06-06 12:28 UTC_
 >
 > **This week** 1 opened (↑1) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▃▁▁▁▁▁▁█▆▁▃` 0.8/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 1 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 2 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 1 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 8 2w+
+>
+> _Since last update (5h ago): +1 awaiting._
 
 #### Needs attention (2)
 
-- [ ] 🔴 CI failing — [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) <!--ack:fp=v40jmj-->
+- [ ] 🔴 CI failing — [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) <!--ack:fp=dbs5a-->
 - [ ] 🔴 CI failing — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=320a6b-->
 
 #### Open pull requests (2)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 🟡 open | 0 | 5h |
+| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 🟡 open | 1 | 1h |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 10d |
 
-#### Awaiting your reply (1)
+#### Awaiting your reply (2)
 
+- [ ] [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [@Copilot](https://github.com/Copilot) 1h<br>&nbsp;&nbsp;_> The `callback` type annotation is too restrictive: callbacks are invoked with `tmp_project_dir` plu…_ <!--ack:fp=10mdp1a-->
 - [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 10d <!--ack:fp=1j34u42-->
 
 ---
