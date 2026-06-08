@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-07 18:28 UTC_
+> _Updated 2026-06-08 00:47 UTC_
 >
 > **This week** 1 opened (↑1) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▂▁▁▁▁▁▁█▂▁▂` 0.8/wk
 >
@@ -46,12 +46,12 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 🟡 open | 1 | 19h |
+| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 🟡 open | 1 | 1d |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 11d |
 
 #### Awaiting your reply (2)
 
-- [ ] [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [@tatiana](https://github.com/tatiana) 19h<br>&nbsp;&nbsp;_> I find this one particularly important, @highlyavailable ^_ <!--ack:fp=l00v1i-->
+- [ ] [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [@tatiana](https://github.com/tatiana) 1d<br>&nbsp;&nbsp;_> I find this one particularly important, @highlyavailable ^_ <!--ack:fp=l00v1i-->
 - [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 11d <!--ack:fp=1j34u42-->
 
 ---
