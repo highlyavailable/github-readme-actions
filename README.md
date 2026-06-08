@@ -29,29 +29,30 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-08 13:28 UTC_
+> _Updated 2026-06-08 18:50 UTC_
 >
-> **This week** 1 opened (↑1) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▂▁▁▁▁▁▁█▂▁▂` 0.8/wk
+> **This week** 1 opened (↑1) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▂▁▁▁▁▁▁█▁▁▂` 0.8/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 2 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 1 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 8 2w+
+>
+> _Since last update (5h ago): -1 awaiting._
 
 #### Needs attention (2)
 
-- [ ] 🔴 CI failing — [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) <!--ack:fp=l5zghq-->
+- [ ] 🔴 CI failing — [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) <!--ack:fp=1b56kmh-->
 - [ ] 🔴 CI failing — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=320a6b-->
 
 #### Open pull requests (2)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 🟡 open | 1 | 1d |
+| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 🟡 open | 2 | 2h |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 12d |
 
-#### Awaiting your reply (2)
+#### Awaiting your reply (1)
 
-- [ ] [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) — [@tatiana](https://github.com/tatiana) 1d<br>&nbsp;&nbsp;_> I find this one particularly important, @highlyavailable ^_ <!--ack:fp=l00v1i-->
 - [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 12d <!--ack:fp=1j34u42-->
 
 ---
