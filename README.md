@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-17 18:50 UTC_
+> _Updated 2026-06-18 00:49 UTC_
 >
-> **This week** 0 opened (↓1) · 1 merged (↑1) · 0 reviewed (=) · velocity `▂▁▁▁▁▁▁█▁▁▂▁` 0.8/wk
+> **This week** 0 opened (↓1) · 1 merged (=) · 0 reviewed (=) · velocity `▂▁▁▁▁▁▁█▁▁▂▁` 0.8/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 1 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
@@ -39,7 +39,7 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 #### Needs attention (1)
 
-- [ ] 🔴 CI failing — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=320a6b-->
+- [ ] 🟠 stale 3w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=1hy77uq-->
 
 #### Open pull requests (1)
 
