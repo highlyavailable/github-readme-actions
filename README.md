@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-24 01:38 UTC_
+> _Updated 2026-06-24 01:55 UTC_
 >
 > **This week** 0 opened (=) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁█▁▁▂▁▁` 0.7/wk
 >
@@ -60,13 +60,13 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 - [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 3w <!--ack:fp=1j34u42-->
 
-#### Recent activity (5)
+#### Recent activity (6)
 
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(13s)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(12s)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(17m)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 - ⬆️ Pushed 0 commits to `feature/1515-per-node-callback` in [`highlyavailable/astronomer-cosmos`](https://github.com/highlyavailable/astronomer-cosmos) _(2w)_
 - 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
-- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -77,6 +77,18 @@ _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighly
 Standalone `merged_prs` block — every accepted PR in the window (`merged_window_days`), up to `max_rows`.
 
 <!--readme-actions:merged_prs:start-->
+| PR | Ref | Merged |
+| --- | --- | --- |
+| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 2026-06-11 |
+| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 2026-05-28 |
+| [fix: declare opentelemetry-semantic-conventions for aio-pika, logging, pika and system-metrics](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | [`open-telemetry/opentelemetry-python-contrib#4594`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | 2026-05-19 |
+| [fix(confluent-kafka): declare opentelemetry-semantic-conventions as a direct dependency](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | [`open-telemetry/opentelemetry-python-contrib#4590`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | 2026-05-18 |
+| [prometheus: validate exponential histogram scale range (#6779)](https://github.com/open-telemetry/opentelemetry-go/pull/6822) | [`open-telemetry/opentelemetry-go#6822`](https://github.com/open-telemetry/opentelemetry-go/pull/6822) | 2025-06-16 |
+| [fix: reduce API test memory consumption from 8.26GB to 1.57GB (#8263)](https://github.com/treeverse/lakeFS/pull/9097) | [`treeverse/lakeFS#9097`](https://github.com/treeverse/lakeFS/pull/9097) | 2025-06-08 |
+| [Separate configurations for colorized and json logs in Task SDK / Celery Executor](https://github.com/apache/airflow/pull/51082) | [`apache/airflow#51082`](https://github.com/apache/airflow/pull/51082) | 2025-06-03 |
+| [Fix/issue 6560 install trace bridge test](https://github.com/open-telemetry/opentelemetry-go/pull/6814) | [`open-telemetry/opentelemetry-go#6814`](https://github.com/open-telemetry/opentelemetry-go/pull/6814) | 2025-05-26 |
+| [bridge/opencensus: add test for OTelSpanContextToOC function](https://github.com/open-telemetry/opentelemetry-go/pull/6813) | [`open-telemetry/opentelemetry-go#6813`](https://github.com/open-telemetry/opentelemetry-go/pull/6813) | 2025-05-23 |
+| [Create RateMyProfessors.com-Selenium-Scraper.yml](https://github.com/up-for-grabs/up-for-grabs.net/pull/3744) | [`up-for-grabs/up-for-grabs.net#3744`](https://github.com/up-for-grabs/up-for-grabs.net/pull/3744) | 2023-02-10 |
 <!--readme-actions:merged_prs:end-->
 
 ### Extended activity timeline
@@ -84,6 +96,12 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(15s)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(17m)_
+- 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
+- ⬆️ Pushed 0 commits to `feature/1515-per-node-callback` in [`highlyavailable/astronomer-cosmos`](https://github.com/highlyavailable/astronomer-cosmos) _(2w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
+- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
