@@ -72,6 +72,20 @@ This README dogfoods the action. The block below is a single `command_center` se
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
 <!--readme-actions:command_center:end-->
 
+### Full merged-PR history
+
+Standalone `merged_prs` block — every accepted PR in the window (`merged_window_days`), up to `max_rows`.
+
+<!--readme-actions:merged_prs:start-->
+<!--readme-actions:merged_prs:end-->
+
+### Extended activity timeline
+
+Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
+
+<!--readme-actions:activity_feed:start-->
+<!--readme-actions:activity_feed:end-->
+
 ## Quickstart
 
 **1. Add markers to your README** for each section you want:
