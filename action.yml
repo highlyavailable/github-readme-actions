@@ -14,7 +14,7 @@ inputs:
     required: false
     default: ${{ github.repository_owner }}
   sections:
-    description: 'Comma-separated list of dashboard sections to render. Available: open_prs, response_inbox, review_inbox, recent_activity, merged_prs, stats, pinned_prs, stale_prs, failing_ci, ready_to_merge, velocity_chart, commit_heatmap, streak, command_center.'
+    description: 'Comma-separated list of dashboard sections to render. Available: open_prs, response_inbox, review_inbox, recent_activity, activity_feed, merged_prs, stats, pinned_prs, stale_prs, failing_ci, ready_to_merge, velocity_chart, commit_heatmap, streak, command_center.'
     required: false
     default: 'open_prs,response_inbox,review_inbox,recent_activity'
   target_file:
@@ -48,6 +48,10 @@ inputs:
     description: 'How dates are rendered: relative (default), absolute (YYYY-MM-DD), or both.'
     required: false
     default: 'relative'
+  theme:
+    description: 'Visual theme for every section. "default" uses emoji status icons; "minimal" strips all emoji for a clean, plain-text dashboard. Per-section override and custom status_labels still win over the theme.'
+    required: false
+    default: 'default'
 
   # Section tuning (shared across sections)
   max_rows:
@@ -74,6 +78,13 @@ inputs:
     description: '[merged_prs] Look-back window in days for merged PRs.'
     required: false
     default: '90'
+  activity_feed_days:
+    description: '[activity_feed] Optional look-back window in days for the public activity timeline. 0 (default) shows the most recent events regardless of age.'
+    required: false
+    default: '0'
+  activity_feed_types:
+    description: '[activity_feed] Comma-separated event types to include (e.g. PullRequestEvent, IssueCommentEvent, PushEvent, WatchEvent). Empty uses a sensible default set.'
+    required: false
   stats_periods:
     description: '[stats] Comma-separated periods to report. Any of: week, month, quarter, year.'
     required: false
@@ -93,7 +104,7 @@ inputs:
     required: false
     default: '12'
   command_center_layout:
-    description: '[command_center] Comma-separated list of blocks. Available: hero, needs_attention, open_prs, stale_prs, failing_ci, ready_to_merge, response_inbox, review_inbox. Default: hero,needs_attention,open_prs,response_inbox,review_inbox.'
+    description: '[command_center] Comma-separated list of blocks. Available: hero, needs_attention, open_prs, recently_merged, stale_prs, failing_ci, ready_to_merge, response_inbox, review_inbox, activity_feed. Default: hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed.'
     required: false
   command_center_rows:
     description: '[command_center] Per-block row cap for embedded tables.'

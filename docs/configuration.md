@@ -16,6 +16,7 @@ All inputs are passed via the `with:` block of the action step. Names are lowerc
 | `commit` | bool | `true` | If `false`, the action writes the file but does not commit or push. |
 | `config_file` | string | `.github/readme-dashboard.yml` | YAML file with per-section rendering config. Missing file is treated as empty. See [customization.md](customization.md). |
 | `date_format` | enum | `relative` | One of `relative` / `absolute` / `both`. Applies to every section unless overridden in the config file. |
+| `theme` | enum | `default` | `default` shows emoji status icons; `minimal` strips all emoji for a clean, plain-text dashboard. Per-section override and custom `status_labels` still win. |
 | `status_labels` | JSON | _(defaults)_ | JSON object overriding status tag text. Wins over the same key in the config file. |
 
 ## Shared section tuning
@@ -34,6 +35,8 @@ These apply to every section that renders rows or filters by repository.
 | Input | Used by | Default | Description |
 |---|---|---|---|
 | `activity_days` | `recent_activity` | `14` | Window of comment activity to include. |
+| `activity_feed_days` | `activity_feed` | `0` | Optional days window for the public activity timeline. `0` = most recent regardless of age. |
+| `activity_feed_types` | `activity_feed` | _(default set)_ | Comma-separated event types to include; overrides the default set. |
 | `merged_window_days` | `merged_prs` | `90` | Look-back window for merged PRs. |
 | `stats_periods` | `stats` | `week,month,year` | Any of `week`, `month`, `quarter`, `year`. |
 | `pinned_prs_state` | `pinned_prs` | `all` | Filter PRs by `open`, `closed`, `merged`, or `all`. |

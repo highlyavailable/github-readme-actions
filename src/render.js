@@ -112,6 +112,13 @@ function emptyState(message) {
   return `_${message}_`;
 }
 
+// Prefix `text` with `icon` only when icons are enabled (default theme).
+// In the minimal theme this returns the bare text — no emoji, no stray spaces.
+function withIcon(icon, text, useIcons = true) {
+  if (!useIcons || !icon) return text;
+  return `${icon} ${text}`;
+}
+
 module.exports = {
   link,
   mono,
@@ -128,5 +135,6 @@ module.exports = {
   userLink,
   repoLink,
   emptyState,
-  escapeText
+  escapeText,
+  withIcon
 };

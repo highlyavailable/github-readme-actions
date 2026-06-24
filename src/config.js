@@ -6,6 +6,7 @@ const KNOWN_SECTIONS = [
   'response_inbox',
   'review_inbox',
   'recent_activity',
+  'activity_feed',
   'merged_prs',
   'stats',
   'pinned_prs',
@@ -85,7 +86,8 @@ function loadConfig() {
       defaults: {
         date_format: core.getInput('date_format') || null,
         status_labels: readJson('status_labels'),
-        viz_style: core.getInput('viz_style') || null
+        viz_style: core.getInput('viz_style') || null,
+        theme: core.getInput('theme') || null
       },
       sections: {}
     },
@@ -100,6 +102,10 @@ function loadConfig() {
     sectionConfig: {
       recent_activity: {
         days: readInt('activity_days', 14)
+      },
+      activity_feed: {
+        days: readInt('activity_feed_days', 0) || null,
+        types: readList('activity_feed_types')
       },
       merged_prs: {
         windowDays: readInt('merged_window_days', 90)

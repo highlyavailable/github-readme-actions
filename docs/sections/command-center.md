@@ -46,7 +46,7 @@ The hero is a single blockquote: heading, timestamp, KPI line, inbox pills. The 
 
 | Input | Default | Effect |
 |---|---|---|
-| `command_center_layout` | `hero,needs_attention,open_prs,response_inbox,review_inbox` | Comma-separated list of blocks in order. |
+| `command_center_layout` | `hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed` | Comma-separated list of blocks in order. |
 | `command_center_rows` | `5` | Per-block row cap for embedded tables. |
 | `stale_days` | `14` | Threshold used by the `needs_attention` and `stale_prs` blocks. |
 
@@ -57,11 +57,13 @@ The hero is a single blockquote: heading, timestamp, KPI line, inbox pills. The 
 | `hero` | Blockquote: heading, timestamp, KPI line + inline sparkline, inbox pills |
 | `needs_attention` | Unified table combining failing CI + stale + ready-to-merge PRs |
 | `open_prs` | Top open PRs table |
+| `recently_merged` | Recently merged/accepted PRs table (see [merged-prs](merged-prs.md)) |
 | `stale_prs` | Stale PRs table (standalone, separate from `needs_attention`) |
 | `failing_ci` | Failing CI table (standalone) |
 | `ready_to_merge` | Ready-to-merge table (standalone) |
 | `response_inbox` | Awaiting-your-reply table |
 | `review_inbox` | Pending-review-requests table |
+| `activity_feed` | Chronological public-activity timeline — comments, reviews, PRs, pushes, releases, each timestamped (see [activity-feed](activity-feed.md)) |
 
 Each subsection is automatically suppressed when its data is empty.
 
@@ -72,7 +74,7 @@ Each subsection is automatically suppressed when its data is empty.
 ```yaml
 sections:
   command_center:
-    layout: [hero, needs_attention, open_prs, response_inbox, review_inbox]
+    layout: [hero, needs_attention, open_prs, recently_merged, response_inbox, review_inbox, activity_feed]
     per_block_rows: 5
 ```
 

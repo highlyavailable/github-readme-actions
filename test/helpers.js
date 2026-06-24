@@ -36,6 +36,9 @@ function mockOctokit({ searchItems = [], totalCount } = {}) {
       pulls: {
         listReviewComments: jest.fn(async () => ({ data: [] })),
         listReviews: jest.fn(async () => ({ data: [] }))
+      },
+      activity: {
+        listPublicEventsForUser: jest.fn(async () => ({ data: [] }))
       }
     }
   };
@@ -69,7 +72,8 @@ function renderCfg(overrides = {}) {
     date_format: overrides.date_format || 'relative',
     status_labels: { ...PLAIN_LABELS, ...(overrides.status_labels || {}) },
     sort: overrides.sort || null,
-    extras: { viz_style: 'mermaid', ...(overrides.extras || {}) }
+    theme: overrides.theme || 'default',
+    extras: { viz_style: 'mermaid', theme: overrides.theme || 'default', ...(overrides.extras || {}) }
   };
 }
 

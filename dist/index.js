@@ -34296,6 +34296,7 @@ const KNOWN_SECTIONS = [
   'response_inbox',
   'review_inbox',
   'recent_activity',
+  'activity_feed',
   'merged_prs',
   'stats',
   'pinned_prs',
@@ -34375,7 +34376,8 @@ function loadConfig() {
       defaults: {
         date_format: core.getInput('date_format') || null,
         status_labels: readJson('status_labels'),
-        viz_style: core.getInput('viz_style') || null
+        viz_style: core.getInput('viz_style') || null,
+        theme: core.getInput('theme') || null
       },
       sections: {}
     },
@@ -34390,6 +34392,10 @@ function loadConfig() {
     sectionConfig: {
       recent_activity: {
         days: readInt('activity_days', 14)
+      },
+      activity_feed: {
+        days: readInt('activity_feed_days', 0) || null,
+        types: readList('activity_feed_types')
       },
       merged_prs: {
         windowDays: readInt('merged_window_days', 90)
@@ -34654,6 +34660,7 @@ const core = __nccwpck_require__(7484);
 
 const KNOWN_STYLES = ['table', 'list', 'compact'];
 const KNOWN_DATE_FORMATS = ['relative', 'absolute', 'both'];
+const KNOWN_THEMES = ['default', 'minimal'];
 
 const DEFAULT_LABELS = {
   merged: '🟢 merged',
@@ -34670,6 +34677,27 @@ const DEFAULT_LABELS = {
   stale: '🟠 stale',
   ready: '🟢 ready'
 };
+
+// Plain-text labels for the `minimal` theme — same words, no emoji.
+const MINIMAL_LABELS = {
+  merged: 'merged',
+  open: 'open',
+  closed: 'closed',
+  draft: 'draft',
+  review_requested: 'review-requested',
+  changes_requested: 'changes-requested',
+  approved: 'approved',
+  conflicts: 'conflicts',
+  ci_failing: 'failing',
+  ci_passing: 'passing',
+  ci_pending: 'pending',
+  stale: 'stale',
+  ready: 'ready'
+};
+
+function baseLabelsForTheme(theme) {
+  return theme === 'minimal' ? MINIMAL_LABELS : DEFAULT_LABELS;
+}
 
 function loadFile(filePath) {
   if (!filePath) return {};
@@ -34694,17 +34722,28 @@ const KNOWN_VIZ_STYLES = ['mermaid', 'unicode', 'both'];
 
 function mergeDefaults(fileConfig, inlineDefaults) {
   const file = fileConfig.defaults || {};
+  const theme =
+    pickKnown(inlineDefaults.theme, KNOWN_THEMES) ||
+    pickKnown(file.theme, KNOWN_THEMES) ||
+    'default';
+  // User overrides, independent of theme — so a section can switch theme and
+  // still keep any explicit label customizations the user set.
+  const userStatusLabels = {
+    ...(file.status_labels || {}),
+    ...(inlineDefaults.status_labels || {})
+  };
   return {
+    theme,
     date_format:
       pickKnown(inlineDefaults.date_format, KNOWN_DATE_FORMATS) ||
       pickKnown(file.date_format, KNOWN_DATE_FORMATS) ||
       'relative',
     empty_state:
       inlineDefaults.empty_state || file.empty_state || null,
+    userStatusLabels,
     status_labels: {
-      ...DEFAULT_LABELS,
-      ...(file.status_labels || {}),
-      ...(inlineDefaults.status_labels || {})
+      ...baseLabelsForTheme(theme),
+      ...userStatusLabels
     },
     viz_style:
       pickKnown(inlineDefaults.viz_style, KNOWN_VIZ_STYLES) ||
@@ -34743,8 +34782,15 @@ function resolveSection(name, defaultsResolved, fileSection, inlineSection, sect
     pickKnown(file.date_format, KNOWN_DATE_FORMATS) ||
     defaultsResolved.date_format;
 
+  const theme =
+    pickKnown(inline.theme, KNOWN_THEMES) ||
+    pickKnown(file.theme, KNOWN_THEMES) ||
+    defaultsResolved.theme ||
+    'default';
+
   const status_labels = {
-    ...defaultsResolved.status_labels,
+    ...baseLabelsForTheme(theme),
+    ...(defaultsResolved.userStatusLabels || {}),
     ...(file.status_labels || {}),
     ...(inline.status_labels || {})
   };
@@ -34762,8 +34808,9 @@ function resolveSection(name, defaultsResolved, fileSection, inlineSection, sect
     empty_state,
     date_format,
     status_labels,
+    theme,
     sort,
-    extras: { ...file, ...inline, viz_style }
+    extras: { ...file, ...inline, viz_style, theme }
   };
 }
 
@@ -34787,7 +34834,9 @@ function resolveAll({ fileConfig = {}, inline = {}, sectionMeta = {}, sectionNam
 module.exports = {
   KNOWN_STYLES,
   KNOWN_DATE_FORMATS,
+  KNOWN_THEMES,
   DEFAULT_LABELS,
+  MINIMAL_LABELS,
   loadFile,
   resolveAll,
   resolveSection,
@@ -34914,6 +34963,13 @@ function emptyState(message) {
   return `_${message}_`;
 }
 
+// Prefix `text` with `icon` only when icons are enabled (default theme).
+// In the minimal theme this returns the bare text — no emoji, no stray spaces.
+function withIcon(icon, text, useIcons = true) {
+  if (!useIcons || !icon) return text;
+  return `${icon} ${text}`;
+}
+
 module.exports = {
   link,
   mono,
@@ -34930,7 +34986,241 @@ module.exports = {
   userLink,
   repoLink,
   emptyState,
-  escapeText
+  escapeText,
+  withIcon
+};
+
+
+/***/ }),
+
+/***/ 9306:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { age, link, repoLink, emptyState, withIcon } = __nccwpck_require__(9121);
+
+// A chronological feed of public GitHub activity (the Events API), rendered as a
+// timeline of "what you did, where, and when". Answers "how active is this
+// person" at a glance — comments, reviews, PRs opened/merged, issues, pushes,
+// releases — each with a relative timestamp.
+//
+// Note: the Events API does NOT surface reactions (they are not events), so this
+// feed intentionally does not include them. It also only exposes *public*
+// activity and is capped by GitHub at ~300 events / ~90 days per user.
+
+// Event types we render by default. Low-signal types (starring, forking, wiki
+// edits, membership) are excluded unless explicitly requested via config.types.
+const DEFAULT_TYPES = [
+  'PullRequestEvent',
+  'PullRequestReviewEvent',
+  'PullRequestReviewCommentEvent',
+  'IssueCommentEvent',
+  'IssuesEvent',
+  'PushEvent',
+  'CommitCommentEvent',
+  'ReleaseEvent',
+  'CreateEvent'
+];
+
+function isoDaysAgo(days, now = Date.now()) {
+  return new Date(now - days * 86400000).toISOString();
+}
+
+function repoMark(fullName) {
+  const [owner, name] = (fullName || '').split('/');
+  if (owner && name) return repoLink(owner, name);
+  return fullName ? `\`${fullName}\`` : '';
+}
+
+function reviewVerb(state) {
+  const s = (state || '').toLowerCase();
+  if (s === 'approved') return { icon: '✅', verb: 'Approved' };
+  if (s === 'changes_requested') return { icon: '🔴', verb: 'Requested changes on' };
+  return { icon: '👀', verb: 'Reviewed' };
+}
+
+// Translate one raw event into a timeline entry, or null to skip it.
+// Returns { icon, verb, target?: {text, url}, repo, at }.
+function describe(event) {
+  const repo = event.repo?.name || '';
+  const at = event.created_at;
+  const p = event.payload || {};
+
+  switch (event.type) {
+    case 'PullRequestEvent': {
+      const pr = p.pull_request || {};
+      const ref = `#${p.number ?? pr.number ?? '?'}`;
+      let icon = '📤';
+      let verb = 'Opened PR';
+      if (p.action === 'closed') {
+        if (pr.merged) { icon = '🔀'; verb = 'Merged PR'; }
+        else { icon = '🚫'; verb = 'Closed PR'; }
+      } else if (p.action === 'reopened') {
+        icon = '♻️'; verb = 'Reopened PR';
+      } else if (p.action !== 'opened') {
+        return null; // assigned/labeled/etc. — noise
+      }
+      return { icon, verb, target: { text: `${ref} ${pr.title || ''}`.trim(), url: pr.html_url }, repo, at };
+    }
+    case 'PullRequestReviewEvent': {
+      const pr = p.pull_request || {};
+      const { icon, verb } = reviewVerb(p.review?.state);
+      const ref = `#${pr.number ?? '?'}`;
+      return { icon, verb, target: { text: `${ref} ${pr.title || ''}`.trim(), url: p.review?.html_url || pr.html_url }, repo, at };
+    }
+    case 'PullRequestReviewCommentEvent': {
+      const pr = p.pull_request || {};
+      const ref = `#${pr.number ?? '?'}`;
+      return { icon: '💬', verb: 'Commented on PR', target: { text: `${ref} ${pr.title || ''}`.trim(), url: p.comment?.html_url || pr.html_url }, repo, at };
+    }
+    case 'IssueCommentEvent': {
+      if (p.action && p.action !== 'created') return null;
+      const issue = p.issue || {};
+      const isPr = Boolean(issue.pull_request);
+      const ref = `#${issue.number ?? '?'}`;
+      return { icon: '💬', verb: `Commented on ${isPr ? 'PR' : 'issue'}`, target: { text: `${ref} ${issue.title || ''}`.trim(), url: p.comment?.html_url || issue.html_url }, repo, at };
+    }
+    case 'IssuesEvent': {
+      const issue = p.issue || {};
+      const ref = `#${issue.number ?? '?'}`;
+      let icon = '🐛';
+      let verb = 'Opened issue';
+      if (p.action === 'closed') { icon = '✔️'; verb = 'Closed issue'; }
+      else if (p.action === 'reopened') { icon = '♻️'; verb = 'Reopened issue'; }
+      else if (p.action !== 'opened') return null;
+      return { icon, verb, target: { text: `${ref} ${issue.title || ''}`.trim(), url: issue.html_url }, repo, at };
+    }
+    case 'PushEvent': {
+      const n = p.distinct_size ?? (p.commits ? p.commits.length : (p.size || 0));
+      const branch = (p.ref || '').replace('refs/heads/', '');
+      const where = branch ? ` to \`${branch}\`` : '';
+      return { icon: '⬆️', verb: `Pushed ${n} commit${n === 1 ? '' : 's'}${where}`, repo, at };
+    }
+    case 'CommitCommentEvent':
+      return { icon: '💬', verb: 'Commented on a commit', target: { text: 'commit', url: p.comment?.html_url }, repo, at };
+    case 'ReleaseEvent': {
+      if (p.action && p.action !== 'published') return null;
+      const rel = p.release || {};
+      return { icon: '🚀', verb: 'Published release', target: { text: rel.name || rel.tag_name || 'release', url: rel.html_url }, repo, at };
+    }
+    case 'CreateEvent': {
+      const t = p.ref_type; // branch | tag | repository
+      if (t === 'repository') return { icon: '✨', verb: 'Created repository', repo, at };
+      if (t === 'tag') return { icon: '🏷️', verb: `Created tag \`${p.ref}\``, repo, at };
+      return null; // branch creation is low-signal
+    }
+    case 'ForkEvent':
+      return { icon: '🍴', verb: 'Forked', repo, at };
+    case 'WatchEvent':
+      return { icon: '⭐', verb: 'Starred', repo, at };
+    default:
+      return null;
+  }
+}
+
+function renderLine(entry, dateFn, useIcons = true) {
+  const parts = [withIcon(entry.icon, entry.verb, useIcons)];
+  if (entry.target && entry.target.url) {
+    parts.push(link(entry.target.text || 'link', entry.target.url));
+  } else if (entry.target && entry.target.text) {
+    parts.push(entry.target.text);
+  }
+  const repo = repoMark(entry.repo);
+  if (repo) parts.push(`in ${repo}`);
+  const ts = dateFn(entry.at);
+  return `- ${parts.join(' ')}${ts ? ` _(${ts})_` : ''}`;
+}
+
+async function fetchEvents(octokit, username, maxPages = 3) {
+  const events = [];
+  for (let page = 1; page <= maxPages; page += 1) {
+    const { data } = await octokit.rest.activity.listPublicEventsForUser({
+      username,
+      per_page: 100,
+      page
+    });
+    if (!data || !data.length) break;
+    events.push(...data);
+    if (data.length < 100) break;
+  }
+  return events;
+}
+
+function summarize(entries) {
+  const s = { commits: 0, comments: 0, reviews: 0, prs: 0, issues: 0 };
+  for (const e of entries) {
+    if (e.verb.startsWith('Pushed')) s.commits += e.commits || 1;
+    else if (e.verb.includes('Commented')) s.comments += 1;
+    else if (/Approved|Reviewed|Requested changes/.test(e.verb)) s.reviews += 1;
+    else if (e.verb.includes('PR')) s.prs += 1;
+    else if (e.verb.includes('issue')) s.issues += 1;
+  }
+  return s;
+}
+
+async function render(ctx) {
+  const { octokit, username, shared, config, render: renderCfg } = ctx;
+  const days = config?.days || null;
+  const includeTypes = config?.types && config.types.length ? config.types : DEFAULT_TYPES;
+  const cutoff = days ? isoDaysAgo(days) : null;
+
+  let raw;
+  try {
+    raw = await fetchEvents(octokit, username);
+  } catch (e) {
+    return {
+      content: emptyState(renderCfg.empty_state || `Could not load activity (${e.message}).`),
+      metadata: { count: 0 }
+    };
+  }
+
+  const entries = raw
+    .filter((ev) => includeTypes.includes(ev.type))
+    .filter((ev) => !cutoff || ev.created_at >= cutoff)
+    .map(describe)
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.at) - new Date(a.at));
+
+  if (entries.length === 0) {
+    const windowLabel = days ? ` in the last ${days} days` : '';
+    return {
+      content: emptyState(renderCfg.empty_state || `No public activity${windowLabel}.`),
+      metadata: { count: 0, window_days: days }
+    };
+  }
+
+  const dateFn = (iso) => age(iso);
+  const useIcons = renderCfg.theme !== 'minimal';
+  const limited = entries.slice(0, shared.maxRows);
+  const lines = limited.map((e) => renderLine(e, dateFn, useIcons));
+
+  const summary = summarize(entries);
+  return {
+    content: lines.join('\n'),
+    metadata: {
+      count: entries.length,
+      shown: limited.length,
+      window_days: days,
+      commits: summary.commits,
+      comments: summary.comments,
+      reviews: summary.reviews,
+      prs: summary.prs,
+      issues: summary.issues
+    }
+  };
+}
+
+module.exports = {
+  name: 'activity_feed',
+  title: 'Activity Feed',
+  defaultStyle: 'list',
+  defaultColumns: null,
+  defaultEmptyState: 'No public activity.',
+  availableColumns: {},
+  render,
+  // exported for tests
+  describe,
+  summarize,
+  DEFAULT_TYPES
 };
 
 
@@ -34946,8 +35236,10 @@ const reviewInbox = __nccwpck_require__(5361);
 const stalePrs = __nccwpck_require__(101);
 const failingCi = __nccwpck_require__(3031);
 const readyToMerge = __nccwpck_require__(5174);
+const mergedPrs = __nccwpck_require__(2006);
+const activityFeed = __nccwpck_require__(9306);
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
-const { link, prRef, age, userLink } = __nccwpck_require__(9121);
+const { link, prRef, age, userLink, withIcon } = __nccwpck_require__(9121);
 const { unicodeSparkline, bucketByWeek } = __nccwpck_require__(412);
 const { ackKey, fingerprint, parseAcknowledged, renderChecklist } = __nccwpck_require__(3157);
 
@@ -34955,8 +35247,10 @@ const DEFAULT_LAYOUT = [
   'hero',
   'needs_attention',
   'open_prs',
+  'recently_merged',
   'response_inbox',
-  'review_inbox'
+  'review_inbox',
+  'activity_feed'
 ];
 
 function subCtx(ctx, maxRows) {
@@ -35043,7 +35337,7 @@ const KPI_PARSE_REGEX =
   /\*\*This week\*\* (\d+) opened · (\d+) merged · (\d+) reviewed/;
 const UPDATED_PARSE_REGEX = /_Updated (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) UTC_/;
 const INBOX_PARSE_REGEX =
-  /🟢 (\d+) ready · 🔴 (\d+) failing · 🟠 (\d+) stale · 🟡 (\d+) awaiting reply · 🔵 (\d+) review/;
+  /(?:🟢 )?(\d+) ready · (?:🔴 )?(\d+) failing · (?:🟠 )?(\d+) stale · (?:🟡 )?(\d+) awaiting reply · (?:🔵 )?(\d+) review/;
 
 function parseExistingSnapshot(existing) {
   if (!existing) return null;
@@ -35115,15 +35409,16 @@ function computeAging(items) {
   return buckets;
 }
 
-function buildAgingLine(items) {
+function buildAgingLine(items, useIcons = true) {
   if (!items.length) return null;
   const b = computeAging(items);
-  return `**Aging** 🟢 ${b['0–3d']} 0–3d · 🟡 ${b['3–7d']} 3–7d · 🟠 ${b['1–2w']} 1–2w · 🔴 ${b['2w+']} 2w+`;
+  const cell = (icon, value, label) => withIcon(icon, `${value} ${label}`, useIcons);
+  return `**Aging** ${cell('🟢', b['0–3d'], '0–3d')} · ${cell('🟡', b['3–7d'], '3–7d')} · ${cell('🟠', b['1–2w'], '1–2w')} · ${cell('🔴', b['2w+'], '2w+')}`;
 }
 
 // ---- Hero --------------------------------------------------------------------
 
-function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel }) {
+function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel, useIcons = true }) {
   const now = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
   const userUrl = `https://github.com/${ctx.username}`;
   const tag = orgLabel ? ` · ${orgLabel}` : '';
@@ -35147,7 +35442,7 @@ function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, dif
     { icon: '🟡', label: 'awaiting reply', value: counts.awaiting },
     { icon: '🔵', label: 'review requests', value: counts.review }
   ];
-  const pills = `**Inbox** ${pillEntries.map((p) => `${p.icon} ${p.value} ${p.label}`).join(' · ')}`;
+  const pills = `**Inbox** ${pillEntries.map((p) => withIcon(p.icon, `${p.value} ${p.label}`, useIcons)).join(' · ')}`;
 
   const lines = [];
   if (patBanner) {
@@ -35263,7 +35558,7 @@ async function buildNeedsAttentionItems(ctx, { failingCount, staleCount, readyCo
   return items;
 }
 
-function renderNeedsAttentionChecklist(items, acked, perRows) {
+function renderNeedsAttentionChecklist(items, acked, perRows, useIcons = true) {
   if (!items.length) return null;
   const seen = new Set();
   const deduped = [];
@@ -35274,9 +35569,9 @@ function renderNeedsAttentionChecklist(items, acked, perRows) {
     deduped.push(item);
   }
   const why = (tag, item) => {
-    if (tag === 'failing') return `🔴 CI failing`;
-    if (tag === 'stale') return `🟠 stale ${age(item.updated_at)}`;
-    if (tag === 'ready') return `🟢 ready to merge`;
+    if (tag === 'failing') return withIcon('🔴', 'CI failing', useIcons);
+    if (tag === 'stale') return withIcon('🟠', `stale ${age(item.updated_at)}`, useIcons);
+    if (tag === 'ready') return withIcon('🟢', 'ready to merge', useIcons);
     return tag;
   };
   const checklistItems = deduped.slice(0, perRows).map((item) => ({
@@ -35327,6 +35622,8 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     readyResult,
     failingResult,
     staleResult,
+    mergedResult,
+    activityResult,
     awaitingItems
   ] = await Promise.all([
     fetchPeriodStats(ctx, isoDaysAgo(7), null, extraScope).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
@@ -35336,6 +35633,8 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     readyToMerge.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
     failingCi.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
     stalePrs.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
+    mergedPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
+    activityFeed.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
     fetchAwaitingReplyItems(ctx, perBlockRows, extraScope)
   ]);
 
@@ -35347,7 +35646,9 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     failing: failingResult.metadata?.count || 0,
     stale: staleResult.metadata?.count || 0,
     awaiting: responseInboxResult.metadata?.count || 0,
-    review: reviewInboxResult.metadata?.count || 0
+    review: reviewInboxResult.metadata?.count || 0,
+    merged: mergedResult.metadata?.count || 0,
+    activity: activityResult.metadata?.count || 0
   };
 
   const needsItems = await buildNeedsAttentionItems(
@@ -35357,18 +35658,25 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     extraScope
   );
 
-  const aging = velocity.items && velocity.items.length ? buildAgingLine(velocity.items) : null;
+  const useIcons = ctx.render?.theme !== 'minimal';
+  const aging = velocity.items && velocity.items.length ? buildAgingLine(velocity.items, useIcons) : null;
   const diffLine = orgLabel ? null : buildDiffLine(existing, weekStats, counts);
 
   const blocks = [];
   for (const block of layout) {
     if (block === 'hero') {
-      blocks.push(buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel }));
+      blocks.push(buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel, useIcons }));
     } else if (block === 'needs_attention') {
-      const na = renderNeedsAttentionChecklist(needsItems, acked, perBlockRows);
+      const na = renderNeedsAttentionChecklist(needsItems, acked, perBlockRows, useIcons);
       if (na) blocks.push(na);
     } else if (block === 'open_prs') {
       const sub = subsectionBlock('Open pull requests', openPrsResult.metadata?.count, openPrsResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'recently_merged') {
+      const sub = subsectionBlock('Recently merged', mergedResult.metadata?.count, mergedResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'activity_feed') {
+      const sub = subsectionBlock('Recent activity', activityResult.metadata?.count, activityResult.content);
       if (sub) blocks.push(sub);
     } else if (block === 'response_inbox') {
       const aw = renderAwaitingReplyChecklist(awaitingItems, acked);
@@ -35427,6 +35735,8 @@ async function render(ctx) {
       ready_count: counts.ready,
       failing_count: counts.failing,
       stale_count: counts.stale,
+      merged_count: counts.merged,
+      activity_count: counts.activity,
       week_opened: weekStats.opened,
       week_merged: weekStats.merged,
       week_reviewed: weekStats.reviewed
@@ -35725,6 +36035,7 @@ const openPrs = __nccwpck_require__(918);
 const responseInbox = __nccwpck_require__(5930);
 const reviewInbox = __nccwpck_require__(5361);
 const recentActivity = __nccwpck_require__(5045);
+const activityFeed = __nccwpck_require__(9306);
 const mergedPrs = __nccwpck_require__(2006);
 const stats = __nccwpck_require__(2749);
 const pinnedPrs = __nccwpck_require__(6576);
@@ -35741,6 +36052,7 @@ const REGISTRY = {
   [responseInbox.name]: responseInbox,
   [reviewInbox.name]: reviewInbox,
   [recentActivity.name]: recentActivity,
+  [activityFeed.name]: activityFeed,
   [mergedPrs.name]: mergedPrs,
   [stats.name]: stats,
   [pinnedPrs.name]: pinnedPrs,

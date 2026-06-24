@@ -54,6 +54,15 @@ describe('command_center', () => {
     expect(metadata.week_opened).toBe(7);
   });
 
+  test('minimal theme strips emoji from hero pills and aging line', async () => {
+    const octokit = fullOctokit();
+    const { content } = await section.render(ctx({ octokit, render: { theme: 'minimal' } }));
+    expect(content).toContain('**Inbox**');
+    expect(content).toContain('awaiting reply');
+    // No colored-circle status icons anywhere in the rendered dashboard.
+    expect(content).not.toMatch(/[🟢🟡🔴🟠🔵⚪]/u);
+  });
+
   test('hero includes inline sparkline characters', async () => {
     const octokit = fullOctokit();
     const { content } = await section.render(ctx({ octokit }));

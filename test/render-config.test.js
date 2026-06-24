@@ -1,4 +1,4 @@
-const { resolveAll, mergeDefaults, DEFAULT_LABELS } = require('../src/render-config');
+const { resolveAll, mergeDefaults, DEFAULT_LABELS, MINIMAL_LABELS } = require('../src/render-config');
 
 describe('render-config', () => {
   test('mergeDefaults: inline beats file beats built-in', () => {
@@ -91,5 +91,37 @@ describe('render-config', () => {
       sectionNames: ['open_prs']
     });
     expect(fileResolved.sections.open_prs.empty_state).toBe('file wins over meta');
+  });
+
+  test('theme: minimal swaps to plain-text labels with no emoji', () => {
+    const merged = mergeDefaults({}, { theme: 'minimal' });
+    expect(merged.theme).toBe('minimal');
+    expect(merged.status_labels.merged).toBe(MINIMAL_LABELS.merged);
+    expect(merged.status_labels.merged).not.toMatch(/\p{Emoji_Presentation}/u);
+  });
+
+  test('theme: default keeps emoji labels', () => {
+    const merged = mergeDefaults({}, {});
+    expect(merged.theme).toBe('default');
+    expect(merged.status_labels.merged).toBe(DEFAULT_LABELS.merged);
+  });
+
+  test('theme: user status_labels still win over the minimal theme base', () => {
+    const merged = mergeDefaults({}, { theme: 'minimal', status_labels: { merged: 'shipped' } });
+    expect(merged.status_labels.merged).toBe('shipped');
+    expect(merged.status_labels.open).toBe(MINIMAL_LABELS.open);
+  });
+
+  test('theme: a section can override the global theme', () => {
+    const resolved = resolveAll({
+      fileConfig: {},
+      inline: { defaults: { theme: 'minimal' }, sections: { open_prs: { theme: 'default' } } },
+      sectionMeta: { open_prs: {}, merged_prs: {} },
+      sectionNames: ['open_prs', 'merged_prs']
+    });
+    expect(resolved.sections.open_prs.theme).toBe('default');
+    expect(resolved.sections.open_prs.status_labels.open).toBe(DEFAULT_LABELS.open);
+    expect(resolved.sections.merged_prs.theme).toBe('minimal');
+    expect(resolved.sections.merged_prs.status_labels.merged).toBe(MINIMAL_LABELS.merged);
   });
 });

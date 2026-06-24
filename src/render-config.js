@@ -4,6 +4,7 @@ const core = require('@actions/core');
 
 const KNOWN_STYLES = ['table', 'list', 'compact'];
 const KNOWN_DATE_FORMATS = ['relative', 'absolute', 'both'];
+const KNOWN_THEMES = ['default', 'minimal'];
 
 const DEFAULT_LABELS = {
   merged: '🟢 merged',
@@ -20,6 +21,27 @@ const DEFAULT_LABELS = {
   stale: '🟠 stale',
   ready: '🟢 ready'
 };
+
+// Plain-text labels for the `minimal` theme — same words, no emoji.
+const MINIMAL_LABELS = {
+  merged: 'merged',
+  open: 'open',
+  closed: 'closed',
+  draft: 'draft',
+  review_requested: 'review-requested',
+  changes_requested: 'changes-requested',
+  approved: 'approved',
+  conflicts: 'conflicts',
+  ci_failing: 'failing',
+  ci_passing: 'passing',
+  ci_pending: 'pending',
+  stale: 'stale',
+  ready: 'ready'
+};
+
+function baseLabelsForTheme(theme) {
+  return theme === 'minimal' ? MINIMAL_LABELS : DEFAULT_LABELS;
+}
 
 function loadFile(filePath) {
   if (!filePath) return {};
@@ -44,17 +66,28 @@ const KNOWN_VIZ_STYLES = ['mermaid', 'unicode', 'both'];
 
 function mergeDefaults(fileConfig, inlineDefaults) {
   const file = fileConfig.defaults || {};
+  const theme =
+    pickKnown(inlineDefaults.theme, KNOWN_THEMES) ||
+    pickKnown(file.theme, KNOWN_THEMES) ||
+    'default';
+  // User overrides, independent of theme — so a section can switch theme and
+  // still keep any explicit label customizations the user set.
+  const userStatusLabels = {
+    ...(file.status_labels || {}),
+    ...(inlineDefaults.status_labels || {})
+  };
   return {
+    theme,
     date_format:
       pickKnown(inlineDefaults.date_format, KNOWN_DATE_FORMATS) ||
       pickKnown(file.date_format, KNOWN_DATE_FORMATS) ||
       'relative',
     empty_state:
       inlineDefaults.empty_state || file.empty_state || null,
+    userStatusLabels,
     status_labels: {
-      ...DEFAULT_LABELS,
-      ...(file.status_labels || {}),
-      ...(inlineDefaults.status_labels || {})
+      ...baseLabelsForTheme(theme),
+      ...userStatusLabels
     },
     viz_style:
       pickKnown(inlineDefaults.viz_style, KNOWN_VIZ_STYLES) ||
@@ -93,8 +126,15 @@ function resolveSection(name, defaultsResolved, fileSection, inlineSection, sect
     pickKnown(file.date_format, KNOWN_DATE_FORMATS) ||
     defaultsResolved.date_format;
 
+  const theme =
+    pickKnown(inline.theme, KNOWN_THEMES) ||
+    pickKnown(file.theme, KNOWN_THEMES) ||
+    defaultsResolved.theme ||
+    'default';
+
   const status_labels = {
-    ...defaultsResolved.status_labels,
+    ...baseLabelsForTheme(theme),
+    ...(defaultsResolved.userStatusLabels || {}),
     ...(file.status_labels || {}),
     ...(inline.status_labels || {})
   };
@@ -112,8 +152,9 @@ function resolveSection(name, defaultsResolved, fileSection, inlineSection, sect
     empty_state,
     date_format,
     status_labels,
+    theme,
     sort,
-    extras: { ...file, ...inline, viz_style }
+    extras: { ...file, ...inline, viz_style, theme }
   };
 }
 
@@ -137,7 +178,9 @@ function resolveAll({ fileConfig = {}, inline = {}, sectionMeta = {}, sectionNam
 module.exports = {
   KNOWN_STYLES,
   KNOWN_DATE_FORMATS,
+  KNOWN_THEMES,
   DEFAULT_LABELS,
+  MINIMAL_LABELS,
   loadFile,
   resolveAll,
   resolveSection,

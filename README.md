@@ -5,7 +5,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/highlyavailable/github-readme-actions/ci.yml?branch=main&label=ci)](https://github.com/highlyavailable/github-readme-actions/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A GitHub Action that turns any markdown file into a **live OSS contributor dashboard**: open PRs, threads awaiting your response, pending review requests, recent activity, merged-PR bookkeeping, and contribution stats — refreshed on a schedule, scoped to your account, configurable per section, and committed back to the repo.
+A GitHub Action that turns any markdown file into a **live OSS contributor dashboard**: open PRs, recently merged/accepted PRs, threads awaiting your response, pending review requests, a timestamped activity timeline (comments, reviews, pushes, releases), and contribution stats — refreshed on a schedule, scoped to your account, configurable per section, and committed back to the repo.
 
 Built for maintainers and principal engineers who manage activity across many repositories.
 

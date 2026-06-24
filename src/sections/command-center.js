@@ -5,8 +5,10 @@ const reviewInbox = require('./review-inbox');
 const stalePrs = require('./stale-prs');
 const failingCi = require('./failing-ci');
 const readyToMerge = require('./ready-to-merge');
+const mergedPrs = require('./merged-prs');
+const activityFeed = require('./activity-feed');
 const { paginateSearch, repoFullName } = require('../github');
-const { link, prRef, age, userLink } = require('../render');
+const { link, prRef, age, userLink, withIcon } = require('../render');
 const { unicodeSparkline, bucketByWeek } = require('../viz');
 const { ackKey, fingerprint, parseAcknowledged, renderChecklist } = require('../acknowledge');
 
@@ -14,8 +16,10 @@ const DEFAULT_LAYOUT = [
   'hero',
   'needs_attention',
   'open_prs',
+  'recently_merged',
   'response_inbox',
-  'review_inbox'
+  'review_inbox',
+  'activity_feed'
 ];
 
 function subCtx(ctx, maxRows) {
@@ -102,7 +106,7 @@ const KPI_PARSE_REGEX =
   /\*\*This week\*\* (\d+) opened · (\d+) merged · (\d+) reviewed/;
 const UPDATED_PARSE_REGEX = /_Updated (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) UTC_/;
 const INBOX_PARSE_REGEX =
-  /🟢 (\d+) ready · 🔴 (\d+) failing · 🟠 (\d+) stale · 🟡 (\d+) awaiting reply · 🔵 (\d+) review/;
+  /(?:🟢 )?(\d+) ready · (?:🔴 )?(\d+) failing · (?:🟠 )?(\d+) stale · (?:🟡 )?(\d+) awaiting reply · (?:🔵 )?(\d+) review/;
 
 function parseExistingSnapshot(existing) {
   if (!existing) return null;
@@ -174,15 +178,16 @@ function computeAging(items) {
   return buckets;
 }
 
-function buildAgingLine(items) {
+function buildAgingLine(items, useIcons = true) {
   if (!items.length) return null;
   const b = computeAging(items);
-  return `**Aging** 🟢 ${b['0–3d']} 0–3d · 🟡 ${b['3–7d']} 3–7d · 🟠 ${b['1–2w']} 1–2w · 🔴 ${b['2w+']} 2w+`;
+  const cell = (icon, value, label) => withIcon(icon, `${value} ${label}`, useIcons);
+  return `**Aging** ${cell('🟢', b['0–3d'], '0–3d')} · ${cell('🟡', b['3–7d'], '3–7d')} · ${cell('🟠', b['1–2w'], '1–2w')} · ${cell('🔴', b['2w+'], '2w+')}`;
 }
 
 // ---- Hero --------------------------------------------------------------------
 
-function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel }) {
+function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel, useIcons = true }) {
   const now = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
   const userUrl = `https://github.com/${ctx.username}`;
   const tag = orgLabel ? ` · ${orgLabel}` : '';
@@ -206,7 +211,7 @@ function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, dif
     { icon: '🟡', label: 'awaiting reply', value: counts.awaiting },
     { icon: '🔵', label: 'review requests', value: counts.review }
   ];
-  const pills = `**Inbox** ${pillEntries.map((p) => `${p.icon} ${p.value} ${p.label}`).join(' · ')}`;
+  const pills = `**Inbox** ${pillEntries.map((p) => withIcon(p.icon, `${p.value} ${p.label}`, useIcons)).join(' · ')}`;
 
   const lines = [];
   if (patBanner) {
@@ -322,7 +327,7 @@ async function buildNeedsAttentionItems(ctx, { failingCount, staleCount, readyCo
   return items;
 }
 
-function renderNeedsAttentionChecklist(items, acked, perRows) {
+function renderNeedsAttentionChecklist(items, acked, perRows, useIcons = true) {
   if (!items.length) return null;
   const seen = new Set();
   const deduped = [];
@@ -333,9 +338,9 @@ function renderNeedsAttentionChecklist(items, acked, perRows) {
     deduped.push(item);
   }
   const why = (tag, item) => {
-    if (tag === 'failing') return `🔴 CI failing`;
-    if (tag === 'stale') return `🟠 stale ${age(item.updated_at)}`;
-    if (tag === 'ready') return `🟢 ready to merge`;
+    if (tag === 'failing') return withIcon('🔴', 'CI failing', useIcons);
+    if (tag === 'stale') return withIcon('🟠', `stale ${age(item.updated_at)}`, useIcons);
+    if (tag === 'ready') return withIcon('🟢', 'ready to merge', useIcons);
     return tag;
   };
   const checklistItems = deduped.slice(0, perRows).map((item) => ({
@@ -386,6 +391,8 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     readyResult,
     failingResult,
     staleResult,
+    mergedResult,
+    activityResult,
     awaitingItems
   ] = await Promise.all([
     fetchPeriodStats(ctx, isoDaysAgo(7), null, extraScope).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
@@ -395,6 +402,8 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     readyToMerge.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
     failingCi.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
     stalePrs.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
+    mergedPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
+    activityFeed.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
     fetchAwaitingReplyItems(ctx, perBlockRows, extraScope)
   ]);
 
@@ -406,7 +415,9 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     failing: failingResult.metadata?.count || 0,
     stale: staleResult.metadata?.count || 0,
     awaiting: responseInboxResult.metadata?.count || 0,
-    review: reviewInboxResult.metadata?.count || 0
+    review: reviewInboxResult.metadata?.count || 0,
+    merged: mergedResult.metadata?.count || 0,
+    activity: activityResult.metadata?.count || 0
   };
 
   const needsItems = await buildNeedsAttentionItems(
@@ -416,18 +427,25 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     extraScope
   );
 
-  const aging = velocity.items && velocity.items.length ? buildAgingLine(velocity.items) : null;
+  const useIcons = ctx.render?.theme !== 'minimal';
+  const aging = velocity.items && velocity.items.length ? buildAgingLine(velocity.items, useIcons) : null;
   const diffLine = orgLabel ? null : buildDiffLine(existing, weekStats, counts);
 
   const blocks = [];
   for (const block of layout) {
     if (block === 'hero') {
-      blocks.push(buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel }));
+      blocks.push(buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel, useIcons }));
     } else if (block === 'needs_attention') {
-      const na = renderNeedsAttentionChecklist(needsItems, acked, perBlockRows);
+      const na = renderNeedsAttentionChecklist(needsItems, acked, perBlockRows, useIcons);
       if (na) blocks.push(na);
     } else if (block === 'open_prs') {
       const sub = subsectionBlock('Open pull requests', openPrsResult.metadata?.count, openPrsResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'recently_merged') {
+      const sub = subsectionBlock('Recently merged', mergedResult.metadata?.count, mergedResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'activity_feed') {
+      const sub = subsectionBlock('Recent activity', activityResult.metadata?.count, activityResult.content);
       if (sub) blocks.push(sub);
     } else if (block === 'response_inbox') {
       const aw = renderAwaitingReplyChecklist(awaitingItems, acked);
@@ -486,6 +504,8 @@ async function render(ctx) {
       ready_count: counts.ready,
       failing_count: counts.failing,
       stale_count: counts.stale,
+      merged_count: counts.merged,
+      activity_count: counts.activity,
       week_opened: weekStats.opened,
       week_merged: weekStats.merged,
       week_reviewed: weekStats.reviewed

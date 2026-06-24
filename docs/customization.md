@@ -16,6 +16,7 @@ Inline inputs always win over the file. The file always wins over built-in defau
 
 # Defaults applied to every section unless overridden.
 defaults:
+  theme: default                 # default (emoji icons) | minimal (plain text, no emoji)
   date_format: relative          # relative | absolute | both
   status_labels:
     merged: merged
@@ -76,9 +77,49 @@ sections:
 | `list`  | Cleaner inside a profile README, smaller surface area. | `- title — \`ref\` — [state]` |
 | `compact` | One line per item, joined by `·`. Good for sidebars or stats. | `title · \`ref\` · [state]` |
 
+## Themes
+
+The fastest way to control the dashboard's look is the `theme` setting:
+
+| Theme | Look |
+|---|---|
+| `default` | Emoji status icons everywhere — inbox pills (🟢🔴🟠🟡🔵), aging buckets, needs-attention reasons, activity-feed icons, and emoji `status_labels`. Maximum at-a-glance signal. |
+| `minimal` | **No emoji anywhere.** Same information, plain text. Clean and modular — ideal if you want an effective, distraction-free profile or you're embedding the dashboard somewhere emoji render poorly. |
+
+Set it once and every section follows:
+
+```yaml
+# inline
+with:
+  theme: minimal
+```
+
+```yaml
+# or in the config file
+defaults:
+  theme: minimal
+```
+
+`minimal` swaps the emoji `status_labels` for plain words (`merged`, `open`, `failing`, …) and drops the hardcoded icons in `command_center` and `activity_feed`. You can still override any individual label on top of either theme, and a single section can opt back into the other theme:
+
+```yaml
+defaults:
+  theme: minimal           # clean by default
+sections:
+  command_center:
+    theme: default         # ...but keep the pills colorful in the hero
+```
+
+Before / after for the activity feed:
+
+```
+default:  - 🔀 Merged PR [#412 add retry logic](url) in acme/api _(2h)_
+minimal:  - Merged PR [#412 add retry logic](url) in acme/api _(2h)_
+```
+
 ## Status labels
 
-Defaults are functional colored indicators (signal, not decoration). Each is a key in `status_labels`:
+Defaults are functional colored indicators (signal, not decoration). Each is a key in `status_labels`. (Switching `theme: minimal` replaces all of these with their plain-text equivalents in one move — reach for individual overrides only when you want something in between.)
 
 | Key | Default | Where it shows up |
 |---|---|---|
