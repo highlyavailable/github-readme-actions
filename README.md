@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-24 01:55 UTC_
+> _Updated 2026-06-24 07:12 UTC_
 >
 > **This week** 0 opened (=) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁█▁▁▂▁▁` 0.7/wk
 >
@@ -39,13 +39,13 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 #### Needs attention (1)
 
-- [ ] 🟠 stale 3w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=1hy77uq-->
+- [ ] 🟠 stale 4w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=1hy77uq-->
 
 #### Open pull requests (1)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 3w |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 4w |
 
 #### Recently merged (4)
 
@@ -58,12 +58,12 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 #### Awaiting your reply (1)
 
-- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 3w <!--ack:fp=1j34u42-->
+- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 4w <!--ack:fp=1j34u42-->
 
 #### Recent activity (6)
 
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(12s)_
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(17m)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(5h)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(5h)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 - ⬆️ Pushed 0 commits to `feature/1515-per-node-callback` in [`highlyavailable/astronomer-cosmos`](https://github.com/highlyavailable/astronomer-cosmos) _(2w)_
 - 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
@@ -96,8 +96,8 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(15s)_
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(17m)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(5h)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(5h)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 - ⬆️ Pushed 0 commits to `feature/1515-per-node-callback` in [`highlyavailable/astronomer-cosmos`](https://github.com/highlyavailable/astronomer-cosmos) _(2w)_
 - 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
