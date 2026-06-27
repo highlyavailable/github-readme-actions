@@ -381,7 +381,7 @@ function subsectionBlock(title, count, content) {
   return `#### ${title} (${count})\n\n${content}`;
 }
 
-// ---- Single command-center group (one user, optional org filter) -----------
+// ---- Single standup group (one user, optional org filter) ------------------
 
 async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraScope, patBanner, prevWeekStats, existing }) {
   const [
@@ -548,10 +548,7 @@ async function render(ctx) {
 }
 
 module.exports = {
-  // Registry key stays `command_center` for marker/input back-compat; the
-  // user-facing name is "Standup" (see title + the rendered hero heading).
-  // The `standup` alias is wired up in sections/index.js and config.js.
-  name: 'command_center',
+  name: 'standup',
   title: 'Standup',
   defaultStyle: 'composite',
   defaultColumns: null,

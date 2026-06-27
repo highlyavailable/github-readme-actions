@@ -34306,8 +34306,7 @@ const KNOWN_SECTIONS = [
   'velocity_chart',
   'commit_heatmap',
   'streak',
-  'standup',
-  'command_center'
+  'standup'
 ];
 
 function readBool(name, fallback) {
@@ -34360,15 +34359,6 @@ function readJson(name) {
 
 function loadConfig() {
   const owner = github.context && github.context.repo ? github.context.repo.owner : '';
-
-  // Shared by the `standup` section and its `command_center` alias.
-  const standupConfig = {
-    layout: readList('command_center_layout'),
-    per_block_rows: readInt('command_center_rows', 5),
-    orgs: readList('command_center_orgs'),
-    disable_pat_warning: readBool('disable_pat_warning', false),
-    stale_days: readInt('stale_days', 14)
-  };
 
   const cfg = {
     githubToken: readToken(),
@@ -34440,8 +34430,13 @@ function loadConfig() {
       streak: {
         months: readInt('heatmap_months', 12)
       },
-      standup: standupConfig,
-      command_center: standupConfig,
+      standup: {
+        layout: readList('standup_layout'),
+        per_block_rows: readInt('standup_rows', 5),
+        orgs: readList('standup_orgs'),
+        disable_pat_warning: readBool('disable_pat_warning', false),
+        stale_days: readInt('stale_days', 14)
+      },
       open_prs: {
         show_ci: readBool('open_prs_show_ci', false)
       }
@@ -34621,21 +34616,12 @@ function markersFor(sectionName) {
   };
 }
 
-// Legacy v1 markers — kept for back-compat with pinned_prs.
-function legacyMarkersFor(sectionName) {
-  return {
-    start: `<!--START_SECTION:github-readme-actions-${sectionName}-->`,
-    end: `<!--END_SECTION:github-readme-actions-${sectionName}-->`
-  };
-}
-
 function findSection(source, sectionName) {
-  for (const variant of [markersFor(sectionName), legacyMarkersFor(sectionName)]) {
-    const startIdx = source.indexOf(variant.start);
-    const endIdx = source.indexOf(variant.end);
-    if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
-      return { ...variant, startIdx, endIdx };
-    }
+  const variant = markersFor(sectionName);
+  const startIdx = source.indexOf(variant.start);
+  const endIdx = source.indexOf(variant.end);
+  if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+    return { ...variant, startIdx, endIdx };
   }
   return null;
 }
@@ -34688,7 +34674,6 @@ function readTarget(targetFile) {
 
 module.exports = {
   markersFor,
-  legacyMarkersFor,
   findSection,
   extractSectionContent,
   replaceSection,
@@ -35299,580 +35284,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ 81:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const core = __nccwpck_require__(7484);
-const openPrs = __nccwpck_require__(918);
-const responseInbox = __nccwpck_require__(5930);
-const reviewInbox = __nccwpck_require__(5361);
-const stalePrs = __nccwpck_require__(101);
-const failingCi = __nccwpck_require__(3031);
-const readyToMerge = __nccwpck_require__(5174);
-const mergedPrs = __nccwpck_require__(2006);
-const activityFeed = __nccwpck_require__(9306);
-const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
-const { isoDaysAgo } = __nccwpck_require__(8865);
-const { link, prRef, age, userLink, withIcon } = __nccwpck_require__(9121);
-const { unicodeSparkline, bucketByWeek } = __nccwpck_require__(412);
-const { ackKey, fingerprint, parseAcknowledged, renderChecklist } = __nccwpck_require__(3157);
-
-const DEFAULT_LAYOUT = [
-  'hero',
-  'needs_attention',
-  'open_prs',
-  'recently_merged',
-  'response_inbox',
-  'review_inbox',
-  'activity_feed'
-];
-
-function subCtx(ctx, maxRows) {
-  return { ...ctx, shared: { ...ctx.shared, maxRows } };
-}
-
-function buildScope(ctx, extraScope = '') {
-  const parts = [];
-  for (const r of ctx.shared.repositories || []) parts.push(`repo:${r}`);
-  for (const r of ctx.shared.excludeRepositories || []) parts.push(`-repo:${r}`);
-  if (extraScope) parts.push(extraScope);
-  return parts.length ? ' ' + parts.join(' ') : '';
-}
-
-// ---- Token / PAT detection ---------------------------------------------------
-
-async function detectTokenAuthor(ctx) {
-  try {
-    const { data } = await ctx.octokit.rest.users.getAuthenticated();
-    return data?.login || null;
-  } catch (e) {
-    return null;
-  }
-}
-
-function buildPatBanner(authLogin, targetLogin) {
-  if (!authLogin) return null;
-  const isBot = authLogin.endsWith('[bot]') || authLogin === 'github-actions[bot]';
-  if (!isBot && authLogin === targetLogin) return null;
-  if (!isBot && authLogin !== targetLogin) return null; // PAT belongs to different user, that's OK if intentional
-  // Bot token detected.
-  return [
-    '> [!WARNING]',
-    `> Running under \`${authLogin}\` (default \`GITHUB_TOKEN\`). Cross-repo sections will be empty.`,
-    '> Provide a fine-grained PAT as `github_token` — see [docs/tokens.md](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/tokens.md).'
-  ].join('\n');
-}
-
-// ---- KPI fetches -------------------------------------------------------------
-
-async function fetchPeriodStats(ctx, sinceISO, untilISO, extraScope = '') {
-  const username = ctx.username;
-  const scope = buildScope(ctx, extraScope);
-  const range = untilISO ? `${sinceISO}..${untilISO}` : `>=${sinceISO}`;
-  const [opened, merged, reviewed] = await Promise.all([
-    ctx.octokit.rest.search.issuesAndPullRequests({
-      q: `type:pr author:${username} created:${range}${scope}`,
-      per_page: 1
-    }).then((r) => r.data.total_count || 0).catch(() => 0),
-    ctx.octokit.rest.search.issuesAndPullRequests({
-      q: `type:pr author:${username} is:merged merged:${range}${scope}`,
-      per_page: 1
-    }).then((r) => r.data.total_count || 0).catch(() => 0),
-    ctx.octokit.rest.search.issuesAndPullRequests({
-      q: `type:pr reviewed-by:${username} -author:${username} updated:${range}${scope}`,
-      per_page: 1
-    }).then((r) => r.data.total_count || 0).catch(() => 0)
-  ]);
-  return { opened, merged, reviewed };
-}
-
-async function fetchVelocity(ctx, weeks = 12, extraScope = '') {
-  const items = await paginateSearch(
-    ctx.octokit,
-    `type:pr author:${ctx.username} created:>=${isoDaysAgo(weeks * 7)}${buildScope(ctx, extraScope)}`,
-    { sort: 'created', order: 'desc' }
-  );
-  const buckets = bucketByWeek(items.map((i) => i.created_at), weeks);
-  return {
-    buckets,
-    total: items.length,
-    average: (buckets.reduce((a, b) => a + b, 0) / weeks).toFixed(1),
-    items
-  };
-}
-
-// ---- Today's diff ------------------------------------------------------------
-
-// Tolerates the optional week-over-week arrow suffix this same line emits
-// (e.g. "0 opened (↓1) · …") — the arrows are non-"·" chars between the count
-// label and the separator, so [^·]* absorbs them. Also accepts the legacy
-// "This week" label so an in-place upgrade can still read the prior snapshot.
-const KPI_PARSE_REGEX =
-  /\*\*(?:Last 30 days|This week)\*\* (\d+) opened[^·]*· (\d+) merged[^·]*· (\d+) reviewed/;
-const UPDATED_PARSE_REGEX = /_Updated (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) UTC_/;
-const INBOX_PARSE_REGEX =
-  /(?:🟢 )?(\d+) ready · (?:🔴 )?(\d+) failing · (?:🟠 )?(\d+) stale · (?:🟡 )?(\d+) awaiting reply · (?:🔵 )?(\d+) review/;
-
-function parseExistingSnapshot(existing) {
-  if (!existing) return null;
-  const kpi = existing.match(KPI_PARSE_REGEX);
-  const upd = existing.match(UPDATED_PARSE_REGEX);
-  const inbox = existing.match(INBOX_PARSE_REGEX);
-  if (!kpi && !inbox) return null;
-  return {
-    opened: kpi ? +kpi[1] : null,
-    merged: kpi ? +kpi[2] : null,
-    reviewed: kpi ? +kpi[3] : null,
-    ready: inbox ? +inbox[1] : null,
-    failing: inbox ? +inbox[2] : null,
-    stale: inbox ? +inbox[3] : null,
-    awaiting: inbox ? +inbox[4] : null,
-    review: inbox ? +inbox[5] : null,
-    updatedAt: upd ? new Date(upd[1] + ':00Z').getTime() : null
-  };
-}
-
-function diffArrow(prev, curr) {
-  if (prev === null || prev === undefined) return '';
-  const delta = curr - prev;
-  if (delta === 0) return ' (=)';
-  if (delta > 0) return ` (↑${delta})`;
-  return ` (↓${Math.abs(delta)})`;
-}
-
-function buildDiffLine(existing, currentStats, currentCounts) {
-  const prev = parseExistingSnapshot(existing);
-  if (!prev) return null;
-  const parts = [];
-  if (prev.updatedAt) {
-    const dt = age(new Date(prev.updatedAt).toISOString());
-    parts.push(`Since last update (${dt} ago)`);
-  } else {
-    parts.push('Since last update');
-  }
-  const sub = [];
-  const fields = [
-    ['opened', currentStats.opened, prev.opened],
-    ['merged', currentStats.merged, prev.merged],
-    ['awaiting', currentCounts.awaiting, prev.awaiting],
-    ['failing', currentCounts.failing, prev.failing]
-  ];
-  for (const [name, c, p] of fields) {
-    if (p === null || p === undefined) continue;
-    const d = c - p;
-    if (d === 0) continue;
-    const arrow = d > 0 ? `+${d}` : `${d}`;
-    sub.push(`${arrow} ${name}`);
-  }
-  if (sub.length === 0) return null;
-  return `_${parts.join(' ')}: ${sub.join(', ')}._`;
-}
-
-// ---- Aging buckets ----------------------------------------------------------
-
-function computeAging(items) {
-  const buckets = { '0–3d': 0, '3–7d': 0, '1–2w': 0, '2w+': 0 };
-  const now = Date.now();
-  for (const i of items) {
-    const ageDays = (now - new Date(i.created_at).getTime()) / 86400000;
-    if (ageDays < 3) buckets['0–3d'] += 1;
-    else if (ageDays < 7) buckets['3–7d'] += 1;
-    else if (ageDays < 14) buckets['1–2w'] += 1;
-    else buckets['2w+'] += 1;
-  }
-  return buckets;
-}
-
-function buildAgingLine(items, useIcons = true) {
-  if (!items.length) return null;
-  const b = computeAging(items);
-  const cell = (icon, value, label) => withIcon(icon, `${value} ${label}`, useIcons);
-  return `**Aging** ${cell('🟢', b['0–3d'], '0–3d')} · ${cell('🟡', b['3–7d'], '3–7d')} · ${cell('🟠', b['1–2w'], '1–2w')} · ${cell('🔴', b['2w+'], '2w+')}`;
-}
-
-// ---- Hero --------------------------------------------------------------------
-
-function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel, useIcons = true }) {
-  const now = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
-  const userUrl = `https://github.com/${ctx.username}`;
-  const tag = orgLabel ? ` · ${orgLabel}` : '';
-  const heading = `### Standup · [\`${ctx.username}\`](${userUrl})${tag}`;
-  const updated = `_Updated ${now}_`;
-
-  const spark = velocity.buckets.length ? unicodeSparkline(velocity.buckets) : '';
-  const wwOpen = prevWeekStats ? diffArrow(prevWeekStats.opened, weekStats.opened) : '';
-  const wwMerge = prevWeekStats ? diffArrow(prevWeekStats.merged, weekStats.merged) : '';
-  const wwReview = prevWeekStats ? diffArrow(prevWeekStats.reviewed, weekStats.reviewed) : '';
-
-  const kpis = [
-    `**Last 30 days** ${weekStats.opened} opened${wwOpen} · ${weekStats.merged} merged${wwMerge} · ${weekStats.reviewed} reviewed${wwReview}`,
-    velocity.buckets.length ? `velocity \`${spark}\` ${velocity.average}/wk` : null
-  ].filter(Boolean).join(' · ');
-
-  const pillEntries = [
-    { icon: '🟢', label: 'ready', value: counts.ready },
-    { icon: '🔴', label: 'failing', value: counts.failing },
-    { icon: '🟠', label: 'stale', value: counts.stale },
-    { icon: '🟡', label: 'awaiting reply', value: counts.awaiting },
-    { icon: '🔵', label: 'review requests', value: counts.review }
-  ];
-  const pills = `**Inbox** ${pillEntries.map((p) => withIcon(p.icon, `${p.value} ${p.label}`, useIcons)).join(' · ')}`;
-
-  const lines = [];
-  if (patBanner) {
-    lines.push(patBanner, '');
-  }
-  lines.push(`> ${heading}`, `> ${updated}`, `>`, `> ${kpis}`, `>`, `> ${pills}`);
-  if (aging) {
-    lines.push(`>`, `> ${aging}`);
-  }
-  if (diffLine) {
-    lines.push(`>`, `> ${diffLine}`);
-  }
-  return lines.join('\n');
-}
-
-// ---- Footer ------------------------------------------------------------------
-
-function buildFooter(ctx) {
-  const u = ctx.username;
-  const openUrl = `https://github.com/issues?q=type%3Apr+author%3A${u}+is%3Aopen`;
-  const reviewUrl = `https://github.com/issues?q=type%3Apr+review-requested%3A${u}+is%3Aopen`;
-  return [
-    '---',
-    `_[View open PRs on GitHub](${openUrl}) · ` +
-      `[Review requests](${reviewUrl}) · ` +
-      '[Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_'
-  ].join('\n');
-}
-
-// ---- Awaiting reply (with conversation preview) ------------------------------
-
-function trimPreview(body, max = 100) {
-  if (!body) return '';
-  const flat = String(body).replace(/\r?\n+/g, ' ').replace(/\s+/g, ' ').trim();
-  if (flat.length <= max) return flat;
-  return flat.slice(0, max - 1).trimEnd() + '…';
-}
-
-async function fetchAwaitingReplyItems(ctx, perRows, extraScope = '') {
-  const username = ctx.username;
-  const prs = await paginateSearch(
-    ctx.octokit,
-    `type:pr author:${username} is:open${ctx.shared.includeDrafts ? '' : ' -draft:true'}${buildScope(ctx, extraScope)}`,
-    { sort: 'updated', order: 'desc' }
-  ).catch(() => []);
-
-  const enriched = [];
-  for (const pr of prs) {
-    const full = repoFullName(pr);
-    const [owner, repo] = full.split('/');
-    if (!owner || !repo) continue;
-    const [issueComments, reviewComments, reviews] = await Promise.all([
-      ctx.octokit.rest.issues.listComments({ owner, repo, issue_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => []),
-      ctx.octokit.rest.pulls.listReviewComments({ owner, repo, pull_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => []),
-      ctx.octokit.rest.pulls.listReviews({ owner, repo, pull_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => [])
-    ]);
-    const events = [];
-    for (const c of issueComments) events.push({ user: c.user?.login, at: c.created_at, body: c.body });
-    for (const c of reviewComments) events.push({ user: c.user?.login, at: c.created_at, body: c.body });
-    for (const r of reviews) if (r.submitted_at) events.push({ user: r.user?.login, at: r.submitted_at, body: r.body });
-    if (events.length === 0) continue;
-    events.sort((a, b) => new Date(b.at) - new Date(a.at));
-    const last = events[0];
-    if (!last.user || last.user === username) continue;
-    enriched.push({ pr, owner, repo, lastUser: last.user, lastAt: last.at, lastBody: last.body });
-  }
-  enriched.sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt));
-  return enriched.slice(0, perRows);
-}
-
-// ---- Needs attention --------------------------------------------------------
-
-async function buildNeedsAttentionItems(ctx, { failingCount, staleCount, readyCount }, perRows, extraScope = '') {
-  const items = [];
-  const username = ctx.username;
-  const scope = buildScope(ctx, extraScope);
-
-  const queries = [];
-  if (readyCount > 0) {
-    queries.push({ tag: 'ready', q: `type:pr author:${username} is:open review:approved${scope}` });
-  }
-  if (staleCount > 0) {
-    queries.push({
-      tag: 'stale',
-      q: `type:pr author:${username} is:open updated:<${isoDaysAgo(ctx.config?.stale_days || 14)}${scope}`
-    });
-  }
-  if (failingCount > 0) {
-    queries.push({ tag: 'failing', q: `type:pr author:${username} is:open${scope}` });
-  }
-
-  const results = await Promise.all(
-    queries.map((q) =>
-      ctx.octokit.rest.search.issuesAndPullRequests({
-        q: q.q,
-        sort: 'updated',
-        order: q.tag === 'stale' ? 'asc' : 'desc',
-        per_page: perRows
-      }).then((r) => ({ tag: q.tag, items: r.data.items || [] })).catch(() => ({ tag: q.tag, items: [] }))
-    )
-  );
-
-  for (const r of results) {
-    for (const item of r.items.slice(0, perRows)) {
-      const full = repoFullName(item);
-      const [owner, repo] = full.split('/');
-      items.push({
-        tag: r.tag, title: item.title, url: item.html_url,
-        owner, repo, number: item.number, updated_at: item.updated_at
-      });
-    }
-  }
-  return items;
-}
-
-function renderNeedsAttentionChecklist(items, acked, perRows, useIcons = true) {
-  if (!items.length) return null;
-  const seen = new Set();
-  const deduped = [];
-  for (const item of items) {
-    const key = ackKey(item.owner, item.repo, item.number);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    deduped.push(item);
-  }
-  const why = (tag, item) => {
-    if (tag === 'failing') return withIcon('🔴', 'CI failing', useIcons);
-    if (tag === 'stale') return withIcon('🟠', `stale ${age(item.updated_at)}`, useIcons);
-    if (tag === 'ready') return withIcon('🟢', 'ready to merge', useIcons);
-    return tag;
-  };
-  const checklistItems = deduped.slice(0, perRows).map((item) => ({
-    ref: ackKey(item.owner, item.repo, item.number),
-    fingerprint: fingerprint(`${item.tag}|${item.updated_at}`),
-    body: `${why(item.tag, item)} — ${link(item.title, item.url)} — ${prRef(item.owner, item.repo, item.number)}`
-  }));
-  return renderChecklist({
-    heading: 'Needs attention',
-    items: checklistItems,
-    acked,
-    emptyState: '_Nothing needs attention._'
-  });
-}
-
-function renderAwaitingReplyChecklist(items, acked) {
-  if (!items.length) return null;
-  const checklistItems = items.map(({ pr, owner, repo, lastUser, lastAt, lastBody }) => {
-    const preview = trimPreview(lastBody, 100);
-    const previewLine = preview ? `<br>&nbsp;&nbsp;_> ${preview}_` : '';
-    return {
-      ref: ackKey(owner, repo, pr.number),
-      fingerprint: fingerprint(`${lastUser}|${lastAt}`),
-      body: `${link(pr.title, pr.html_url)} — ${prRef(owner, repo, pr.number)} — ${userLink(lastUser)} ${age(lastAt)}${previewLine}`
-    };
-  });
-  return renderChecklist({
-    heading: 'Awaiting your reply',
-    items: checklistItems,
-    acked,
-    emptyState: '_No threads waiting on you._'
-  });
-}
-
-function subsectionBlock(title, count, content) {
-  if (!count) return null;
-  return `#### ${title} (${count})\n\n${content}`;
-}
-
-// ---- Single command-center group (one user, optional org filter) -----------
-
-async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraScope, patBanner, prevWeekStats, existing }) {
-  const [
-    weekStats,
-    velocity,
-    openPrsResult,
-    reviewInboxResult,
-    readyResult,
-    failingResult,
-    staleResult,
-    mergedResult,
-    activityResult,
-    awaitingItems
-  ] = await Promise.all([
-    fetchPeriodStats(ctx, isoDaysAgo(30), null, extraScope).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
-    fetchVelocity(ctx, 12, extraScope).catch(() => ({ buckets: [], total: 0, average: '0.0', items: [] })),
-    openPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
-    reviewInbox.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
-    readyToMerge.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
-    failingCi.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
-    stalePrs.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
-    mergedPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
-    activityFeed.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
-    fetchAwaitingReplyItems(ctx, perBlockRows, extraScope)
-  ]);
-
-  const responseInboxResult = await responseInbox.render(subCtx(ctx, perBlockRows))
-    .catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } }));
-
-  const counts = {
-    ready: readyResult.metadata?.count || 0,
-    failing: failingResult.metadata?.count || 0,
-    stale: staleResult.metadata?.count || 0,
-    awaiting: responseInboxResult.metadata?.count || 0,
-    review: reviewInboxResult.metadata?.count || 0,
-    merged: mergedResult.metadata?.count || 0,
-    activity: activityResult.metadata?.count || 0
-  };
-
-  const needsItems = await buildNeedsAttentionItems(
-    ctx,
-    { failingCount: counts.failing, staleCount: counts.stale, readyCount: counts.ready },
-    perBlockRows,
-    extraScope
-  );
-
-  const useIcons = ctx.render?.theme !== 'minimal';
-  const aging = velocity.items && velocity.items.length ? buildAgingLine(velocity.items, useIcons) : null;
-  const diffLine = orgLabel ? null : buildDiffLine(existing, weekStats, counts);
-
-  const blocks = [];
-  for (const block of layout) {
-    if (block === 'hero') {
-      blocks.push(buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel, useIcons }));
-    } else if (block === 'needs_attention') {
-      const na = renderNeedsAttentionChecklist(needsItems, acked, perBlockRows, useIcons);
-      if (na) blocks.push(na);
-    } else if (block === 'open_prs') {
-      const sub = subsectionBlock('Open pull requests', openPrsResult.metadata?.count, openPrsResult.content);
-      if (sub) blocks.push(sub);
-    } else if (block === 'recently_merged') {
-      const sub = subsectionBlock('Recently merged', mergedResult.metadata?.count, mergedResult.content);
-      if (sub) blocks.push(sub);
-    } else if (block === 'activity_feed') {
-      const sub = subsectionBlock('Recent activity', activityResult.metadata?.count, activityResult.content);
-      if (sub) blocks.push(sub);
-    } else if (block === 'response_inbox') {
-      const aw = renderAwaitingReplyChecklist(awaitingItems, acked);
-      if (aw) blocks.push(aw);
-    } else if (block === 'review_inbox') {
-      const sub = subsectionBlock('Pending review requests', counts.review, reviewInboxResult.content);
-      if (sub) blocks.push(sub);
-    } else if (block === 'stale_prs') {
-      const sub = subsectionBlock('Stale', counts.stale, staleResult.content);
-      if (sub) blocks.push(sub);
-    } else if (block === 'failing_ci') {
-      const sub = subsectionBlock('Failing CI', counts.failing, failingResult.content);
-      if (sub) blocks.push(sub);
-    } else if (block === 'ready_to_merge') {
-      const sub = subsectionBlock('Ready to merge', counts.ready, readyResult.content);
-      if (sub) blocks.push(sub);
-    }
-  }
-
-  return { blocks, counts, weekStats };
-}
-
-// ---- Top-level orchestrator -------------------------------------------------
-
-async function render(ctx) {
-  const { config, existing } = ctx;
-  const layout = config?.layout && config.layout.length ? config.layout : DEFAULT_LAYOUT;
-  const perBlockRows = config?.per_block_rows || 5;
-  const orgs = config?.orgs || [];
-  const acked = parseAcknowledged(existing || '');
-
-  // PAT detection — run once and reuse across org groups.
-  let patBanner = null;
-  if (!config?.disable_pat_warning) {
-    const authLogin = await detectTokenAuthor(ctx);
-    patBanner = buildPatBanner(authLogin, ctx.username);
-    if (patBanner) core.info(`PAT banner active (token user = ${authLogin}).`);
-  }
-
-  // Period-over-period arrows compare the last 30 days to the preceding 30.
-  const prevWeekStats = await fetchPeriodStats(ctx, isoDaysAgo(60), isoDaysAgo(30)).catch(() => null);
-
-  const allBlocks = [];
-  const aggregateMeta = {};
-
-  if (orgs.length === 0) {
-    const { blocks, counts, weekStats } = await renderGroup(ctx, {
-      acked, perBlockRows, layout, orgLabel: null, extraScope: '',
-      patBanner, prevWeekStats, existing
-    });
-    allBlocks.push(...blocks);
-    Object.assign(aggregateMeta, {
-      open_prs_count: 0, // populated below by individual sub-fetches if needed
-      awaiting_reply_count: counts.awaiting,
-      review_requests_count: counts.review,
-      ready_count: counts.ready,
-      failing_count: counts.failing,
-      stale_count: counts.stale,
-      merged_count: counts.merged,
-      activity_count: counts.activity,
-      last30_opened: weekStats.opened,
-      last30_merged: weekStats.merged,
-      last30_reviewed: weekStats.reviewed
-    });
-  } else {
-    let firstOrg = true;
-    for (const org of orgs) {
-      const { blocks, counts } = await renderGroup(ctx, {
-        acked, perBlockRows, layout,
-        orgLabel: `org [\`${org}\`](https://github.com/${org})`,
-        extraScope: `org:${org}`,
-        patBanner: firstOrg ? patBanner : null,
-        prevWeekStats: null,
-        existing
-      });
-      if (blocks.length) allBlocks.push(...blocks);
-      aggregateMeta[`${org}_failing_count`] = counts.failing;
-      aggregateMeta[`${org}_stale_count`] = counts.stale;
-      aggregateMeta[`${org}_ready_count`] = counts.ready;
-      aggregateMeta[`${org}_awaiting_count`] = counts.awaiting;
-      firstOrg = false;
-    }
-  }
-
-  // Always append footer at the very end.
-  allBlocks.push(buildFooter(ctx));
-
-  if (allBlocks.length === 1) {
-    // Only the footer — nothing rendered.
-    allBlocks.unshift('_No data to render._');
-  }
-
-  aggregateMeta.acknowledged_count = acked.size;
-
-  return {
-    content: allBlocks.join('\n\n'),
-    metadata: aggregateMeta
-  };
-}
-
-module.exports = {
-  // Registry key stays `command_center` for marker/input back-compat; the
-  // user-facing name is "Standup" (see title + the rendered hero heading).
-  // The `standup` alias is wired up in sections/index.js and config.js.
-  name: 'command_center',
-  title: 'Standup',
-  defaultStyle: 'composite',
-  defaultColumns: null,
-  defaultEmptyState: 'No data available.',
-  availableColumns: {},
-  defaultLayout: DEFAULT_LAYOUT,
-  render,
-  // exported for tests
-  parseExistingSnapshot,
-  buildDiffLine,
-  computeAging,
-  trimPreview
-};
-
-
-/***/ }),
-
 /***/ 4284:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -36125,7 +35536,7 @@ const readyToMerge = __nccwpck_require__(5174);
 const velocityChart = __nccwpck_require__(5066);
 const commitHeatmap = __nccwpck_require__(4284);
 const streak = __nccwpck_require__(5090);
-const commandCenter = __nccwpck_require__(81);
+const standup = __nccwpck_require__(1483);
 
 const REGISTRY = {
   [openPrs.name]: openPrs,
@@ -36142,10 +35553,7 @@ const REGISTRY = {
   [velocityChart.name]: velocityChart,
   [commitHeatmap.name]: commitHeatmap,
   [streak.name]: streak,
-  [commandCenter.name]: commandCenter,
-  // `standup` is the current name for the composite dashboard; `command_center`
-  // is kept as an alias so existing markers and workflows keep working.
-  standup: commandCenter
+  [standup.name]: standup
 };
 
 function get(name) {
@@ -36866,6 +36274,577 @@ module.exports = {
   defaultEmptyState: 'No stale pull requests.',
   availableColumns: COLUMNS,
   render
+};
+
+
+/***/ }),
+
+/***/ 1483:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(7484);
+const openPrs = __nccwpck_require__(918);
+const responseInbox = __nccwpck_require__(5930);
+const reviewInbox = __nccwpck_require__(5361);
+const stalePrs = __nccwpck_require__(101);
+const failingCi = __nccwpck_require__(3031);
+const readyToMerge = __nccwpck_require__(5174);
+const mergedPrs = __nccwpck_require__(2006);
+const activityFeed = __nccwpck_require__(9306);
+const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { isoDaysAgo } = __nccwpck_require__(8865);
+const { link, prRef, age, userLink, withIcon } = __nccwpck_require__(9121);
+const { unicodeSparkline, bucketByWeek } = __nccwpck_require__(412);
+const { ackKey, fingerprint, parseAcknowledged, renderChecklist } = __nccwpck_require__(3157);
+
+const DEFAULT_LAYOUT = [
+  'hero',
+  'needs_attention',
+  'open_prs',
+  'recently_merged',
+  'response_inbox',
+  'review_inbox',
+  'activity_feed'
+];
+
+function subCtx(ctx, maxRows) {
+  return { ...ctx, shared: { ...ctx.shared, maxRows } };
+}
+
+function buildScope(ctx, extraScope = '') {
+  const parts = [];
+  for (const r of ctx.shared.repositories || []) parts.push(`repo:${r}`);
+  for (const r of ctx.shared.excludeRepositories || []) parts.push(`-repo:${r}`);
+  if (extraScope) parts.push(extraScope);
+  return parts.length ? ' ' + parts.join(' ') : '';
+}
+
+// ---- Token / PAT detection ---------------------------------------------------
+
+async function detectTokenAuthor(ctx) {
+  try {
+    const { data } = await ctx.octokit.rest.users.getAuthenticated();
+    return data?.login || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function buildPatBanner(authLogin, targetLogin) {
+  if (!authLogin) return null;
+  const isBot = authLogin.endsWith('[bot]') || authLogin === 'github-actions[bot]';
+  if (!isBot && authLogin === targetLogin) return null;
+  if (!isBot && authLogin !== targetLogin) return null; // PAT belongs to different user, that's OK if intentional
+  // Bot token detected.
+  return [
+    '> [!WARNING]',
+    `> Running under \`${authLogin}\` (default \`GITHUB_TOKEN\`). Cross-repo sections will be empty.`,
+    '> Provide a fine-grained PAT as `github_token` — see [docs/tokens.md](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/tokens.md).'
+  ].join('\n');
+}
+
+// ---- KPI fetches -------------------------------------------------------------
+
+async function fetchPeriodStats(ctx, sinceISO, untilISO, extraScope = '') {
+  const username = ctx.username;
+  const scope = buildScope(ctx, extraScope);
+  const range = untilISO ? `${sinceISO}..${untilISO}` : `>=${sinceISO}`;
+  const [opened, merged, reviewed] = await Promise.all([
+    ctx.octokit.rest.search.issuesAndPullRequests({
+      q: `type:pr author:${username} created:${range}${scope}`,
+      per_page: 1
+    }).then((r) => r.data.total_count || 0).catch(() => 0),
+    ctx.octokit.rest.search.issuesAndPullRequests({
+      q: `type:pr author:${username} is:merged merged:${range}${scope}`,
+      per_page: 1
+    }).then((r) => r.data.total_count || 0).catch(() => 0),
+    ctx.octokit.rest.search.issuesAndPullRequests({
+      q: `type:pr reviewed-by:${username} -author:${username} updated:${range}${scope}`,
+      per_page: 1
+    }).then((r) => r.data.total_count || 0).catch(() => 0)
+  ]);
+  return { opened, merged, reviewed };
+}
+
+async function fetchVelocity(ctx, weeks = 12, extraScope = '') {
+  const items = await paginateSearch(
+    ctx.octokit,
+    `type:pr author:${ctx.username} created:>=${isoDaysAgo(weeks * 7)}${buildScope(ctx, extraScope)}`,
+    { sort: 'created', order: 'desc' }
+  );
+  const buckets = bucketByWeek(items.map((i) => i.created_at), weeks);
+  return {
+    buckets,
+    total: items.length,
+    average: (buckets.reduce((a, b) => a + b, 0) / weeks).toFixed(1),
+    items
+  };
+}
+
+// ---- Today's diff ------------------------------------------------------------
+
+// Tolerates the optional week-over-week arrow suffix this same line emits
+// (e.g. "0 opened (↓1) · …") — the arrows are non-"·" chars between the count
+// label and the separator, so [^·]* absorbs them. Also accepts the legacy
+// "This week" label so an in-place upgrade can still read the prior snapshot.
+const KPI_PARSE_REGEX =
+  /\*\*(?:Last 30 days|This week)\*\* (\d+) opened[^·]*· (\d+) merged[^·]*· (\d+) reviewed/;
+const UPDATED_PARSE_REGEX = /_Updated (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) UTC_/;
+const INBOX_PARSE_REGEX =
+  /(?:🟢 )?(\d+) ready · (?:🔴 )?(\d+) failing · (?:🟠 )?(\d+) stale · (?:🟡 )?(\d+) awaiting reply · (?:🔵 )?(\d+) review/;
+
+function parseExistingSnapshot(existing) {
+  if (!existing) return null;
+  const kpi = existing.match(KPI_PARSE_REGEX);
+  const upd = existing.match(UPDATED_PARSE_REGEX);
+  const inbox = existing.match(INBOX_PARSE_REGEX);
+  if (!kpi && !inbox) return null;
+  return {
+    opened: kpi ? +kpi[1] : null,
+    merged: kpi ? +kpi[2] : null,
+    reviewed: kpi ? +kpi[3] : null,
+    ready: inbox ? +inbox[1] : null,
+    failing: inbox ? +inbox[2] : null,
+    stale: inbox ? +inbox[3] : null,
+    awaiting: inbox ? +inbox[4] : null,
+    review: inbox ? +inbox[5] : null,
+    updatedAt: upd ? new Date(upd[1] + ':00Z').getTime() : null
+  };
+}
+
+function diffArrow(prev, curr) {
+  if (prev === null || prev === undefined) return '';
+  const delta = curr - prev;
+  if (delta === 0) return ' (=)';
+  if (delta > 0) return ` (↑${delta})`;
+  return ` (↓${Math.abs(delta)})`;
+}
+
+function buildDiffLine(existing, currentStats, currentCounts) {
+  const prev = parseExistingSnapshot(existing);
+  if (!prev) return null;
+  const parts = [];
+  if (prev.updatedAt) {
+    const dt = age(new Date(prev.updatedAt).toISOString());
+    parts.push(`Since last update (${dt} ago)`);
+  } else {
+    parts.push('Since last update');
+  }
+  const sub = [];
+  const fields = [
+    ['opened', currentStats.opened, prev.opened],
+    ['merged', currentStats.merged, prev.merged],
+    ['awaiting', currentCounts.awaiting, prev.awaiting],
+    ['failing', currentCounts.failing, prev.failing]
+  ];
+  for (const [name, c, p] of fields) {
+    if (p === null || p === undefined) continue;
+    const d = c - p;
+    if (d === 0) continue;
+    const arrow = d > 0 ? `+${d}` : `${d}`;
+    sub.push(`${arrow} ${name}`);
+  }
+  if (sub.length === 0) return null;
+  return `_${parts.join(' ')}: ${sub.join(', ')}._`;
+}
+
+// ---- Aging buckets ----------------------------------------------------------
+
+function computeAging(items) {
+  const buckets = { '0–3d': 0, '3–7d': 0, '1–2w': 0, '2w+': 0 };
+  const now = Date.now();
+  for (const i of items) {
+    const ageDays = (now - new Date(i.created_at).getTime()) / 86400000;
+    if (ageDays < 3) buckets['0–3d'] += 1;
+    else if (ageDays < 7) buckets['3–7d'] += 1;
+    else if (ageDays < 14) buckets['1–2w'] += 1;
+    else buckets['2w+'] += 1;
+  }
+  return buckets;
+}
+
+function buildAgingLine(items, useIcons = true) {
+  if (!items.length) return null;
+  const b = computeAging(items);
+  const cell = (icon, value, label) => withIcon(icon, `${value} ${label}`, useIcons);
+  return `**Aging** ${cell('🟢', b['0–3d'], '0–3d')} · ${cell('🟡', b['3–7d'], '3–7d')} · ${cell('🟠', b['1–2w'], '1–2w')} · ${cell('🔴', b['2w+'], '2w+')}`;
+}
+
+// ---- Hero --------------------------------------------------------------------
+
+function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel, useIcons = true }) {
+  const now = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
+  const userUrl = `https://github.com/${ctx.username}`;
+  const tag = orgLabel ? ` · ${orgLabel}` : '';
+  const heading = `### Standup · [\`${ctx.username}\`](${userUrl})${tag}`;
+  const updated = `_Updated ${now}_`;
+
+  const spark = velocity.buckets.length ? unicodeSparkline(velocity.buckets) : '';
+  const wwOpen = prevWeekStats ? diffArrow(prevWeekStats.opened, weekStats.opened) : '';
+  const wwMerge = prevWeekStats ? diffArrow(prevWeekStats.merged, weekStats.merged) : '';
+  const wwReview = prevWeekStats ? diffArrow(prevWeekStats.reviewed, weekStats.reviewed) : '';
+
+  const kpis = [
+    `**Last 30 days** ${weekStats.opened} opened${wwOpen} · ${weekStats.merged} merged${wwMerge} · ${weekStats.reviewed} reviewed${wwReview}`,
+    velocity.buckets.length ? `velocity \`${spark}\` ${velocity.average}/wk` : null
+  ].filter(Boolean).join(' · ');
+
+  const pillEntries = [
+    { icon: '🟢', label: 'ready', value: counts.ready },
+    { icon: '🔴', label: 'failing', value: counts.failing },
+    { icon: '🟠', label: 'stale', value: counts.stale },
+    { icon: '🟡', label: 'awaiting reply', value: counts.awaiting },
+    { icon: '🔵', label: 'review requests', value: counts.review }
+  ];
+  const pills = `**Inbox** ${pillEntries.map((p) => withIcon(p.icon, `${p.value} ${p.label}`, useIcons)).join(' · ')}`;
+
+  const lines = [];
+  if (patBanner) {
+    lines.push(patBanner, '');
+  }
+  lines.push(`> ${heading}`, `> ${updated}`, `>`, `> ${kpis}`, `>`, `> ${pills}`);
+  if (aging) {
+    lines.push(`>`, `> ${aging}`);
+  }
+  if (diffLine) {
+    lines.push(`>`, `> ${diffLine}`);
+  }
+  return lines.join('\n');
+}
+
+// ---- Footer ------------------------------------------------------------------
+
+function buildFooter(ctx) {
+  const u = ctx.username;
+  const openUrl = `https://github.com/issues?q=type%3Apr+author%3A${u}+is%3Aopen`;
+  const reviewUrl = `https://github.com/issues?q=type%3Apr+review-requested%3A${u}+is%3Aopen`;
+  return [
+    '---',
+    `_[View open PRs on GitHub](${openUrl}) · ` +
+      `[Review requests](${reviewUrl}) · ` +
+      '[Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_'
+  ].join('\n');
+}
+
+// ---- Awaiting reply (with conversation preview) ------------------------------
+
+function trimPreview(body, max = 100) {
+  if (!body) return '';
+  const flat = String(body).replace(/\r?\n+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (flat.length <= max) return flat;
+  return flat.slice(0, max - 1).trimEnd() + '…';
+}
+
+async function fetchAwaitingReplyItems(ctx, perRows, extraScope = '') {
+  const username = ctx.username;
+  const prs = await paginateSearch(
+    ctx.octokit,
+    `type:pr author:${username} is:open${ctx.shared.includeDrafts ? '' : ' -draft:true'}${buildScope(ctx, extraScope)}`,
+    { sort: 'updated', order: 'desc' }
+  ).catch(() => []);
+
+  const enriched = [];
+  for (const pr of prs) {
+    const full = repoFullName(pr);
+    const [owner, repo] = full.split('/');
+    if (!owner || !repo) continue;
+    const [issueComments, reviewComments, reviews] = await Promise.all([
+      ctx.octokit.rest.issues.listComments({ owner, repo, issue_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => []),
+      ctx.octokit.rest.pulls.listReviewComments({ owner, repo, pull_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => []),
+      ctx.octokit.rest.pulls.listReviews({ owner, repo, pull_number: pr.number, per_page: 100 }).then((r) => r.data).catch(() => [])
+    ]);
+    const events = [];
+    for (const c of issueComments) events.push({ user: c.user?.login, at: c.created_at, body: c.body });
+    for (const c of reviewComments) events.push({ user: c.user?.login, at: c.created_at, body: c.body });
+    for (const r of reviews) if (r.submitted_at) events.push({ user: r.user?.login, at: r.submitted_at, body: r.body });
+    if (events.length === 0) continue;
+    events.sort((a, b) => new Date(b.at) - new Date(a.at));
+    const last = events[0];
+    if (!last.user || last.user === username) continue;
+    enriched.push({ pr, owner, repo, lastUser: last.user, lastAt: last.at, lastBody: last.body });
+  }
+  enriched.sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt));
+  return enriched.slice(0, perRows);
+}
+
+// ---- Needs attention --------------------------------------------------------
+
+async function buildNeedsAttentionItems(ctx, { failingCount, staleCount, readyCount }, perRows, extraScope = '') {
+  const items = [];
+  const username = ctx.username;
+  const scope = buildScope(ctx, extraScope);
+
+  const queries = [];
+  if (readyCount > 0) {
+    queries.push({ tag: 'ready', q: `type:pr author:${username} is:open review:approved${scope}` });
+  }
+  if (staleCount > 0) {
+    queries.push({
+      tag: 'stale',
+      q: `type:pr author:${username} is:open updated:<${isoDaysAgo(ctx.config?.stale_days || 14)}${scope}`
+    });
+  }
+  if (failingCount > 0) {
+    queries.push({ tag: 'failing', q: `type:pr author:${username} is:open${scope}` });
+  }
+
+  const results = await Promise.all(
+    queries.map((q) =>
+      ctx.octokit.rest.search.issuesAndPullRequests({
+        q: q.q,
+        sort: 'updated',
+        order: q.tag === 'stale' ? 'asc' : 'desc',
+        per_page: perRows
+      }).then((r) => ({ tag: q.tag, items: r.data.items || [] })).catch(() => ({ tag: q.tag, items: [] }))
+    )
+  );
+
+  for (const r of results) {
+    for (const item of r.items.slice(0, perRows)) {
+      const full = repoFullName(item);
+      const [owner, repo] = full.split('/');
+      items.push({
+        tag: r.tag, title: item.title, url: item.html_url,
+        owner, repo, number: item.number, updated_at: item.updated_at
+      });
+    }
+  }
+  return items;
+}
+
+function renderNeedsAttentionChecklist(items, acked, perRows, useIcons = true) {
+  if (!items.length) return null;
+  const seen = new Set();
+  const deduped = [];
+  for (const item of items) {
+    const key = ackKey(item.owner, item.repo, item.number);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(item);
+  }
+  const why = (tag, item) => {
+    if (tag === 'failing') return withIcon('🔴', 'CI failing', useIcons);
+    if (tag === 'stale') return withIcon('🟠', `stale ${age(item.updated_at)}`, useIcons);
+    if (tag === 'ready') return withIcon('🟢', 'ready to merge', useIcons);
+    return tag;
+  };
+  const checklistItems = deduped.slice(0, perRows).map((item) => ({
+    ref: ackKey(item.owner, item.repo, item.number),
+    fingerprint: fingerprint(`${item.tag}|${item.updated_at}`),
+    body: `${why(item.tag, item)} — ${link(item.title, item.url)} — ${prRef(item.owner, item.repo, item.number)}`
+  }));
+  return renderChecklist({
+    heading: 'Needs attention',
+    items: checklistItems,
+    acked,
+    emptyState: '_Nothing needs attention._'
+  });
+}
+
+function renderAwaitingReplyChecklist(items, acked) {
+  if (!items.length) return null;
+  const checklistItems = items.map(({ pr, owner, repo, lastUser, lastAt, lastBody }) => {
+    const preview = trimPreview(lastBody, 100);
+    const previewLine = preview ? `<br>&nbsp;&nbsp;_> ${preview}_` : '';
+    return {
+      ref: ackKey(owner, repo, pr.number),
+      fingerprint: fingerprint(`${lastUser}|${lastAt}`),
+      body: `${link(pr.title, pr.html_url)} — ${prRef(owner, repo, pr.number)} — ${userLink(lastUser)} ${age(lastAt)}${previewLine}`
+    };
+  });
+  return renderChecklist({
+    heading: 'Awaiting your reply',
+    items: checklistItems,
+    acked,
+    emptyState: '_No threads waiting on you._'
+  });
+}
+
+function subsectionBlock(title, count, content) {
+  if (!count) return null;
+  return `#### ${title} (${count})\n\n${content}`;
+}
+
+// ---- Single standup group (one user, optional org filter) ------------------
+
+async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraScope, patBanner, prevWeekStats, existing }) {
+  const [
+    weekStats,
+    velocity,
+    openPrsResult,
+    reviewInboxResult,
+    readyResult,
+    failingResult,
+    staleResult,
+    mergedResult,
+    activityResult,
+    awaitingItems
+  ] = await Promise.all([
+    fetchPeriodStats(ctx, isoDaysAgo(30), null, extraScope).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
+    fetchVelocity(ctx, 12, extraScope).catch(() => ({ buckets: [], total: 0, average: '0.0', items: [] })),
+    openPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
+    reviewInbox.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
+    readyToMerge.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
+    failingCi.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
+    stalePrs.render(subCtx(ctx, 20)).catch(() => ({ metadata: { count: 0 } })),
+    mergedPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
+    activityFeed.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
+    fetchAwaitingReplyItems(ctx, perBlockRows, extraScope)
+  ]);
+
+  const responseInboxResult = await responseInbox.render(subCtx(ctx, perBlockRows))
+    .catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } }));
+
+  const counts = {
+    ready: readyResult.metadata?.count || 0,
+    failing: failingResult.metadata?.count || 0,
+    stale: staleResult.metadata?.count || 0,
+    awaiting: responseInboxResult.metadata?.count || 0,
+    review: reviewInboxResult.metadata?.count || 0,
+    merged: mergedResult.metadata?.count || 0,
+    activity: activityResult.metadata?.count || 0
+  };
+
+  const needsItems = await buildNeedsAttentionItems(
+    ctx,
+    { failingCount: counts.failing, staleCount: counts.stale, readyCount: counts.ready },
+    perBlockRows,
+    extraScope
+  );
+
+  const useIcons = ctx.render?.theme !== 'minimal';
+  const aging = velocity.items && velocity.items.length ? buildAgingLine(velocity.items, useIcons) : null;
+  const diffLine = orgLabel ? null : buildDiffLine(existing, weekStats, counts);
+
+  const blocks = [];
+  for (const block of layout) {
+    if (block === 'hero') {
+      blocks.push(buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, diffLine, patBanner, orgLabel, useIcons }));
+    } else if (block === 'needs_attention') {
+      const na = renderNeedsAttentionChecklist(needsItems, acked, perBlockRows, useIcons);
+      if (na) blocks.push(na);
+    } else if (block === 'open_prs') {
+      const sub = subsectionBlock('Open pull requests', openPrsResult.metadata?.count, openPrsResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'recently_merged') {
+      const sub = subsectionBlock('Recently merged', mergedResult.metadata?.count, mergedResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'activity_feed') {
+      const sub = subsectionBlock('Recent activity', activityResult.metadata?.count, activityResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'response_inbox') {
+      const aw = renderAwaitingReplyChecklist(awaitingItems, acked);
+      if (aw) blocks.push(aw);
+    } else if (block === 'review_inbox') {
+      const sub = subsectionBlock('Pending review requests', counts.review, reviewInboxResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'stale_prs') {
+      const sub = subsectionBlock('Stale', counts.stale, staleResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'failing_ci') {
+      const sub = subsectionBlock('Failing CI', counts.failing, failingResult.content);
+      if (sub) blocks.push(sub);
+    } else if (block === 'ready_to_merge') {
+      const sub = subsectionBlock('Ready to merge', counts.ready, readyResult.content);
+      if (sub) blocks.push(sub);
+    }
+  }
+
+  return { blocks, counts, weekStats };
+}
+
+// ---- Top-level orchestrator -------------------------------------------------
+
+async function render(ctx) {
+  const { config, existing } = ctx;
+  const layout = config?.layout && config.layout.length ? config.layout : DEFAULT_LAYOUT;
+  const perBlockRows = config?.per_block_rows || 5;
+  const orgs = config?.orgs || [];
+  const acked = parseAcknowledged(existing || '');
+
+  // PAT detection — run once and reuse across org groups.
+  let patBanner = null;
+  if (!config?.disable_pat_warning) {
+    const authLogin = await detectTokenAuthor(ctx);
+    patBanner = buildPatBanner(authLogin, ctx.username);
+    if (patBanner) core.info(`PAT banner active (token user = ${authLogin}).`);
+  }
+
+  // Period-over-period arrows compare the last 30 days to the preceding 30.
+  const prevWeekStats = await fetchPeriodStats(ctx, isoDaysAgo(60), isoDaysAgo(30)).catch(() => null);
+
+  const allBlocks = [];
+  const aggregateMeta = {};
+
+  if (orgs.length === 0) {
+    const { blocks, counts, weekStats } = await renderGroup(ctx, {
+      acked, perBlockRows, layout, orgLabel: null, extraScope: '',
+      patBanner, prevWeekStats, existing
+    });
+    allBlocks.push(...blocks);
+    Object.assign(aggregateMeta, {
+      open_prs_count: 0, // populated below by individual sub-fetches if needed
+      awaiting_reply_count: counts.awaiting,
+      review_requests_count: counts.review,
+      ready_count: counts.ready,
+      failing_count: counts.failing,
+      stale_count: counts.stale,
+      merged_count: counts.merged,
+      activity_count: counts.activity,
+      last30_opened: weekStats.opened,
+      last30_merged: weekStats.merged,
+      last30_reviewed: weekStats.reviewed
+    });
+  } else {
+    let firstOrg = true;
+    for (const org of orgs) {
+      const { blocks, counts } = await renderGroup(ctx, {
+        acked, perBlockRows, layout,
+        orgLabel: `org [\`${org}\`](https://github.com/${org})`,
+        extraScope: `org:${org}`,
+        patBanner: firstOrg ? patBanner : null,
+        prevWeekStats: null,
+        existing
+      });
+      if (blocks.length) allBlocks.push(...blocks);
+      aggregateMeta[`${org}_failing_count`] = counts.failing;
+      aggregateMeta[`${org}_stale_count`] = counts.stale;
+      aggregateMeta[`${org}_ready_count`] = counts.ready;
+      aggregateMeta[`${org}_awaiting_count`] = counts.awaiting;
+      firstOrg = false;
+    }
+  }
+
+  // Always append footer at the very end.
+  allBlocks.push(buildFooter(ctx));
+
+  if (allBlocks.length === 1) {
+    // Only the footer — nothing rendered.
+    allBlocks.unshift('_No data to render._');
+  }
+
+  aggregateMeta.acknowledged_count = acked.size;
+
+  return {
+    content: allBlocks.join('\n\n'),
+    metadata: aggregateMeta
+  };
+}
+
+module.exports = {
+  name: 'standup',
+  title: 'Standup',
+  defaultStyle: 'composite',
+  defaultColumns: null,
+  defaultEmptyState: 'No data available.',
+  availableColumns: {},
+  defaultLayout: DEFAULT_LAYOUT,
+  render,
+  // exported for tests
+  parseExistingSnapshot,
+  buildDiffLine,
+  computeAging,
+  trimPreview
 };
 
 

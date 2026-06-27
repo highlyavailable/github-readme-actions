@@ -145,7 +145,7 @@ That's it. The action runs on the schedule, regenerates each block, and commits 
 
 | Section | Description | Docs |
 |---|---|---|
-| `standup` | A single block containing the full dashboard: KPIs, velocity sparkline, a "needs attention" checklist, and embedded tables for open PRs / recently merged / response inbox / review inbox. (Alias: `command_center`.) | [docs](docs/sections/standup.md) |
+| `standup` | A single block containing the full dashboard: KPIs, velocity sparkline, a "needs attention" checklist, and embedded tables for open PRs / recently merged / response inbox / review inbox. | [docs](docs/sections/standup.md) |
 
 ### Inbox / activity (tables and lists)
 
@@ -159,7 +159,7 @@ That's it. The action runs on the schedule, regenerates each block, and commits 
 | `ready_to_merge` | Your PRs approved + mergeable + green | [docs](docs/sections/ready-to-merge.md) |
 | `recent_activity` | Issues/PRs you've commented on recently, grouped by repo | [docs](docs/sections/recent-activity.md) |
 | `merged_prs` | Recently merged PRs for bookkeeping | [docs](docs/sections/merged-prs.md) |
-| `pinned_prs` | Curated showcase list (v1 compat) | [docs](docs/sections/pinned-prs.md) |
+| `pinned_prs` | Curated showcase list of PRs, filtered by state/date with an explicit blacklist | [docs](docs/sections/pinned-prs.md) |
 
 ### Visualizations
 
@@ -194,8 +194,8 @@ All inputs are documented in [docs/configuration.md](docs/configuration.md). The
 | `stale_days` | `14` | Inactivity threshold for `stale_prs` |
 | `velocity_weeks` | `12` | Weeks plotted by `velocity_chart` |
 | `heatmap_months` | `12` | Months covered by `commit_heatmap` and `streak` |
-| `command_center_layout` | `hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed` | Blocks inside `standup` |
-| `command_center_rows` | `5` | Per-block row cap inside `standup` |
+| `standup_layout` | `hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed` | Blocks inside `standup` |
+| `standup_rows` | `5` | Per-block row cap inside `standup` |
 
 Section-specific knobs (`activity_days`, `merged_window_days`, `stats_periods`, etc.) are listed in [docs/configuration.md](docs/configuration.md).
 
@@ -218,10 +218,6 @@ Ready-to-copy workflow files live in [examples/](examples/):
 | `sections_rendered` | Comma-separated list of sections that rendered successfully |
 | `sections_failed` | Comma-separated list of sections that errored or had no marker |
 | `<section>_count` | Row count rendered for that section |
-
-## Migrating from v1
-
-v2 is a clean break: input names are lowercase snake_case, the marker format changed, and the action is now multi-section. Legacy `pinned_prs` markers (`<!--START_SECTION:github-readme-actions-pinned_prs-->`) are still recognized. Full guide in [MIGRATION.md](MIGRATION.md).
 
 ## Development
 

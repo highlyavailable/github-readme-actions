@@ -1,4 +1,4 @@
-const section = require('../../src/sections/command-center');
+const section = require('../../src/sections/standup');
 const { searchItem, ctx } = require('../helpers');
 
 function fullOctokit() {
@@ -41,7 +41,7 @@ function fullOctokit() {
   };
 }
 
-describe('command_center', () => {
+describe('standup', () => {
   test('renders compact hero with KPI line and inbox pills', async () => {
     const octokit = fullOctokit();
     const { content, metadata } = await section.render(ctx({ octokit }));

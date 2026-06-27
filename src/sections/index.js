@@ -12,7 +12,7 @@ const readyToMerge = require('./ready-to-merge');
 const velocityChart = require('./velocity-chart');
 const commitHeatmap = require('./commit-heatmap');
 const streak = require('./streak');
-const commandCenter = require('./command-center');
+const standup = require('./standup');
 
 const REGISTRY = {
   [openPrs.name]: openPrs,
@@ -29,10 +29,7 @@ const REGISTRY = {
   [velocityChart.name]: velocityChart,
   [commitHeatmap.name]: commitHeatmap,
   [streak.name]: streak,
-  [commandCenter.name]: commandCenter,
-  // `standup` is the current name for the composite dashboard; `command_center`
-  // is kept as an alias so existing markers and workflows keep working.
-  standup: commandCenter
+  [standup.name]: standup
 };
 
 function get(name) {

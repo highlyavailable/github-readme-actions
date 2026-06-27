@@ -35,9 +35,6 @@ jobs:
           <!--readme-actions:standup:start-->
           <!--readme-actions:standup:end-->
 
-          <!--readme-actions:command_center:start-->
-          <!--readme-actions:command_center:end-->
-
           <!--readme-actions:open_prs:start-->
           <!--readme-actions:open_prs:end-->
 
@@ -86,7 +83,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ github.repository_owner }}
-          sections: standup, command_center, open_prs, response_inbox, review_inbox, recent_activity, activity_feed, merged_prs, stats, pinned_prs
+          sections: standup, open_prs, response_inbox, review_inbox, recent_activity, activity_feed, merged_prs, stats, pinned_prs
           target_file: /tmp/test-readme.md
           commit: false
           max_rows: 3

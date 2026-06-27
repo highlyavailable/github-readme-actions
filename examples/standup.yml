@@ -28,6 +28,6 @@ jobs:
           # Blocks rendered inside the standup section, in order. Valid blocks:
           # hero, needs_attention, open_prs, recently_merged, stale_prs,
           # failing_ci, ready_to_merge, response_inbox, review_inbox, activity_feed.
-          command_center_layout: hero, needs_attention, ready_to_merge, failing_ci, response_inbox, review_inbox
-          command_center_rows: 5
+          standup_layout: hero, needs_attention, ready_to_merge, failing_ci, response_inbox, review_inbox
+          standup_rows: 5
           viz_style: mermaid

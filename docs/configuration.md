@@ -47,8 +47,8 @@ These apply to every section that renders rows or filters by repository.
 | `stale_days` | `stale_prs` | `14` | Inactivity threshold in days. |
 | `velocity_weeks` | `velocity_chart` | `12` | Weeks plotted. |
 | `heatmap_months` | `commit_heatmap`, `streak` | `12` | Months of GraphQL contribution history. |
-| `command_center_layout` | `standup` | _(see docs)_ | Comma-separated list of blocks inside the composite. |
-| `command_center_rows` | `standup` | `5` | Per-block row cap inside the composite. |
+| `standup_layout` | `standup` | _(see docs)_ | Comma-separated list of blocks inside the composite. |
+| `standup_rows` | `standup` | `5` | Per-block row cap inside the composite. |
 | `viz_style` | global | `mermaid` | Visualization style for chart sections: `mermaid`, `unicode`, `both`. |
 
 ## Markers
@@ -61,13 +61,6 @@ Each section is identified in your target file by a comment marker pair:
 ```
 
 Anything between the two markers is replaced on every run. Anything outside is preserved verbatim.
-
-Legacy v1 markers for `pinned_prs` are still recognized:
-
-```
-<!--START_SECTION:github-readme-actions-pinned_prs-->
-<!--END_SECTION:github-readme-actions-pinned_prs-->
-```
 
 ## Outputs
 

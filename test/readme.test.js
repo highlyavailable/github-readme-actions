@@ -7,23 +7,17 @@ const SOURCE = `# My README
 old content
 <!--readme-actions:open_prs:end-->
 
-## Pinned (legacy)
-<!--START_SECTION:github-readme-actions-pinned_prs-->
+## Pinned
+<!--readme-actions:pinned_prs:start-->
 old pinned
-<!--END_SECTION:github-readme-actions-pinned_prs-->
+<!--readme-actions:pinned_prs:end-->
 `;
 
 describe('readme markers', () => {
-  test('findSection locates new-style markers', () => {
+  test('findSection locates markers', () => {
     const match = findSection(SOURCE, 'open_prs');
     expect(match).not.toBeNull();
     expect(match.start).toBe('<!--readme-actions:open_prs:start-->');
-  });
-
-  test('findSection locates legacy markers', () => {
-    const match = findSection(SOURCE, 'pinned_prs');
-    expect(match).not.toBeNull();
-    expect(match.start).toBe('<!--START_SECTION:github-readme-actions-pinned_prs-->');
   });
 
   test('findSection returns null when markers missing', () => {

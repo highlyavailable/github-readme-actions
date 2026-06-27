@@ -8,21 +8,12 @@ function markersFor(sectionName) {
   };
 }
 
-// Legacy v1 markers — kept for back-compat with pinned_prs.
-function legacyMarkersFor(sectionName) {
-  return {
-    start: `<!--START_SECTION:github-readme-actions-${sectionName}-->`,
-    end: `<!--END_SECTION:github-readme-actions-${sectionName}-->`
-  };
-}
-
 function findSection(source, sectionName) {
-  for (const variant of [markersFor(sectionName), legacyMarkersFor(sectionName)]) {
-    const startIdx = source.indexOf(variant.start);
-    const endIdx = source.indexOf(variant.end);
-    if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
-      return { ...variant, startIdx, endIdx };
-    }
+  const variant = markersFor(sectionName);
+  const startIdx = source.indexOf(variant.start);
+  const endIdx = source.indexOf(variant.end);
+  if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+    return { ...variant, startIdx, endIdx };
   }
   return null;
 }
@@ -75,7 +66,6 @@ function readTarget(targetFile) {
 
 module.exports = {
   markersFor,
-  legacyMarkersFor,
   findSection,
   extractSectionContent,
   replaceSection,

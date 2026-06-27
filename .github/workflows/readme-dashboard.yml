@@ -21,6 +21,6 @@ jobs:
           username: highlyavailable
           sections: standup, merged_prs, activity_feed
           stale_days: 21
-          command_center_rows: 5      # keeps the standup preview compact
+          standup_rows: 5             # keeps the standup preview compact
           merged_window_days: 3650    # ~10 years -> effectively all-time merged PRs
           max_rows: 50                # cap for the standalone merged + activity lists

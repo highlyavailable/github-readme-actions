@@ -2,8 +2,6 @@
 
 A composite section: one marker pair, one block, dense by design. Output is grouped, deep-linked, and reads at a glance — what needs your attention up top, what you've shipped below.
 
-> `command_center` is a deprecated alias for `standup`. Existing markers, the `command_center_*` inputs, and the `command_center_*` outputs all keep working.
-
 ## Marker
 
 ```
@@ -40,8 +38,8 @@ The hero is a single blockquote: heading, timestamp, KPI line, inbox pills. The 
 
 | Input | Default | Effect |
 |---|---|---|
-| `command_center_layout` | `hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed` | Comma-separated list of blocks in order. |
-| `command_center_rows` | `5` | Per-block row cap for embedded tables. |
+| `standup_layout` | `hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed` | Comma-separated list of blocks in order. |
+| `standup_rows` | `5` | Per-block row cap for embedded tables. |
 | `stale_days` | `14` | Threshold used by the `needs_attention` and `stale_prs` blocks. |
 
 ## Available blocks
@@ -93,17 +91,15 @@ sections:
 
 | Output | Description |
 |---|---|
-| `command_center_awaiting_reply_count` | Threads waiting on you |
-| `command_center_review_requests_count` | Pending review requests |
-| `command_center_ready_count` | Approved + mergeable PRs |
-| `command_center_failing_count` | PRs with failing CI |
-| `command_center_stale_count` | PRs untouched past `stale_days` |
-| `command_center_merged_count` | PRs merged in the window |
-| `command_center_last30_opened` | PRs opened in the last 30 days |
-| `command_center_last30_merged` | PRs merged in the last 30 days |
-| `command_center_last30_reviewed` | PRs you reviewed in the last 30 days |
-
-(Output names keep the `command_center_` prefix for back-compat.)
+| `standup_awaiting_reply_count` | Threads waiting on you |
+| `standup_review_requests_count` | Pending review requests |
+| `standup_ready_count` | Approved + mergeable PRs |
+| `standup_failing_count` | PRs with failing CI |
+| `standup_stale_count` | PRs untouched past `stale_days` |
+| `standup_merged_count` | PRs merged in the window |
+| `standup_last30_opened` | PRs opened in the last 30 days |
+| `standup_last30_merged` | PRs merged in the last 30 days |
+| `standup_last30_reviewed` | PRs you reviewed in the last 30 days |
 
 ## Acknowledge checkboxes
 

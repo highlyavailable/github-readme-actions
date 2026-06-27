@@ -14,7 +14,7 @@ inputs:
     required: false
     default: ${{ github.repository_owner }}
   sections:
-    description: 'Comma-separated list of dashboard sections to render. Available: standup, open_prs, response_inbox, review_inbox, recent_activity, activity_feed, merged_prs, stats, pinned_prs, stale_prs, failing_ci, ready_to_merge, velocity_chart, commit_heatmap, streak. (command_center is a deprecated alias for standup.)'
+    description: 'Comma-separated list of dashboard sections to render. Available: standup, open_prs, response_inbox, review_inbox, recent_activity, activity_feed, merged_prs, stats, pinned_prs, stale_prs, failing_ci, ready_to_merge, velocity_chart, commit_heatmap, streak.'
     required: false
     default: 'open_prs,response_inbox,review_inbox,recent_activity'
   target_file:
@@ -99,7 +99,6 @@ inputs:
     required: false
     default: 'week,month,year'
 
-  # v2.1 sections
   stale_days:
     description: '[stale_prs] Days of inactivity before a PR is considered stale.'
     required: false
@@ -112,14 +111,14 @@ inputs:
     description: '[commit_heatmap, streak] Months of contribution history to include.'
     required: false
     default: '12'
-  command_center_layout:
+  standup_layout:
     description: '[standup] Comma-separated list of blocks. Available: hero, needs_attention, open_prs, recently_merged, stale_prs, failing_ci, ready_to_merge, response_inbox, review_inbox, activity_feed. Default: hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed.'
     required: false
-  command_center_rows:
+  standup_rows:
     description: '[standup] Per-block row cap for embedded tables.'
     required: false
     default: '5'
-  command_center_orgs:
+  standup_orgs:
     description: '[standup] Comma-separated GitHub orgs to render separate sub-dashboards for. Each org gets its own hero + needs_attention + tables, scoped via `org:<name>` in queries. Empty means a single global view.'
     required: false
   disable_pat_warning:
@@ -135,7 +134,7 @@ inputs:
     required: false
     default: 'mermaid'
 
-  # pinned_prs (kept from v1 for back-compat)
+  # pinned_prs
   pinned_prs_state:
     description: '[pinned_prs] Filter PRs by state: open, closed, merged, all.'
     required: false

@@ -42,7 +42,6 @@ The Release workflow creates the GitHub release, publishes to the GitHub Actions
 - [ ] `make ci` green locally
 - [ ] `dist/` committed and reflects current `src/`
 - [ ] `package.json` version bumped
-- [ ] `MIGRATION.md` updated for breaking changes
 - [ ] Section docs updated for any new inputs
 
 ## Hotfix

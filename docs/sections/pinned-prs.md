@@ -1,19 +1,12 @@
 # pinned_prs
 
-Curated showcase list of pull requests, with filtering by state, date, and an explicit blacklist. Kept for backwards compatibility with v1 of this action.
+Curated showcase list of pull requests, with filtering by state, date, and an explicit blacklist.
 
 ## Marker
 
 ```
 <!--readme-actions:pinned_prs:start-->
 <!--readme-actions:pinned_prs:end-->
-```
-
-Legacy v1 markers are also accepted:
-
-```
-<!--START_SECTION:github-readme-actions-pinned_prs-->
-<!--END_SECTION:github-readme-actions-pinned_prs-->
 ```
 
 ## Output

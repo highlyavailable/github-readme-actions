@@ -16,8 +16,7 @@ const KNOWN_SECTIONS = [
   'velocity_chart',
   'commit_heatmap',
   'streak',
-  'standup',
-  'command_center'
+  'standup'
 ];
 
 function readBool(name, fallback) {
@@ -70,15 +69,6 @@ function readJson(name) {
 
 function loadConfig() {
   const owner = github.context && github.context.repo ? github.context.repo.owner : '';
-
-  // Shared by the `standup` section and its `command_center` alias.
-  const standupConfig = {
-    layout: readList('command_center_layout'),
-    per_block_rows: readInt('command_center_rows', 5),
-    orgs: readList('command_center_orgs'),
-    disable_pat_warning: readBool('disable_pat_warning', false),
-    stale_days: readInt('stale_days', 14)
-  };
 
   const cfg = {
     githubToken: readToken(),
@@ -150,8 +140,13 @@ function loadConfig() {
       streak: {
         months: readInt('heatmap_months', 12)
       },
-      standup: standupConfig,
-      command_center: standupConfig,
+      standup: {
+        layout: readList('standup_layout'),
+        per_block_rows: readInt('standup_rows', 5),
+        orgs: readList('standup_orgs'),
+        disable_pat_warning: readBool('disable_pat_warning', false),
+        stale_days: readInt('stale_days', 14)
+      },
       open_prs: {
         show_ci: readBool('open_prs_show_ci', false)
       }
