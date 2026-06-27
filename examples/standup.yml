@@ -1,0 +1,33 @@
+name: Readme dashboard (standup)
+
+# Single composite section: one marker pair in the README, one block that
+# renders the whole dashboard — KPIs, velocity sparkline, a "needs attention"
+# checklist, and embedded tables. Plus standalone visualization blocks.
+#
+# README markers for this setup:
+#   <!--readme-actions:standup:start--><!--readme-actions:standup:end-->
+#   <!--readme-actions:commit_heatmap:start--><!--readme-actions:commit_heatmap:end-->
+#   <!--readme-actions:streak:start--><!--readme-actions:streak:end-->
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: highlyavailable/github-readme-actions@v2
+        with:
+          github_token: ${{ secrets.DASHBOARD_PAT }}
+          sections: standup, commit_heatmap, streak
+          # Blocks rendered inside the standup section, in order. Valid blocks:
+          # hero, needs_attention, open_prs, recently_merged, stale_prs,
+          # failing_ci, ready_to_merge, response_inbox, review_inbox, activity_feed.
+          command_center_layout: hero, needs_attention, ready_to_merge, failing_ci, response_inbox, review_inbox
+          command_center_rows: 5
+          viz_style: mermaid

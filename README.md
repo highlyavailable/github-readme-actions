@@ -5,15 +5,15 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/highlyavailable/github-readme-actions/ci.yml?branch=main&label=ci)](https://github.com/highlyavailable/github-readme-actions/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A GitHub Action that turns any markdown file into a **live OSS contributor dashboard**: open PRs, recently merged/accepted PRs, threads awaiting your response, pending review requests, a timestamped activity timeline (comments, reviews, pushes, releases), and contribution stats — refreshed on a schedule, scoped to your account, configurable per section, and committed back to the repo.
+A GitHub Action that keeps a **live contributor dashboard** in any markdown file: open PRs, recently merged PRs, threads awaiting your response, pending review requests, a timestamped activity timeline, and contribution stats — refreshed on a schedule, scoped to your account, configurable per section, and committed back to the repo.
 
-Built for maintainers and principal engineers who manage activity across many repositories.
+It's a single place to see what needs your attention and what you've shipped across every repo you work in.
 
 ---
 
 ## What it produces
 
-Each section is a self-contained markdown block, addressed by a comment marker pair. You compose your README out of the blocks you want; the action keeps them in sync. Example:
+Each section is a self-contained markdown block, addressed by a comment marker pair. You compose your README out of the blocks you want; the action keeps them in sync. The headline block is `standup` — a single marker pair with the whole dashboard inside. Example:
 
 ```
 <!--readme-actions:response_inbox:start-->
@@ -25,13 +25,13 @@ Each section is a self-contained markdown block, addressed by a comment marker p
 
 ## Live demo
 
-This README dogfoods the action. The block below is a single `command_center` section — one marker pair, full dashboard inside. Regenerated every 6 hours by [.github/workflows/readme-dashboard.yml](.github/workflows/readme-dashboard.yml).
+This README dogfoods the action. The block below is a single `standup` section — one marker pair, full dashboard inside. Regenerated every 6 hours by [.github/workflows/readme-dashboard.yml](.github/workflows/readme-dashboard.yml).
 
-<!--readme-actions:command_center:start-->
-> ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-27 12:28 UTC_
+<!--readme-actions:standup:start-->
+> ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
+> _Updated 2026-06-24 01:55 UTC_
 >
-> **This week** 0 opened (=) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁█▆▁▃▁▁▁` 0.7/wk
+> **Last 30 days** 0 opened (=) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁█▁▁▂▁▁` 0.7/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 1 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
@@ -39,13 +39,13 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 #### Needs attention (1)
 
-- [ ] 🟠 stale 4w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=1hy77uq-->
+- [ ] 🟠 stale 3w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=1hy77uq-->
 
 #### Open pull requests (1)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 4w |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 3w |
 
 #### Recently merged (4)
 
@@ -58,19 +58,17 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 #### Awaiting your reply (1)
 
-- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 4w <!--ack:fp=1j34u42-->
+- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 3w <!--ack:fp=1j34u42-->
 
-#### Recent activity (6)
+#### Recent activity (3)
 
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(3d)_
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(3d)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
-- ⬆️ Pushed 0 commits to `feature/1515-per-node-callback` in [`highlyavailable/astronomer-cosmos`](https://github.com/highlyavailable/astronomer-cosmos) _(2w)_
-- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
+- 📤 Opened PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
-<!--readme-actions:command_center:end-->
+<!--readme-actions:standup:end-->
 
 ### Full merged-PR history
 
@@ -96,12 +94,9 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(3d)_
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(3d)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
-- ⬆️ Pushed 0 commits to `feature/1515-per-node-callback` in [`highlyavailable/astronomer-cosmos`](https://github.com/highlyavailable/astronomer-cosmos) _(2w)_
-- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
-- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
+- 📤 Opened PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
@@ -150,7 +145,7 @@ That's it. The action runs on the schedule, regenerates each block, and commits 
 
 | Section | Description | Docs |
 |---|---|---|
-| `command_center` | A single block containing a full dashboard widget: KPIs, velocity chart, and embedded tables for open PRs / response inbox / review inbox | [docs](docs/sections/command-center.md) |
+| `standup` | A single block containing the full dashboard: KPIs, velocity sparkline, a "needs attention" checklist, and embedded tables for open PRs / recently merged / response inbox / review inbox. (Alias: `command_center`.) | [docs](docs/sections/standup.md) |
 
 ### Inbox / activity (tables and lists)
 
@@ -199,8 +194,8 @@ All inputs are documented in [docs/configuration.md](docs/configuration.md). The
 | `stale_days` | `14` | Inactivity threshold for `stale_prs` |
 | `velocity_weeks` | `12` | Weeks plotted by `velocity_chart` |
 | `heatmap_months` | `12` | Months covered by `commit_heatmap` and `streak` |
-| `command_center_layout` | `kpis,velocity,open_prs,response_inbox,review_inbox` | Blocks inside `command_center` |
-| `command_center_rows` | `5` | Per-block row cap inside `command_center` |
+| `command_center_layout` | `hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed` | Blocks inside `standup` |
+| `command_center_rows` | `5` | Per-block row cap inside `standup` |
 
 Section-specific knobs (`activity_days`, `merged_window_days`, `stats_periods`, etc.) are listed in [docs/configuration.md](docs/configuration.md).
 
@@ -213,7 +208,7 @@ Ready-to-copy workflow files live in [examples/](examples/):
 - [examples/scoped.yml](examples/scoped.yml) — restrict to a specific set of repositories
 - [examples/no-commit.yml](examples/no-commit.yml) — render only, commit handled by your own step
 - [examples/readme-dashboard.yml](examples/readme-dashboard.yml) — drop-in `.github/readme-dashboard.yml` showing every customization knob
-- [examples/command-center.yml](examples/command-center.yml) — single composite section + visualizations
+- [examples/standup.yml](examples/standup.yml) — single composite `standup` section + visualizations
 
 ## Outputs
 
@@ -232,7 +227,7 @@ v2 is a clean break: input names are lowercase snake_case, the marker format cha
 
 ```bash
 make install      # install deps
-make test         # run jest suite (57 unit tests, no network)
+make test         # run jest suite (no network)
 make ci           # lint, test, build, verify dist/ is fresh
 make build        # rebuild dist/
 ```

@@ -1,13 +1,11 @@
 const { paginateSearch, repoFullName } = require('../github');
+const { openPrQuery } = require('../query');
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate, userLink } = require('../render');
 
-function buildQuery(username, shared) {
-  const parts = [`type:pr`, `author:${username}`, `is:open`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
+// Cap how many candidate PRs we enrich with per-PR comment/review lookups.
+// Each candidate costs 3 API calls, so without a bound a user with dozens of
+// open PRs would fire hundreds of requests per run only to discard most.
+const ENRICH_CAP = 40;
 
 async function lastActivity(octokit, owner, repo, number, username) {
   const [issueComments, reviewComments, reviews] = await Promise.all([
@@ -47,20 +45,31 @@ const COLUMNS = {
 
 async function render(ctx) {
   const { octokit, username, shared, render: renderCfg } = ctx;
-  const prs = await paginateSearch(octokit, buildQuery(username, shared), {
+  const prs = await paginateSearch(octokit, openPrQuery(username, shared), {
     sort: 'updated',
     order: 'desc'
   });
 
-  const enriched = [];
-  for (const pr of prs) {
-    const full = repoFullName(pr);
-    const [owner, repo] = full.split('/');
-    if (!owner || !repo) continue;
-    const activity = await lastActivity(octokit, owner, repo, pr.number, username);
-    if (!activity || !activity.waitingOnUser) continue;
-    enriched.push({ ...pr, owner, repo, lastUser: activity.last.user, lastAt: activity.last.at });
-  }
+  // Search already returns most-recently-updated first, so the freshest
+  // candidates are at the front — bound the enrichment to the top ENRICH_CAP.
+  const candidates = prs
+    .map((pr) => {
+      const [owner, repo] = repoFullName(pr).split('/');
+      return owner && repo ? { pr, owner, repo } : null;
+    })
+    .filter(Boolean)
+    .slice(0, ENRICH_CAP);
+
+  const enriched = (
+    await Promise.all(
+      candidates.map(async ({ pr, owner, repo }) => {
+        const activity = await lastActivity(octokit, owner, repo, pr.number, username);
+        if (!activity || !activity.waitingOnUser) return null;
+        return { ...pr, owner, repo, lastUser: activity.last.user, lastAt: activity.last.at };
+      })
+    )
+  ).filter(Boolean);
+
   enriched.sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt));
   const limited = enriched.slice(0, shared.maxRows);
 

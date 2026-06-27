@@ -42,7 +42,7 @@ The action talks to the GitHub REST and search APIs as the principal supplied vi
 | `velocity_chart` | `Pull requests: Read` |
 | `commit_heatmap` | Profile read (default) |
 | `streak` | Profile read (default) |
-| `command_center` | Union of the embedded blocks' requirements |
+| `standup` | Union of the embedded blocks' requirements |
 
 Plus `Contents: Read and write` on the dashboard repo itself, so the action can push the updated README.
 

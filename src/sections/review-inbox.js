@@ -1,11 +1,9 @@
 const { paginateSearch, repoFullName } = require('../github');
+const { repoScope } = require('../query');
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate, userLink } = require('../render');
 
 function buildQuery(username, shared) {
-  const parts = [`type:pr`, `is:open`, `review-requested:${username}`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  return parts.join(' ');
+  return [`type:pr`, `is:open`, `review-requested:${username}`, ...repoScope(shared)].join(' ');
 }
 
 const COLUMNS = {

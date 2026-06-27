@@ -45,13 +45,13 @@ describe('command_center', () => {
   test('renders compact hero with KPI line and inbox pills', async () => {
     const octokit = fullOctokit();
     const { content, metadata } = await section.render(ctx({ octokit }));
-    expect(content).toContain('### Command Center');
+    expect(content).toContain('### Standup');
     expect(content).toContain('[`octocat`](https://github.com/octocat)');
-    expect(content).toMatch(/\*\*This week\*\* 7 opened.*2 merged.*0 reviewed/);
+    expect(content).toMatch(/\*\*Last 30 days\*\* 7 opened.*2 merged.*0 reviewed/);
     expect(content).toContain('velocity');
     expect(content).toContain('**Inbox**');
     expect(content).toContain('awaiting reply');
-    expect(metadata.week_opened).toBe(7);
+    expect(metadata.last30_opened).toBe(7);
   });
 
   test('minimal theme strips emoji from hero pills and aging line', async () => {
@@ -94,7 +94,7 @@ describe('command_center', () => {
     const { content } = await section.render(
       ctx({ octokit, config: { layout: ['hero', 'open_prs'], per_block_rows: 3 } })
     );
-    expect(content).toContain('### Command Center');
+    expect(content).toContain('### Standup');
     expect(content).toContain('Open pull requests');
     expect(content).not.toContain('Awaiting your reply');
   });
@@ -139,6 +139,26 @@ describe('command_center', () => {
     expect(content).toContain('#### Needs attention');
     expect(content).toMatch(/- \[ \] .*Broken PR/);
     expect(content).toContain('<!--ack:fp=');
+  });
+
+  test('parseExistingSnapshot reads KPIs even when week-over-week arrows are present', () => {
+    // Regression: the hero emits arrows like "0 opened (↓1)", and the parser
+    // must still recover the counts from its own previous output.
+    const snapshot = [
+      '> ### Standup · [`octocat`](https://github.com/octocat)',
+      '> _Updated 2026-06-24 01:55 UTC_',
+      '>',
+      '> **Last 30 days** 5 opened (↑2) · 3 merged (=) · 1 reviewed (↓1) · velocity `▁█` 0.7/wk',
+      '>',
+      '> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 2 stale · 🟡 1 awaiting reply · 🔵 0 review requests'
+    ].join('\n');
+    const parsed = section.parseExistingSnapshot(snapshot);
+    expect(parsed.opened).toBe(5);
+    expect(parsed.merged).toBe(3);
+    expect(parsed.reviewed).toBe(1);
+    expect(parsed.failing).toBe(1);
+    expect(parsed.stale).toBe(2);
+    expect(parsed.updatedAt).not.toBeNull();
   });
 
   test('acknowledged items persist when fingerprint matches', async () => {

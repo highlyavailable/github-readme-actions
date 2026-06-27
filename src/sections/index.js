@@ -29,7 +29,10 @@ const REGISTRY = {
   [velocityChart.name]: velocityChart,
   [commitHeatmap.name]: commitHeatmap,
   [streak.name]: streak,
-  [commandCenter.name]: commandCenter
+  [commandCenter.name]: commandCenter,
+  // `standup` is the current name for the composite dashboard; `command_center`
+  // is kept as an alias so existing markers and workflows keep working.
+  standup: commandCenter
 };
 
 function get(name) {

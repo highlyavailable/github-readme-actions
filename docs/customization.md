@@ -100,13 +100,13 @@ defaults:
   theme: minimal
 ```
 
-`minimal` swaps the emoji `status_labels` for plain words (`merged`, `open`, `failing`, …) and drops the hardcoded icons in `command_center` and `activity_feed`. You can still override any individual label on top of either theme, and a single section can opt back into the other theme:
+`minimal` swaps the emoji `status_labels` for plain words (`merged`, `open`, `failing`, …) and drops the hardcoded icons in `standup` and `activity_feed`. You can still override any individual label on top of either theme, and a single section can opt back into the other theme:
 
 ```yaml
 defaults:
   theme: minimal           # clean by default
 sections:
-  command_center:
+  standup:
     theme: default         # ...but keep the pills colorful in the hero
 ```
 
@@ -127,15 +127,15 @@ Defaults are functional colored indicators (signal, not decoration). Each is a k
 | `open` | `🟡 open` | open_prs, pinned_prs |
 | `closed` | `🔴 closed` | pinned_prs |
 | `draft` | `⚪ draft` | open_prs, pinned_prs |
-| `review_requested` | `🔵 review-requested` | command_center inbox pills |
+| `review_requested` | `🔵 review-requested` | standup inbox pills |
 | `changes_requested` | `🟠 changes-requested` | (future) |
 | `approved` | `🟢 approved` | ready_to_merge |
 | `conflicts` | `🔴 conflicts` | (future) |
 | `ci_failing` | `🔴 failing` | failing_ci |
 | `ci_passing` | `🟢 passing` | (future) |
 | `ci_pending` | `🟡 pending` | (future) |
-| `stale` | `🟠 stale` | command_center needs attention |
-| `ready` | `🟢 ready` | command_center inbox pills |
+| `stale` | `🟠 stale` | standup needs attention |
+| `ready` | `🟢 ready` | standup inbox pills |
 
 Override individual keys; unspecified keys keep their defaults. Prefer plain text? Set `merged: "[merged]"`. Want all-caps? Set `open: "OPEN"`. Use whatever palette your README needs.
 

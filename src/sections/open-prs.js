@@ -1,13 +1,6 @@
 const { paginateSearch, repoFullName } = require('../github');
+const { openPrQuery } = require('../query');
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = require('../render');
-
-function buildQuery(username, shared) {
-  const parts = [`type:pr`, `author:${username}`, `is:open`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
 
 function ciTag(ciStatus, render) {
   if (ciStatus === 'failing') return render.tag('ci_failing');
@@ -59,7 +52,7 @@ const SORTS = {
 
 async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
-  const items = await paginateSearch(octokit, buildQuery(username, shared), {
+  const items = await paginateSearch(octokit, openPrQuery(username, shared), {
     sort: 'updated',
     order: 'desc'
   });

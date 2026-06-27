@@ -1,28 +1,26 @@
 const { paginateSearch, repoFullName } = require('../github');
+const { openPrQuery } = require('../query');
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = require('../render');
 
-function buildQuery(username, shared) {
-  const parts = [`type:pr`, `author:${username}`, `is:open`, `review:approved`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
+// Each candidate costs 2 API calls (PR detail + check runs). Bound the fan-out.
+const ENRICH_CAP = 40;
 
+// On API error we return `null` ("unknown"), never an optimistic default — a PR
+// whose mergeability or CI we could not verify must not be advertised as ready.
 async function fetchHeadShaAndMergeable(octokit, owner, repo, number) {
   try {
     const { data } = await octokit.rest.pulls.get({ owner, repo, pull_number: number });
     return { sha: data.head?.sha || null, mergeable: data.mergeable !== false };
   } catch (e) {
-    return { sha: null, mergeable: true };
+    return { sha: null, mergeable: null };
   }
 }
 
 async function fetchChecks(octokit, owner, repo, sha) {
-  if (!sha) return { allGreen: true };
+  if (!sha) return { allGreen: null };
   try {
     const { data } = await octokit.rest.checks.listForRef({ owner, repo, ref: sha, per_page: 100 });
-    if (data.total_count === 0) return { allGreen: true };
+    if (data.total_count === 0) return { allGreen: true }; // no CI configured — approval is enough
     const blocking = data.check_runs.filter(
       (c) =>
         c.conclusion === 'failure' ||
@@ -33,7 +31,7 @@ async function fetchChecks(octokit, owner, repo, sha) {
     );
     return { allGreen: blocking.length === 0 };
   } catch (e) {
-    return { allGreen: true };
+    return { allGreen: null };
   }
 }
 
@@ -47,22 +45,30 @@ const COLUMNS = {
 
 async function render(ctx) {
   const { octokit, username, shared, render: renderCfg } = ctx;
-  const items = await paginateSearch(octokit, buildQuery(username, shared), {
+  const items = await paginateSearch(octokit, openPrQuery(username, shared, ['review:approved']), {
     sort: 'updated',
     order: 'desc'
   });
 
-  const ready = [];
-  for (const item of items) {
-    const full = repoFullName(item);
-    const [owner, repo] = full.split('/');
-    if (!owner || !repo) continue;
-    const { sha, mergeable } = await fetchHeadShaAndMergeable(octokit, owner, repo, item.number);
-    if (!mergeable) continue;
-    const { allGreen } = await fetchChecks(octokit, owner, repo, sha);
-    if (!allGreen) continue;
-    ready.push({ ...item, owner, repo });
-  }
+  const candidates = items
+    .map((item) => {
+      const [owner, repo] = repoFullName(item).split('/');
+      return owner && repo ? { item, owner, repo } : null;
+    })
+    .filter(Boolean)
+    .slice(0, ENRICH_CAP);
+
+  const ready = (
+    await Promise.all(
+      candidates.map(async ({ item, owner, repo }) => {
+        const { sha, mergeable } = await fetchHeadShaAndMergeable(octokit, owner, repo, item.number);
+        if (mergeable !== true) return null; // false or unknown — not provably ready
+        const { allGreen } = await fetchChecks(octokit, owner, repo, sha);
+        if (allGreen !== true) return null; // failing or unverifiable — exclude
+        return { ...item, owner, repo };
+      })
+    )
+  ).filter(Boolean);
 
   if (ready.length === 0) {
     return {

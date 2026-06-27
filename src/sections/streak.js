@@ -18,8 +18,14 @@ function computeCurrentStreak(days, now = new Date()) {
   for (let i = days.length - 1; i >= 0; i -= 1) {
     const d = days[i];
     if (d.date > today) continue;
-    if (d.count > 0) streak += 1;
-    else break;
+    if (d.count > 0) {
+      streak += 1;
+      continue;
+    }
+    // A zero on *today* doesn't break the run — the day isn't over yet. Any
+    // earlier zero ends the streak.
+    if (d.date === today) continue;
+    break;
   }
   return streak;
 }

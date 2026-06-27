@@ -16,6 +16,7 @@ const KNOWN_SECTIONS = [
   'velocity_chart',
   'commit_heatmap',
   'streak',
+  'standup',
   'command_center'
 ];
 
@@ -69,6 +70,16 @@ function readJson(name) {
 
 function loadConfig() {
   const owner = github.context && github.context.repo ? github.context.repo.owner : '';
+
+  // Shared by the `standup` section and its `command_center` alias.
+  const standupConfig = {
+    layout: readList('command_center_layout'),
+    per_block_rows: readInt('command_center_rows', 5),
+    orgs: readList('command_center_orgs'),
+    disable_pat_warning: readBool('disable_pat_warning', false),
+    stale_days: readInt('stale_days', 14)
+  };
+
   const cfg = {
     githubToken: readToken(),
     username: core.getInput('username') || owner,
@@ -101,11 +112,14 @@ function loadConfig() {
 
     sectionConfig: {
       recent_activity: {
-        days: readInt('activity_days', 14)
+        days: readInt('activity_days', 14),
+        excludeRepositories: readList('recent_activity_exclude_repositories')
       },
       activity_feed: {
         days: readInt('activity_feed_days', 0) || null,
-        types: readList('activity_feed_types')
+        types: readList('activity_feed_types'),
+        repositories: readList('activity_feed_repositories'),
+        excludeRepositories: readList('activity_feed_exclude_repositories')
       },
       merged_prs: {
         windowDays: readInt('merged_window_days', 90)
@@ -136,13 +150,8 @@ function loadConfig() {
       streak: {
         months: readInt('heatmap_months', 12)
       },
-      command_center: {
-        layout: readList('command_center_layout'),
-        per_block_rows: readInt('command_center_rows', 5),
-        orgs: readList('command_center_orgs'),
-        disable_pat_warning: readBool('disable_pat_warning', false),
-        stale_days: readInt('stale_days', 14)
-      },
+      standup: standupConfig,
+      command_center: standupConfig,
       open_prs: {
         show_ci: readBool('open_prs_show_ci', false)
       }

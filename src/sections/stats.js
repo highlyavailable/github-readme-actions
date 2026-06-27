@@ -1,4 +1,5 @@
-const { table } = require('../render');
+const { isoDaysAgo, repoScope } = require('../query');
+const { table, emptyState } = require('../render');
 
 const PERIOD_DAYS = {
   week: 7,
@@ -6,10 +7,6 @@ const PERIOD_DAYS = {
   quarter: 90,
   year: 365
 };
-
-function isoDaysAgo(days, now = Date.now()) {
-  return new Date(now - days * 86400000).toISOString().slice(0, 10);
-}
 
 async function countQuery(octokit, q) {
   const { data } = await octokit.rest.search.issuesAndPullRequests({
@@ -19,18 +16,11 @@ async function countQuery(octokit, q) {
   return data.total_count || 0;
 }
 
-function repoFilter(shared) {
-  const parts = [];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  return parts.length ? ' ' + parts.join(' ') : '';
-}
-
 async function statsForPeriod(octokit, username, shared, period) {
   const days = PERIOD_DAYS[period];
   if (!days) return null;
   const since = isoDaysAgo(days);
-  const scope = repoFilter(shared);
+  const scope = repoScope(shared).length ? ' ' + repoScope(shared).join(' ') : '';
   const [opened, merged, reviewed] = await Promise.all([
     countQuery(octokit, `type:pr author:${username} created:>=${since}${scope}`),
     countQuery(octokit, `type:pr author:${username} is:merged merged:>=${since}${scope}`),
@@ -65,10 +55,18 @@ async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
   const periods = (config?.periods || ['week', 'month', 'year']).filter((p) => PERIOD_DAYS[p]);
 
-  const stats = [];
-  for (const period of periods) {
-    const stat = await statsForPeriod(octokit, username, shared, period);
-    if (stat) stats.push(stat);
+  const stats = (
+    await Promise.all(periods.map((period) => statsForPeriod(octokit, username, shared, period)))
+  ).filter(Boolean);
+
+  // If every period is all-zero there is no signal — a grid of zeros reads as
+  // "broken", so render a single empty-state line instead.
+  const hasSignal = stats.some((s) => s.opened || s.merged || s.reviewed);
+  if (!hasSignal) {
+    return {
+      content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState || 'No activity yet.'),
+      metadata: { periods: periods.join(','), empty: true }
+    };
   }
 
   const style = renderCfg.style || 'table';

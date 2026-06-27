@@ -1,22 +1,6 @@
 const { paginateSearch, repoFullName } = require('../github');
+const { isoDaysAgo, openPrQuery } = require('../query');
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = require('../render');
-
-function isoDaysAgo(days, now = Date.now()) {
-  return new Date(now - days * 86400000).toISOString().slice(0, 10);
-}
-
-function buildQuery(username, shared, staleDays) {
-  const parts = [
-    `type:pr`,
-    `author:${username}`,
-    `is:open`,
-    `updated:<${isoDaysAgo(staleDays)}`
-  ];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
 
 const COLUMNS = {
   pr: { header: 'PR', render: (r) => link(r.title, r.html_url) },
@@ -33,7 +17,8 @@ const COLUMNS = {
 async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
   const staleDays = config?.staleDays || 14;
-  const items = await paginateSearch(octokit, buildQuery(username, shared, staleDays), {
+  const query = openPrQuery(username, shared, [`updated:<${isoDaysAgo(staleDays)}`]);
+  const items = await paginateSearch(octokit, query, {
     sort: 'updated',
     order: 'asc'
   });

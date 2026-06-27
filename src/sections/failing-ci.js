@@ -1,13 +1,9 @@
 const { paginateSearch, repoFullName } = require('../github');
+const { openPrQuery } = require('../query');
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = require('../render');
 
-function buildQuery(username, shared) {
-  const parts = [`type:pr`, `author:${username}`, `is:open`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
+// Each candidate costs 2 API calls (head SHA + check runs). Bound the fan-out.
+const ENRICH_CAP = 40;
 
 async function fetchHeadSha(octokit, owner, repo, number) {
   try {
@@ -43,21 +39,28 @@ const COLUMNS = {
 
 async function render(ctx) {
   const { octokit, username, shared, render: renderCfg } = ctx;
-  const items = await paginateSearch(octokit, buildQuery(username, shared), {
+  const items = await paginateSearch(octokit, openPrQuery(username, shared), {
     sort: 'updated',
     order: 'desc'
   });
 
-  const enriched = [];
-  for (const item of items) {
-    const full = repoFullName(item);
-    const [owner, repo] = full.split('/');
-    if (!owner || !repo) continue;
-    const sha = await fetchHeadSha(octokit, owner, repo, item.number);
-    const checks = await fetchChecks(octokit, owner, repo, sha);
-    if (!checks.failing) continue;
-    enriched.push({ ...item, owner, repo, failed: checks.failed });
-  }
+  const candidates = items
+    .map((item) => {
+      const [owner, repo] = repoFullName(item).split('/');
+      return owner && repo ? { item, owner, repo } : null;
+    })
+    .filter(Boolean)
+    .slice(0, ENRICH_CAP);
+
+  const enriched = (
+    await Promise.all(
+      candidates.map(async ({ item, owner, repo }) => {
+        const sha = await fetchHeadSha(octokit, owner, repo, item.number);
+        const checks = await fetchChecks(octokit, owner, repo, sha);
+        return checks.failing ? { ...item, owner, repo, failed: checks.failed } : null;
+      })
+    )
+  ).filter(Boolean);
 
   if (enriched.length === 0) {
     return {

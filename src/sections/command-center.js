@@ -8,6 +8,7 @@ const readyToMerge = require('./ready-to-merge');
 const mergedPrs = require('./merged-prs');
 const activityFeed = require('./activity-feed');
 const { paginateSearch, repoFullName } = require('../github');
+const { isoDaysAgo } = require('../query');
 const { link, prRef, age, userLink, withIcon } = require('../render');
 const { unicodeSparkline, bucketByWeek } = require('../viz');
 const { ackKey, fingerprint, parseAcknowledged, renderChecklist } = require('../acknowledge');
@@ -24,10 +25,6 @@ const DEFAULT_LAYOUT = [
 
 function subCtx(ctx, maxRows) {
   return { ...ctx, shared: { ...ctx.shared, maxRows } };
-}
-
-function isoDaysAgo(days, now = Date.now()) {
-  return new Date(now - days * 86400000).toISOString().slice(0, 10);
 }
 
 function buildScope(ctx, extraScope = '') {
@@ -102,8 +99,12 @@ async function fetchVelocity(ctx, weeks = 12, extraScope = '') {
 
 // ---- Today's diff ------------------------------------------------------------
 
+// Tolerates the optional week-over-week arrow suffix this same line emits
+// (e.g. "0 opened (↓1) · …") — the arrows are non-"·" chars between the count
+// label and the separator, so [^·]* absorbs them. Also accepts the legacy
+// "This week" label so an in-place upgrade can still read the prior snapshot.
 const KPI_PARSE_REGEX =
-  /\*\*This week\*\* (\d+) opened · (\d+) merged · (\d+) reviewed/;
+  /\*\*(?:Last 30 days|This week)\*\* (\d+) opened[^·]*· (\d+) merged[^·]*· (\d+) reviewed/;
 const UPDATED_PARSE_REGEX = /_Updated (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) UTC_/;
 const INBOX_PARSE_REGEX =
   /(?:🟢 )?(\d+) ready · (?:🔴 )?(\d+) failing · (?:🟠 )?(\d+) stale · (?:🟡 )?(\d+) awaiting reply · (?:🔵 )?(\d+) review/;
@@ -191,7 +192,7 @@ function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, dif
   const now = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
   const userUrl = `https://github.com/${ctx.username}`;
   const tag = orgLabel ? ` · ${orgLabel}` : '';
-  const heading = `### Command Center · [\`${ctx.username}\`](${userUrl})${tag}`;
+  const heading = `### Standup · [\`${ctx.username}\`](${userUrl})${tag}`;
   const updated = `_Updated ${now}_`;
 
   const spark = velocity.buckets.length ? unicodeSparkline(velocity.buckets) : '';
@@ -200,7 +201,7 @@ function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, dif
   const wwReview = prevWeekStats ? diffArrow(prevWeekStats.reviewed, weekStats.reviewed) : '';
 
   const kpis = [
-    `**This week** ${weekStats.opened} opened${wwOpen} · ${weekStats.merged} merged${wwMerge} · ${weekStats.reviewed} reviewed${wwReview}`,
+    `**Last 30 days** ${weekStats.opened} opened${wwOpen} · ${weekStats.merged} merged${wwMerge} · ${weekStats.reviewed} reviewed${wwReview}`,
     velocity.buckets.length ? `velocity \`${spark}\` ${velocity.average}/wk` : null
   ].filter(Boolean).join(' · ');
 
@@ -395,7 +396,7 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     activityResult,
     awaitingItems
   ] = await Promise.all([
-    fetchPeriodStats(ctx, isoDaysAgo(7), null, extraScope).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
+    fetchPeriodStats(ctx, isoDaysAgo(30), null, extraScope).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
     fetchVelocity(ctx, 12, extraScope).catch(() => ({ buckets: [], total: 0, average: '0.0', items: [] })),
     openPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
     reviewInbox.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
@@ -485,8 +486,8 @@ async function render(ctx) {
     if (patBanner) core.info(`PAT banner active (token user = ${authLogin}).`);
   }
 
-  // Week-over-week needs the prior week stats.
-  const prevWeekStats = await fetchPeriodStats(ctx, isoDaysAgo(14), isoDaysAgo(7)).catch(() => null);
+  // Period-over-period arrows compare the last 30 days to the preceding 30.
+  const prevWeekStats = await fetchPeriodStats(ctx, isoDaysAgo(60), isoDaysAgo(30)).catch(() => null);
 
   const allBlocks = [];
   const aggregateMeta = {};
@@ -506,9 +507,9 @@ async function render(ctx) {
       stale_count: counts.stale,
       merged_count: counts.merged,
       activity_count: counts.activity,
-      week_opened: weekStats.opened,
-      week_merged: weekStats.merged,
-      week_reviewed: weekStats.reviewed
+      last30_opened: weekStats.opened,
+      last30_merged: weekStats.merged,
+      last30_reviewed: weekStats.reviewed
     });
   } else {
     let firstOrg = true;
@@ -547,8 +548,11 @@ async function render(ctx) {
 }
 
 module.exports = {
+  // Registry key stays `command_center` for marker/input back-compat; the
+  // user-facing name is "Standup" (see title + the rendered hero heading).
+  // The `standup` alias is wired up in sections/index.js and config.js.
   name: 'command_center',
-  title: 'Command Center',
+  title: 'Standup',
   defaultStyle: 'composite',
   defaultColumns: null,
   defaultEmptyState: 'No data available.',

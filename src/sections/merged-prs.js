@@ -1,20 +1,12 @@
 const { paginateSearch, repoFullName } = require('../github');
+const { isoDaysAgo, repoScope } = require('../query');
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate, isoDate } = require('../render');
 
-function isoDaysAgo(days, now = Date.now()) {
-  const d = new Date(now - days * 86400000);
-  return d.toISOString().slice(0, 10);
-}
-
 function buildQuery(username, shared, windowDays) {
-  const parts = [
-    `type:pr`,
-    `author:${username}`,
-    `is:merged`,
-    `merged:>=${isoDaysAgo(windowDays)}`
-  ];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
+  const parts = [`type:pr`, `author:${username}`, `is:merged`];
+  // windowDays === 0 means "all time" — omit the date filter entirely.
+  if (windowDays > 0) parts.push(`merged:>=${isoDaysAgo(windowDays)}`);
+  parts.push(...repoScope(shared));
   return parts.join(' ');
 }
 
@@ -28,14 +20,19 @@ const COLUMNS = {
 
 async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
-  const windowDays = config?.windowDays || 90;
+  // Use ?? so that 0 (all-time) is preserved rather than coerced to the 90-day default.
+  const windowDays = config?.windowDays ?? 90;
   const items = await paginateSearch(octokit, buildQuery(username, shared, windowDays), {
     sort: 'updated',
     order: 'desc'
   });
 
   if (items.length === 0) {
-    return { content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState || "No data."), metadata: { count: 0, window_days: windowDays } };
+    const windowLabel = windowDays > 0 ? `in the last ${windowDays} days` : 'ever';
+    return {
+      content: emptyState(renderCfg.empty_state || `No merged PRs ${windowLabel}.`),
+      metadata: { count: 0, window_days: windowDays || null }
+    };
   }
 
   const sorted = items
@@ -55,7 +52,7 @@ async function render(ctx) {
 
   return {
     content: renderRows({ style: renderCfg.style, headers, rows: cells }),
-    metadata: { count: items.length, window_days: windowDays }
+    metadata: { count: items.length, window_days: windowDays || null }
   };
 }
 

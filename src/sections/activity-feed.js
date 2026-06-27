@@ -93,6 +93,9 @@ function describe(event) {
     }
     case 'PushEvent': {
       const n = p.distinct_size ?? (p.commits ? p.commits.length : (p.size || 0));
+      // A push of zero distinct commits (merges, no-op syncs, and the dashboard's
+      // own auto-commits surface this way) is pure noise — drop it.
+      if (!n) return null;
       const branch = (p.ref || '').replace('refs/heads/', '');
       const where = branch ? ` to \`${branch}\`` : '';
       return { icon: '⬆️', verb: `Pushed ${n} commit${n === 1 ? '' : 's'}${where}`, repo, at };
@@ -165,6 +168,21 @@ async function render(ctx) {
   const includeTypes = config?.types && config.types.length ? config.types : DEFAULT_TYPES;
   const cutoff = days ? isoDaysAgo(days) : null;
 
+  // Section-level lists merge with (but don't replace) the global shared lists.
+  // This lets users exclude a noisy repo from the feed without affecting other sections.
+  const sectionExcludes = config?.excludeRepositories || [];
+  const globalExcludes = shared.excludeRepositories || [];
+  const excludedRepos = new Set(
+    [...globalExcludes, ...sectionExcludes].map((r) => r.toLowerCase())
+  );
+
+  // Section-level include list overrides the global one when set; otherwise falls back.
+  const sectionRepos = config?.repositories || [];
+  const globalRepos = shared.repositories || [];
+  const includedRepos = new Set(
+    [...globalRepos, ...sectionRepos].map((r) => r.toLowerCase())
+  );
+
   let raw;
   try {
     raw = await fetchEvents(octokit, username);
@@ -178,6 +196,12 @@ async function render(ctx) {
   const entries = raw
     .filter((ev) => includeTypes.includes(ev.type))
     .filter((ev) => !cutoff || ev.created_at >= cutoff)
+    .filter((ev) => {
+      const repo = (ev.repo?.name || '').toLowerCase();
+      if (excludedRepos.size > 0 && excludedRepos.has(repo)) return false;
+      if (includedRepos.size > 0 && !includedRepos.has(repo)) return false;
+      return true;
+    })
     .map(describe)
     .filter(Boolean)
     .sort((a, b) => new Date(b.at) - new Date(a.at));

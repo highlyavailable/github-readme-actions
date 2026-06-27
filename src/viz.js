@@ -101,7 +101,7 @@ function unicodeHeatmap(weeks) {
     });
     lines.push(`${dayLabels[day]} ${cells.join('')}`);
   }
-  return ['```text', ...lines, '```', '', '_Legend: `·` 0 · `░` 1–2 · `▒` 3–5 · `▓` 6–10 · `█` 10+_'].join('\n');
+  return ['```text', ...lines, '```', '', '_Legend: `·` 0 · `░` 1–2 · `▒` 3–5 · `▓` 6–10 · `█` 11+_'].join('\n');
 }
 
 function bucketByWeek(timestamps, weeks, nowMs = Date.now()) {

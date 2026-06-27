@@ -14,7 +14,7 @@ inputs:
     required: false
     default: ${{ github.repository_owner }}
   sections:
-    description: 'Comma-separated list of dashboard sections to render. Available: open_prs, response_inbox, review_inbox, recent_activity, activity_feed, merged_prs, stats, pinned_prs, stale_prs, failing_ci, ready_to_merge, velocity_chart, commit_heatmap, streak, command_center.'
+    description: 'Comma-separated list of dashboard sections to render. Available: standup, open_prs, response_inbox, review_inbox, recent_activity, activity_feed, merged_prs, stats, pinned_prs, stale_prs, failing_ci, ready_to_merge, velocity_chart, commit_heatmap, streak. (command_center is a deprecated alias for standup.)'
     required: false
     default: 'open_prs,response_inbox,review_inbox,recent_activity'
   target_file:
@@ -75,7 +75,7 @@ inputs:
     required: false
     default: '14'
   merged_window_days:
-    description: '[merged_prs] Look-back window in days for merged PRs.'
+    description: '[merged_prs] Look-back window in days for merged PRs. Set to 0 to show all merged PRs with no time limit.'
     required: false
     default: '90'
   activity_feed_days:
@@ -84,6 +84,15 @@ inputs:
     default: '0'
   activity_feed_types:
     description: '[activity_feed] Comma-separated event types to include (e.g. PullRequestEvent, IssueCommentEvent, PushEvent, WatchEvent). Empty uses a sensible default set.'
+    required: false
+  activity_feed_repositories:
+    description: '[activity_feed] Comma-separated owner/repo list to scope the activity feed to specific repositories. Merges with the global repositories filter. The Events API does not support server-side filtering, so this is applied client-side.'
+    required: false
+  activity_feed_exclude_repositories:
+    description: '[activity_feed] Comma-separated owner/repo list to exclude from the activity feed. Additive with the global exclude_repositories. Applied client-side after fetching events.'
+    required: false
+  recent_activity_exclude_repositories:
+    description: '[recent_activity] Comma-separated owner/repo list to exclude from the recent activity section only. Additive with the global exclude_repositories.'
     required: false
   stats_periods:
     description: '[stats] Comma-separated periods to report. Any of: week, month, quarter, year.'
@@ -104,17 +113,17 @@ inputs:
     required: false
     default: '12'
   command_center_layout:
-    description: '[command_center] Comma-separated list of blocks. Available: hero, needs_attention, open_prs, recently_merged, stale_prs, failing_ci, ready_to_merge, response_inbox, review_inbox, activity_feed. Default: hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed.'
+    description: '[standup] Comma-separated list of blocks. Available: hero, needs_attention, open_prs, recently_merged, stale_prs, failing_ci, ready_to_merge, response_inbox, review_inbox, activity_feed. Default: hero,needs_attention,open_prs,recently_merged,response_inbox,review_inbox,activity_feed.'
     required: false
   command_center_rows:
-    description: '[command_center] Per-block row cap for embedded tables.'
+    description: '[standup] Per-block row cap for embedded tables.'
     required: false
     default: '5'
   command_center_orgs:
-    description: '[command_center] Comma-separated GitHub orgs to render separate sub-dashboards for. Each org gets its own hero + needs_attention + tables, scoped via `org:<name>` in queries. Empty means a single global view.'
+    description: '[standup] Comma-separated GitHub orgs to render separate sub-dashboards for. Each org gets its own hero + needs_attention + tables, scoped via `org:<name>` in queries. Empty means a single global view.'
     required: false
   disable_pat_warning:
-    description: '[command_center] Suppress the PAT-missing banner even when the action detects a bot token.'
+    description: '[standup] Suppress the PAT-missing banner even when the action detects a bot token.'
     required: false
     default: 'false'
   open_prs_show_ci:

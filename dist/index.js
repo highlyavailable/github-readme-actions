@@ -34306,6 +34306,7 @@ const KNOWN_SECTIONS = [
   'velocity_chart',
   'commit_heatmap',
   'streak',
+  'standup',
   'command_center'
 ];
 
@@ -34359,6 +34360,16 @@ function readJson(name) {
 
 function loadConfig() {
   const owner = github.context && github.context.repo ? github.context.repo.owner : '';
+
+  // Shared by the `standup` section and its `command_center` alias.
+  const standupConfig = {
+    layout: readList('command_center_layout'),
+    per_block_rows: readInt('command_center_rows', 5),
+    orgs: readList('command_center_orgs'),
+    disable_pat_warning: readBool('disable_pat_warning', false),
+    stale_days: readInt('stale_days', 14)
+  };
+
   const cfg = {
     githubToken: readToken(),
     username: core.getInput('username') || owner,
@@ -34391,11 +34402,14 @@ function loadConfig() {
 
     sectionConfig: {
       recent_activity: {
-        days: readInt('activity_days', 14)
+        days: readInt('activity_days', 14),
+        excludeRepositories: readList('recent_activity_exclude_repositories')
       },
       activity_feed: {
         days: readInt('activity_feed_days', 0) || null,
-        types: readList('activity_feed_types')
+        types: readList('activity_feed_types'),
+        repositories: readList('activity_feed_repositories'),
+        excludeRepositories: readList('activity_feed_exclude_repositories')
       },
       merged_prs: {
         windowDays: readInt('merged_window_days', 90)
@@ -34426,13 +34440,8 @@ function loadConfig() {
       streak: {
         months: readInt('heatmap_months', 12)
       },
-      command_center: {
-        layout: readList('command_center_layout'),
-        per_block_rows: readInt('command_center_rows', 5),
-        orgs: readList('command_center_orgs'),
-        disable_pat_warning: readBool('disable_pat_warning', false),
-        stale_days: readInt('stale_days', 14)
-      },
+      standup: standupConfig,
+      command_center: standupConfig,
       open_prs: {
         show_ci: readBool('open_prs_show_ci', false)
       }
@@ -34555,6 +34564,46 @@ module.exports = {
   isPullRequest,
   isMerged
 };
+
+
+/***/ }),
+
+/***/ 8865:
+/***/ ((module) => {
+
+// Shared GitHub search-query helpers.
+//
+// Every section needs the same repo-scoping and PR-filter boilerplate. Before,
+// each section file carried its own copy of `isoDaysAgo` and a hand-rolled
+// `buildQuery` loop — six copies of one, ten of the other, drifting subtly
+// apart. This module is the single source of truth for query construction.
+
+function isoDaysAgo(days, now = Date.now()) {
+  return new Date(now - days * 86400000).toISOString().slice(0, 10);
+}
+
+// `repo:` / `-repo:` qualifiers for the shared allow + deny lists, plus any
+// section-specific excludes. Returns an array of query tokens (possibly empty).
+function repoScope(shared = {}, sectionExcludes = []) {
+  const parts = [];
+  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
+  const excludes = [
+    ...new Set([...(shared.excludeRepositories || []), ...sectionExcludes])
+  ];
+  for (const repo of excludes) parts.push(`-repo:${repo}`);
+  return parts;
+}
+
+// The canonical "my open PRs" query, with optional extra qualifiers appended.
+// Honours `shared.includeDrafts` so callers never re-implement the draft filter.
+function openPrQuery(username, shared = {}, extra = []) {
+  const parts = [`type:pr`, `author:${username}`, `is:open`, ...extra];
+  parts.push(...repoScope(shared));
+  if (!shared.includeDrafts) parts.push('-draft:true');
+  return parts.join(' ');
+}
+
+module.exports = { isoDaysAgo, repoScope, openPrQuery };
 
 
 /***/ }),
@@ -35091,6 +35140,9 @@ function describe(event) {
     }
     case 'PushEvent': {
       const n = p.distinct_size ?? (p.commits ? p.commits.length : (p.size || 0));
+      // A push of zero distinct commits (merges, no-op syncs, and the dashboard's
+      // own auto-commits surface this way) is pure noise — drop it.
+      if (!n) return null;
       const branch = (p.ref || '').replace('refs/heads/', '');
       const where = branch ? ` to \`${branch}\`` : '';
       return { icon: '⬆️', verb: `Pushed ${n} commit${n === 1 ? '' : 's'}${where}`, repo, at };
@@ -35163,6 +35215,21 @@ async function render(ctx) {
   const includeTypes = config?.types && config.types.length ? config.types : DEFAULT_TYPES;
   const cutoff = days ? isoDaysAgo(days) : null;
 
+  // Section-level lists merge with (but don't replace) the global shared lists.
+  // This lets users exclude a noisy repo from the feed without affecting other sections.
+  const sectionExcludes = config?.excludeRepositories || [];
+  const globalExcludes = shared.excludeRepositories || [];
+  const excludedRepos = new Set(
+    [...globalExcludes, ...sectionExcludes].map((r) => r.toLowerCase())
+  );
+
+  // Section-level include list overrides the global one when set; otherwise falls back.
+  const sectionRepos = config?.repositories || [];
+  const globalRepos = shared.repositories || [];
+  const includedRepos = new Set(
+    [...globalRepos, ...sectionRepos].map((r) => r.toLowerCase())
+  );
+
   let raw;
   try {
     raw = await fetchEvents(octokit, username);
@@ -35176,6 +35243,12 @@ async function render(ctx) {
   const entries = raw
     .filter((ev) => includeTypes.includes(ev.type))
     .filter((ev) => !cutoff || ev.created_at >= cutoff)
+    .filter((ev) => {
+      const repo = (ev.repo?.name || '').toLowerCase();
+      if (excludedRepos.size > 0 && excludedRepos.has(repo)) return false;
+      if (includedRepos.size > 0 && !includedRepos.has(repo)) return false;
+      return true;
+    })
     .map(describe)
     .filter(Boolean)
     .sort((a, b) => new Date(b.at) - new Date(a.at));
@@ -35239,6 +35312,7 @@ const readyToMerge = __nccwpck_require__(5174);
 const mergedPrs = __nccwpck_require__(2006);
 const activityFeed = __nccwpck_require__(9306);
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { isoDaysAgo } = __nccwpck_require__(8865);
 const { link, prRef, age, userLink, withIcon } = __nccwpck_require__(9121);
 const { unicodeSparkline, bucketByWeek } = __nccwpck_require__(412);
 const { ackKey, fingerprint, parseAcknowledged, renderChecklist } = __nccwpck_require__(3157);
@@ -35255,10 +35329,6 @@ const DEFAULT_LAYOUT = [
 
 function subCtx(ctx, maxRows) {
   return { ...ctx, shared: { ...ctx.shared, maxRows } };
-}
-
-function isoDaysAgo(days, now = Date.now()) {
-  return new Date(now - days * 86400000).toISOString().slice(0, 10);
 }
 
 function buildScope(ctx, extraScope = '') {
@@ -35333,8 +35403,12 @@ async function fetchVelocity(ctx, weeks = 12, extraScope = '') {
 
 // ---- Today's diff ------------------------------------------------------------
 
+// Tolerates the optional week-over-week arrow suffix this same line emits
+// (e.g. "0 opened (↓1) · …") — the arrows are non-"·" chars between the count
+// label and the separator, so [^·]* absorbs them. Also accepts the legacy
+// "This week" label so an in-place upgrade can still read the prior snapshot.
 const KPI_PARSE_REGEX =
-  /\*\*This week\*\* (\d+) opened · (\d+) merged · (\d+) reviewed/;
+  /\*\*(?:Last 30 days|This week)\*\* (\d+) opened[^·]*· (\d+) merged[^·]*· (\d+) reviewed/;
 const UPDATED_PARSE_REGEX = /_Updated (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) UTC_/;
 const INBOX_PARSE_REGEX =
   /(?:🟢 )?(\d+) ready · (?:🔴 )?(\d+) failing · (?:🟠 )?(\d+) stale · (?:🟡 )?(\d+) awaiting reply · (?:🔵 )?(\d+) review/;
@@ -35422,7 +35496,7 @@ function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, dif
   const now = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
   const userUrl = `https://github.com/${ctx.username}`;
   const tag = orgLabel ? ` · ${orgLabel}` : '';
-  const heading = `### Command Center · [\`${ctx.username}\`](${userUrl})${tag}`;
+  const heading = `### Standup · [\`${ctx.username}\`](${userUrl})${tag}`;
   const updated = `_Updated ${now}_`;
 
   const spark = velocity.buckets.length ? unicodeSparkline(velocity.buckets) : '';
@@ -35431,7 +35505,7 @@ function buildHero({ ctx, weekStats, prevWeekStats, velocity, counts, aging, dif
   const wwReview = prevWeekStats ? diffArrow(prevWeekStats.reviewed, weekStats.reviewed) : '';
 
   const kpis = [
-    `**This week** ${weekStats.opened} opened${wwOpen} · ${weekStats.merged} merged${wwMerge} · ${weekStats.reviewed} reviewed${wwReview}`,
+    `**Last 30 days** ${weekStats.opened} opened${wwOpen} · ${weekStats.merged} merged${wwMerge} · ${weekStats.reviewed} reviewed${wwReview}`,
     velocity.buckets.length ? `velocity \`${spark}\` ${velocity.average}/wk` : null
   ].filter(Boolean).join(' · ');
 
@@ -35626,7 +35700,7 @@ async function renderGroup(ctx, { acked, perBlockRows, layout, orgLabel, extraSc
     activityResult,
     awaitingItems
   ] = await Promise.all([
-    fetchPeriodStats(ctx, isoDaysAgo(7), null, extraScope).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
+    fetchPeriodStats(ctx, isoDaysAgo(30), null, extraScope).catch(() => ({ opened: 0, merged: 0, reviewed: 0 })),
     fetchVelocity(ctx, 12, extraScope).catch(() => ({ buckets: [], total: 0, average: '0.0', items: [] })),
     openPrs.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
     reviewInbox.render(subCtx(ctx, perBlockRows)).catch((e) => ({ content: `_error: ${e.message}_`, metadata: { count: 0 } })),
@@ -35716,8 +35790,8 @@ async function render(ctx) {
     if (patBanner) core.info(`PAT banner active (token user = ${authLogin}).`);
   }
 
-  // Week-over-week needs the prior week stats.
-  const prevWeekStats = await fetchPeriodStats(ctx, isoDaysAgo(14), isoDaysAgo(7)).catch(() => null);
+  // Period-over-period arrows compare the last 30 days to the preceding 30.
+  const prevWeekStats = await fetchPeriodStats(ctx, isoDaysAgo(60), isoDaysAgo(30)).catch(() => null);
 
   const allBlocks = [];
   const aggregateMeta = {};
@@ -35737,9 +35811,9 @@ async function render(ctx) {
       stale_count: counts.stale,
       merged_count: counts.merged,
       activity_count: counts.activity,
-      week_opened: weekStats.opened,
-      week_merged: weekStats.merged,
-      week_reviewed: weekStats.reviewed
+      last30_opened: weekStats.opened,
+      last30_merged: weekStats.merged,
+      last30_reviewed: weekStats.reviewed
     });
   } else {
     let firstOrg = true;
@@ -35778,8 +35852,11 @@ async function render(ctx) {
 }
 
 module.exports = {
+  // Registry key stays `command_center` for marker/input back-compat; the
+  // user-facing name is "Standup" (see title + the rendered hero heading).
+  // The `standup` alias is wired up in sections/index.js and config.js.
   name: 'command_center',
-  title: 'Command Center',
+  title: 'Standup',
   defaultStyle: 'composite',
   defaultColumns: null,
   defaultEmptyState: 'No data available.',
@@ -35935,15 +36012,11 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { openPrQuery } = __nccwpck_require__(8865);
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = __nccwpck_require__(9121);
 
-function buildQuery(username, shared) {
-  const parts = [`type:pr`, `author:${username}`, `is:open`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
+// Each candidate costs 2 API calls (head SHA + check runs). Bound the fan-out.
+const ENRICH_CAP = 40;
 
 async function fetchHeadSha(octokit, owner, repo, number) {
   try {
@@ -35979,21 +36052,28 @@ const COLUMNS = {
 
 async function render(ctx) {
   const { octokit, username, shared, render: renderCfg } = ctx;
-  const items = await paginateSearch(octokit, buildQuery(username, shared), {
+  const items = await paginateSearch(octokit, openPrQuery(username, shared), {
     sort: 'updated',
     order: 'desc'
   });
 
-  const enriched = [];
-  for (const item of items) {
-    const full = repoFullName(item);
-    const [owner, repo] = full.split('/');
-    if (!owner || !repo) continue;
-    const sha = await fetchHeadSha(octokit, owner, repo, item.number);
-    const checks = await fetchChecks(octokit, owner, repo, sha);
-    if (!checks.failing) continue;
-    enriched.push({ ...item, owner, repo, failed: checks.failed });
-  }
+  const candidates = items
+    .map((item) => {
+      const [owner, repo] = repoFullName(item).split('/');
+      return owner && repo ? { item, owner, repo } : null;
+    })
+    .filter(Boolean)
+    .slice(0, ENRICH_CAP);
+
+  const enriched = (
+    await Promise.all(
+      candidates.map(async ({ item, owner, repo }) => {
+        const sha = await fetchHeadSha(octokit, owner, repo, item.number);
+        const checks = await fetchChecks(octokit, owner, repo, sha);
+        return checks.failing ? { ...item, owner, repo, failed: checks.failed } : null;
+      })
+    )
+  ).filter(Boolean);
 
   if (enriched.length === 0) {
     return {
@@ -36062,7 +36142,10 @@ const REGISTRY = {
   [velocityChart.name]: velocityChart,
   [commitHeatmap.name]: commitHeatmap,
   [streak.name]: streak,
-  [commandCenter.name]: commandCenter
+  [commandCenter.name]: commandCenter,
+  // `standup` is the current name for the composite dashboard; `command_center`
+  // is kept as an alias so existing markers and workflows keep working.
+  standup: commandCenter
 };
 
 function get(name) {
@@ -36078,22 +36161,14 @@ module.exports = { REGISTRY, get };
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { isoDaysAgo, repoScope } = __nccwpck_require__(8865);
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate, isoDate } = __nccwpck_require__(9121);
 
-function isoDaysAgo(days, now = Date.now()) {
-  const d = new Date(now - days * 86400000);
-  return d.toISOString().slice(0, 10);
-}
-
 function buildQuery(username, shared, windowDays) {
-  const parts = [
-    `type:pr`,
-    `author:${username}`,
-    `is:merged`,
-    `merged:>=${isoDaysAgo(windowDays)}`
-  ];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
+  const parts = [`type:pr`, `author:${username}`, `is:merged`];
+  // windowDays === 0 means "all time" — omit the date filter entirely.
+  if (windowDays > 0) parts.push(`merged:>=${isoDaysAgo(windowDays)}`);
+  parts.push(...repoScope(shared));
   return parts.join(' ');
 }
 
@@ -36107,14 +36182,19 @@ const COLUMNS = {
 
 async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
-  const windowDays = config?.windowDays || 90;
+  // Use ?? so that 0 (all-time) is preserved rather than coerced to the 90-day default.
+  const windowDays = config?.windowDays ?? 90;
   const items = await paginateSearch(octokit, buildQuery(username, shared, windowDays), {
     sort: 'updated',
     order: 'desc'
   });
 
   if (items.length === 0) {
-    return { content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState || "No data."), metadata: { count: 0, window_days: windowDays } };
+    const windowLabel = windowDays > 0 ? `in the last ${windowDays} days` : 'ever';
+    return {
+      content: emptyState(renderCfg.empty_state || `No merged PRs ${windowLabel}.`),
+      metadata: { count: 0, window_days: windowDays || null }
+    };
   }
 
   const sorted = items
@@ -36134,7 +36214,7 @@ async function render(ctx) {
 
   return {
     content: renderRows({ style: renderCfg.style, headers, rows: cells }),
-    metadata: { count: items.length, window_days: windowDays }
+    metadata: { count: items.length, window_days: windowDays || null }
   };
 }
 
@@ -36155,15 +36235,8 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { openPrQuery } = __nccwpck_require__(8865);
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = __nccwpck_require__(9121);
-
-function buildQuery(username, shared) {
-  const parts = [`type:pr`, `author:${username}`, `is:open`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
 
 function ciTag(ciStatus, render) {
   if (ciStatus === 'failing') return render.tag('ci_failing');
@@ -36215,7 +36288,7 @@ const SORTS = {
 
 async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
-  const items = await paginateSearch(octokit, buildQuery(username, shared), {
+  const items = await paginateSearch(octokit, openPrQuery(username, shared), {
     sort: 'updated',
     order: 'desc'
   });
@@ -36357,30 +36430,28 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { openPrQuery } = __nccwpck_require__(8865);
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = __nccwpck_require__(9121);
 
-function buildQuery(username, shared) {
-  const parts = [`type:pr`, `author:${username}`, `is:open`, `review:approved`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
+// Each candidate costs 2 API calls (PR detail + check runs). Bound the fan-out.
+const ENRICH_CAP = 40;
 
+// On API error we return `null` ("unknown"), never an optimistic default — a PR
+// whose mergeability or CI we could not verify must not be advertised as ready.
 async function fetchHeadShaAndMergeable(octokit, owner, repo, number) {
   try {
     const { data } = await octokit.rest.pulls.get({ owner, repo, pull_number: number });
     return { sha: data.head?.sha || null, mergeable: data.mergeable !== false };
   } catch (e) {
-    return { sha: null, mergeable: true };
+    return { sha: null, mergeable: null };
   }
 }
 
 async function fetchChecks(octokit, owner, repo, sha) {
-  if (!sha) return { allGreen: true };
+  if (!sha) return { allGreen: null };
   try {
     const { data } = await octokit.rest.checks.listForRef({ owner, repo, ref: sha, per_page: 100 });
-    if (data.total_count === 0) return { allGreen: true };
+    if (data.total_count === 0) return { allGreen: true }; // no CI configured — approval is enough
     const blocking = data.check_runs.filter(
       (c) =>
         c.conclusion === 'failure' ||
@@ -36391,7 +36462,7 @@ async function fetchChecks(octokit, owner, repo, sha) {
     );
     return { allGreen: blocking.length === 0 };
   } catch (e) {
-    return { allGreen: true };
+    return { allGreen: null };
   }
 }
 
@@ -36405,22 +36476,30 @@ const COLUMNS = {
 
 async function render(ctx) {
   const { octokit, username, shared, render: renderCfg } = ctx;
-  const items = await paginateSearch(octokit, buildQuery(username, shared), {
+  const items = await paginateSearch(octokit, openPrQuery(username, shared, ['review:approved']), {
     sort: 'updated',
     order: 'desc'
   });
 
-  const ready = [];
-  for (const item of items) {
-    const full = repoFullName(item);
-    const [owner, repo] = full.split('/');
-    if (!owner || !repo) continue;
-    const { sha, mergeable } = await fetchHeadShaAndMergeable(octokit, owner, repo, item.number);
-    if (!mergeable) continue;
-    const { allGreen } = await fetchChecks(octokit, owner, repo, sha);
-    if (!allGreen) continue;
-    ready.push({ ...item, owner, repo });
-  }
+  const candidates = items
+    .map((item) => {
+      const [owner, repo] = repoFullName(item).split('/');
+      return owner && repo ? { item, owner, repo } : null;
+    })
+    .filter(Boolean)
+    .slice(0, ENRICH_CAP);
+
+  const ready = (
+    await Promise.all(
+      candidates.map(async ({ item, owner, repo }) => {
+        const { sha, mergeable } = await fetchHeadShaAndMergeable(octokit, owner, repo, item.number);
+        if (mergeable !== true) return null; // false or unknown — not provably ready
+        const { allGreen } = await fetchChecks(octokit, owner, repo, sha);
+        if (allGreen !== true) return null; // failing or unverifiable — exclude
+        return { ...item, owner, repo };
+      })
+    )
+  ).filter(Boolean);
 
   if (ready.length === 0) {
     return {
@@ -36459,18 +36538,15 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch, repoFullName, isPullRequest } = __nccwpck_require__(6474);
+const { isoDaysAgo, repoScope } = __nccwpck_require__(8865);
 const { link, emptyState, formatDate, renderRows, repoLink } = __nccwpck_require__(9121);
 
-function isoDaysAgo(days, now = Date.now()) {
-  const d = new Date(now - days * 86400000);
-  return d.toISOString().slice(0, 10);
-}
-
-function buildQuery(username, shared, days) {
-  const parts = [`commenter:${username}`, `updated:>=${isoDaysAgo(days)}`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  return parts.join(' ');
+function buildQuery(username, shared, days, sectionExcludeRepos = []) {
+  return [
+    `commenter:${username}`,
+    `updated:>=${isoDaysAgo(days)}`,
+    ...repoScope(shared, sectionExcludeRepos)
+  ].join(' ');
 }
 
 function groupByRepo(items) {
@@ -36525,7 +36601,8 @@ function renderFlat(items, maxRows, renderCfg) {
 async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
   const days = config?.days || 14;
-  const items = await paginateSearch(octokit, buildQuery(username, shared, days), {
+  const sectionExcludeRepos = config?.excludeRepositories || [];
+  const items = await paginateSearch(octokit, buildQuery(username, shared, days, sectionExcludeRepos), {
     sort: 'updated',
     order: 'desc'
   });
@@ -36563,15 +36640,13 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { openPrQuery } = __nccwpck_require__(8865);
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate, userLink } = __nccwpck_require__(9121);
 
-function buildQuery(username, shared) {
-  const parts = [`type:pr`, `author:${username}`, `is:open`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
+// Cap how many candidate PRs we enrich with per-PR comment/review lookups.
+// Each candidate costs 3 API calls, so without a bound a user with dozens of
+// open PRs would fire hundreds of requests per run only to discard most.
+const ENRICH_CAP = 40;
 
 async function lastActivity(octokit, owner, repo, number, username) {
   const [issueComments, reviewComments, reviews] = await Promise.all([
@@ -36611,20 +36686,31 @@ const COLUMNS = {
 
 async function render(ctx) {
   const { octokit, username, shared, render: renderCfg } = ctx;
-  const prs = await paginateSearch(octokit, buildQuery(username, shared), {
+  const prs = await paginateSearch(octokit, openPrQuery(username, shared), {
     sort: 'updated',
     order: 'desc'
   });
 
-  const enriched = [];
-  for (const pr of prs) {
-    const full = repoFullName(pr);
-    const [owner, repo] = full.split('/');
-    if (!owner || !repo) continue;
-    const activity = await lastActivity(octokit, owner, repo, pr.number, username);
-    if (!activity || !activity.waitingOnUser) continue;
-    enriched.push({ ...pr, owner, repo, lastUser: activity.last.user, lastAt: activity.last.at });
-  }
+  // Search already returns most-recently-updated first, so the freshest
+  // candidates are at the front — bound the enrichment to the top ENRICH_CAP.
+  const candidates = prs
+    .map((pr) => {
+      const [owner, repo] = repoFullName(pr).split('/');
+      return owner && repo ? { pr, owner, repo } : null;
+    })
+    .filter(Boolean)
+    .slice(0, ENRICH_CAP);
+
+  const enriched = (
+    await Promise.all(
+      candidates.map(async ({ pr, owner, repo }) => {
+        const activity = await lastActivity(octokit, owner, repo, pr.number, username);
+        if (!activity || !activity.waitingOnUser) return null;
+        return { ...pr, owner, repo, lastUser: activity.last.user, lastAt: activity.last.at };
+      })
+    )
+  ).filter(Boolean);
+
   enriched.sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt));
   const limited = enriched.slice(0, shared.maxRows);
 
@@ -36661,13 +36747,11 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { repoScope } = __nccwpck_require__(8865);
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate, userLink } = __nccwpck_require__(9121);
 
 function buildQuery(username, shared) {
-  const parts = [`type:pr`, `is:open`, `review-requested:${username}`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  return parts.join(' ');
+  return [`type:pr`, `is:open`, `review-requested:${username}`, ...repoScope(shared)].join(' ');
 }
 
 const COLUMNS = {
@@ -36725,24 +36809,8 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch, repoFullName } = __nccwpck_require__(6474);
+const { isoDaysAgo, openPrQuery } = __nccwpck_require__(8865);
 const { link, prRef, renderRows, emptyState, makeStatusTag, formatDate } = __nccwpck_require__(9121);
-
-function isoDaysAgo(days, now = Date.now()) {
-  return new Date(now - days * 86400000).toISOString().slice(0, 10);
-}
-
-function buildQuery(username, shared, staleDays) {
-  const parts = [
-    `type:pr`,
-    `author:${username}`,
-    `is:open`,
-    `updated:<${isoDaysAgo(staleDays)}`
-  ];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  if (!shared.includeDrafts) parts.push('-draft:true');
-  return parts.join(' ');
-}
 
 const COLUMNS = {
   pr: { header: 'PR', render: (r) => link(r.title, r.html_url) },
@@ -36759,7 +36827,8 @@ const COLUMNS = {
 async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
   const staleDays = config?.staleDays || 14;
-  const items = await paginateSearch(octokit, buildQuery(username, shared, staleDays), {
+  const query = openPrQuery(username, shared, [`updated:<${isoDaysAgo(staleDays)}`]);
+  const items = await paginateSearch(octokit, query, {
     sort: 'updated',
     order: 'asc'
   });
@@ -36805,7 +36874,8 @@ module.exports = {
 /***/ 2749:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const { table } = __nccwpck_require__(9121);
+const { isoDaysAgo, repoScope } = __nccwpck_require__(8865);
+const { table, emptyState } = __nccwpck_require__(9121);
 
 const PERIOD_DAYS = {
   week: 7,
@@ -36813,10 +36883,6 @@ const PERIOD_DAYS = {
   quarter: 90,
   year: 365
 };
-
-function isoDaysAgo(days, now = Date.now()) {
-  return new Date(now - days * 86400000).toISOString().slice(0, 10);
-}
 
 async function countQuery(octokit, q) {
   const { data } = await octokit.rest.search.issuesAndPullRequests({
@@ -36826,18 +36892,11 @@ async function countQuery(octokit, q) {
   return data.total_count || 0;
 }
 
-function repoFilter(shared) {
-  const parts = [];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  return parts.length ? ' ' + parts.join(' ') : '';
-}
-
 async function statsForPeriod(octokit, username, shared, period) {
   const days = PERIOD_DAYS[period];
   if (!days) return null;
   const since = isoDaysAgo(days);
-  const scope = repoFilter(shared);
+  const scope = repoScope(shared).length ? ' ' + repoScope(shared).join(' ') : '';
   const [opened, merged, reviewed] = await Promise.all([
     countQuery(octokit, `type:pr author:${username} created:>=${since}${scope}`),
     countQuery(octokit, `type:pr author:${username} is:merged merged:>=${since}${scope}`),
@@ -36872,10 +36931,18 @@ async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
   const periods = (config?.periods || ['week', 'month', 'year']).filter((p) => PERIOD_DAYS[p]);
 
-  const stats = [];
-  for (const period of periods) {
-    const stat = await statsForPeriod(octokit, username, shared, period);
-    if (stat) stats.push(stat);
+  const stats = (
+    await Promise.all(periods.map((period) => statsForPeriod(octokit, username, shared, period)))
+  ).filter(Boolean);
+
+  // If every period is all-zero there is no signal — a grid of zeros reads as
+  // "broken", so render a single empty-state line instead.
+  const hasSignal = stats.some((s) => s.opened || s.merged || s.reviewed);
+  if (!hasSignal) {
+    return {
+      content: emptyState(renderCfg.empty_state || module.exports.defaultEmptyState || 'No activity yet.'),
+      metadata: { periods: periods.join(','), empty: true }
+    };
   }
 
   const style = renderCfg.style || 'table';
@@ -36923,8 +36990,14 @@ function computeCurrentStreak(days, now = new Date()) {
   for (let i = days.length - 1; i >= 0; i -= 1) {
     const d = days[i];
     if (d.date > today) continue;
-    if (d.count > 0) streak += 1;
-    else break;
+    if (d.count > 0) {
+      streak += 1;
+      continue;
+    }
+    // A zero on *today* doesn't break the run — the day isn't over yet. Any
+    // earlier zero ends the streak.
+    if (d.date === today) continue;
+    break;
   }
   return streak;
 }
@@ -37016,40 +37089,17 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { paginateSearch } = __nccwpck_require__(6474);
-const { renderSparkline } = __nccwpck_require__(412);
+const { renderSparkline, bucketByWeek, weekLabels } = __nccwpck_require__(412);
+const { isoDaysAgo, repoScope } = __nccwpck_require__(8865);
 const { emptyState } = __nccwpck_require__(9121);
 
-function isoDaysAgo(days, now = Date.now()) {
-  return new Date(now - days * 86400000).toISOString().slice(0, 10);
-}
-
 function buildQuery(username, shared, weeks) {
-  const parts = [`type:pr`, `author:${username}`, `created:>=${isoDaysAgo(weeks * 7)}`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  return parts.join(' ');
-}
-
-function bucketWeeks(items, weeks, nowMs = Date.now()) {
-  const buckets = new Array(weeks).fill(0);
-  const weekMs = 7 * 86400 * 1000;
-  const startMs = nowMs - weeks * weekMs;
-  for (const item of items) {
-    const t = new Date(item.created_at).getTime();
-    if (!Number.isFinite(t) || t < startMs || t > nowMs) continue;
-    const idx = Math.min(weeks - 1, Math.floor((t - startMs) / weekMs));
-    buckets[idx] += 1;
-  }
-  return buckets;
-}
-
-function weekLabels(weeks, nowMs = Date.now()) {
-  const out = [];
-  for (let i = weeks - 1; i >= 0; i -= 1) {
-    const d = new Date(nowMs - i * 7 * 86400 * 1000);
-    out.push(d.toISOString().slice(5, 10));
-  }
-  return out;
+  return [
+    `type:pr`,
+    `author:${username}`,
+    `created:>=${isoDaysAgo(weeks * 7)}`,
+    ...repoScope(shared)
+  ].join(' ');
 }
 
 async function render(ctx) {
@@ -37067,7 +37117,7 @@ async function render(ctx) {
     };
   }
 
-  const buckets = bucketWeeks(items, weeks);
+  const buckets = bucketByWeek(items.map((i) => i.created_at), weeks);
   const labels = weekLabels(weeks);
   const avg = (buckets.reduce((a, b) => a + b, 0) / weeks).toFixed(1);
 
@@ -37204,7 +37254,7 @@ function unicodeHeatmap(weeks) {
     });
     lines.push(`${dayLabels[day]} ${cells.join('')}`);
   }
-  return ['```text', ...lines, '```', '', '_Legend: `·` 0 · `░` 1–2 · `▒` 3–5 · `▓` 6–10 · `█` 10+_'].join('\n');
+  return ['```text', ...lines, '```', '', '_Legend: `·` 0 · `░` 1–2 · `▒` 3–5 · `▓` 6–10 · `█` 11+_'].join('\n');
 }
 
 function bucketByWeek(timestamps, weeks, nowMs = Date.now()) {

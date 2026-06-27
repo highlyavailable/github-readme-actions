@@ -42,6 +42,16 @@ describe('streak', () => {
     expect(content).toContain('**5d** longest');
   });
 
+  test('a not-yet-active today does not reset the current streak', async () => {
+    // Last day is today with 0 contributions; the three days before are active.
+    const counts = [1, 1, 1, 0];
+    const octokit = octokitWithContributions(makeWeeks(counts), 3);
+    const { metadata } = await section.render(
+      ctx({ octokit, config: { months: 1 }, render: { style: 'compact' } })
+    );
+    expect(metadata.current).toBe(3);
+  });
+
   test('table style renders four rows', async () => {
     const counts = [1, 1, 1];
     const octokit = octokitWithContributions(makeWeeks(counts), 3);

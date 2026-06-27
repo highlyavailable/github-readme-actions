@@ -1,16 +1,13 @@
 const { paginateSearch, repoFullName, isPullRequest } = require('../github');
+const { isoDaysAgo, repoScope } = require('../query');
 const { link, emptyState, formatDate, renderRows, repoLink } = require('../render');
 
-function isoDaysAgo(days, now = Date.now()) {
-  const d = new Date(now - days * 86400000);
-  return d.toISOString().slice(0, 10);
-}
-
-function buildQuery(username, shared, days) {
-  const parts = [`commenter:${username}`, `updated:>=${isoDaysAgo(days)}`];
-  for (const repo of shared.repositories || []) parts.push(`repo:${repo}`);
-  for (const repo of shared.excludeRepositories || []) parts.push(`-repo:${repo}`);
-  return parts.join(' ');
+function buildQuery(username, shared, days, sectionExcludeRepos = []) {
+  return [
+    `commenter:${username}`,
+    `updated:>=${isoDaysAgo(days)}`,
+    ...repoScope(shared, sectionExcludeRepos)
+  ].join(' ');
 }
 
 function groupByRepo(items) {
@@ -65,7 +62,8 @@ function renderFlat(items, maxRows, renderCfg) {
 async function render(ctx) {
   const { octokit, username, shared, config, render: renderCfg } = ctx;
   const days = config?.days || 14;
-  const items = await paginateSearch(octokit, buildQuery(username, shared, days), {
+  const sectionExcludeRepos = config?.excludeRepositories || [];
+  const items = await paginateSearch(octokit, buildQuery(username, shared, days, sectionExcludeRepos), {
     sort: 'updated',
     order: 'desc'
   });

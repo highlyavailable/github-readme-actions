@@ -13,9 +13,9 @@ defaults:
     ci_failing: "[ci:failing]"
 
 sections:
-  # Composite "app window" — single block, full dashboard inside
-  command_center:
-    layout: [kpis, velocity, ready_to_merge, failing_ci, response_inbox, review_inbox]
+  # Composite block — single marker pair, full dashboard inside
+  standup:
+    layout: [hero, needs_attention, ready_to_merge, failing_ci, response_inbox, review_inbox]
     per_block_rows: 5
 
   # Standalone inbox sections

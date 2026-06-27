@@ -105,4 +105,51 @@ describe('activity_feed', () => {
     expect(metadata.count).toBe(0);
     expect(content).toContain('Could not load activity');
   });
+
+  test('drops zero-commit pushes (merges, no-op syncs, bot auto-commits)', async () => {
+    const octokit = octokitWithEvents([
+      event('PushEvent', { ref: 'refs/heads/main', distinct_size: 0, commits: [] }),
+      event('PushEvent', { ref: 'refs/heads/main', distinct_size: 2, commits: [{}, {}] })
+    ]);
+    const { content, metadata } = await section.render(ctx({ octokit }));
+    expect(metadata.count).toBe(1);
+    expect(content).not.toContain('Pushed 0 commits');
+    expect(content).toContain('Pushed 2 commits');
+  });
+
+  test('excludes events from repos in shared.excludeRepositories', async () => {
+    const octokit = octokitWithEvents([
+      event('PushEvent', { ref: 'refs/heads/main', distinct_size: 1, commits: [{}] }, { repo: { name: 'acme/noisy-repo' } }),
+      event('PushEvent', { ref: 'refs/heads/main', distinct_size: 2, commits: [{}, {}] }, { repo: { name: 'acme/widgets' } })
+    ]);
+    const { content, metadata } = await section.render(
+      ctx({ octokit, shared: { maxRows: 10, includeDrafts: false, repositories: [], excludeRepositories: ['acme/noisy-repo'] } })
+    );
+    expect(metadata.count).toBe(1);
+    expect(content).not.toContain('noisy-repo');
+    expect(content).toContain('acme/widgets');
+  });
+
+  test('excludes events from repos in config.excludeRepositories (section-specific)', async () => {
+    const octokit = octokitWithEvents([
+      event('PushEvent', { ref: 'refs/heads/main', distinct_size: 1, commits: [{}] }, { repo: { name: 'acme/private-work' } }),
+      event('IssuesEvent', { action: 'opened', issue: { number: 3, title: 'Bug', html_url: 'u' } }, { repo: { name: 'acme/widgets' } })
+    ]);
+    const { content, metadata } = await section.render(
+      ctx({ octokit, config: { excludeRepositories: ['acme/private-work'] } })
+    );
+    expect(metadata.count).toBe(1);
+    expect(content).not.toContain('private-work');
+  });
+
+  test('scopes events to repos in shared.repositories when set', async () => {
+    const octokit = octokitWithEvents([
+      event('PushEvent', { ref: 'refs/heads/main', distinct_size: 1, commits: [{}] }, { repo: { name: 'acme/other' } }),
+      event('PushEvent', { ref: 'refs/heads/main', distinct_size: 2, commits: [{}, {}] }, { repo: { name: 'acme/widgets' } })
+    ]);
+    const { metadata } = await section.render(
+      ctx({ octokit, shared: { maxRows: 10, includeDrafts: false, repositories: ['acme/widgets'], excludeRepositories: [] } })
+    );
+    expect(metadata.count).toBe(1);
+  });
 });

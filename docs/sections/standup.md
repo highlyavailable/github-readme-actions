@@ -1,46 +1,40 @@
-# command_center
+# standup
 
-A composite "app window" section: one marker pair, one block, dense by design. Output is grouped, color-coded, and deep-linked so it reads at a glance.
+A composite section: one marker pair, one block, dense by design. Output is grouped, deep-linked, and reads at a glance — what needs your attention up top, what you've shipped below.
+
+> `command_center` is a deprecated alias for `standup`. Existing markers, the `command_center_*` inputs, and the `command_center_*` outputs all keep working.
 
 ## Marker
 
 ```
-<!--readme-actions:command_center:start-->
-<!--readme-actions:command_center:end-->
+<!--readme-actions:standup:start-->
+<!--readme-actions:standup:end-->
 ```
 
 ## Output
 
 ```
-> ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
+> ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
 > _Updated 2026-05-21 04:41 UTC_
 >
-> **This week** 7 opened · 2 merged · 0 reviewed · velocity `▁▁▁▁▂▁▁▁▁▁▁▇` 0.7/wk
+> **Last 30 days** 7 opened · 5 merged · 2 reviewed · velocity `▁▁▁▁▂▁▁▁▁▁▁▇` 0.7/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 3 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 
-#### Needs attention (4)
+#### Needs attention (3)
 
-| Why | PR | Ref |
+- [ ] 🔴 CI failing — [gcp: migrate Pub/Sub...](url) — [`redpanda-data/connect#4432`](url) <!--ack:fp=8x2hk1-->
+- [ ] 🟠 stale 28d — [docs: refresh guide](url) — [`acme/api#380`](url) <!--ack:fp=qw4n9p-->
+- [ ] 🟢 ready to merge — [feat: rate limit](url) — [`acme/api#420`](url) <!--ack:fp=pe5jq7-->
+
+#### Recently merged (5)
+
+| PR | Ref | Merged |
 |---|---|---|
-| 🔴 CI failing | [gcp: migrate Pub/Sub...](url) | [`redpanda-data/connect#4432`](url) |
-| 🟠 stale 28d | [docs: refresh guide](url) | [`acme/api#380`](url) |
-| 🟢 ready to merge | [feat: rate limit](url) | [`acme/api#420`](url) |
-
-#### Open pull requests (8)
-
-| PR | Ref | State | Comments | Updated |
-|---|---|---|---|---|
-| [add retry logic](url) | [`acme/api#412`](url) | 🟡 open | 3 | 2h |
-
-#### Awaiting your reply (1)
-
-| PR | Ref | Last reply | Age |
-|---|---|---|---|
-| [add retry logic](url) | [`acme/api#412`](url) | [@CLAassistant](https://github.com/CLAassistant) | 5d |
+| [add retry logic](url) | [`acme/api#412`](url) | 2026-05-18 |
 ```
 
-The hero is a single blockquote: heading, timestamp, KPI line, inbox pills. The velocity sparkline lives inline in the KPI line — no big chart, just signal. Empty subsections are dropped automatically.
+The hero is a single blockquote: heading, timestamp, KPI line, inbox pills. The velocity sparkline lives inline in the KPI line — no big chart, just signal. `Needs attention` and `Awaiting your reply` render as interactive task lists (see [Acknowledge checkboxes](#acknowledge-checkboxes)). Empty subsections are dropped automatically.
 
 ## Inputs
 
@@ -55,15 +49,15 @@ The hero is a single blockquote: heading, timestamp, KPI line, inbox pills. The 
 | Block | What it renders |
 |---|---|
 | `hero` | Blockquote: heading, timestamp, KPI line + inline sparkline, inbox pills |
-| `needs_attention` | Unified table combining failing CI + stale + ready-to-merge PRs |
+| `needs_attention` | Task-list checklist combining failing CI + stale + ready-to-merge PRs |
 | `open_prs` | Top open PRs table |
-| `recently_merged` | Recently merged/accepted PRs table (see [merged-prs](merged-prs.md)) |
+| `recently_merged` | Recently merged PRs table (see [merged-prs](merged-prs.md)) |
 | `stale_prs` | Stale PRs table (standalone, separate from `needs_attention`) |
 | `failing_ci` | Failing CI table (standalone) |
 | `ready_to_merge` | Ready-to-merge table (standalone) |
-| `response_inbox` | Awaiting-your-reply table |
+| `response_inbox` | Awaiting-your-reply task list, with a one-line preview of the last reply |
 | `review_inbox` | Pending-review-requests table |
-| `activity_feed` | Chronological public-activity timeline — comments, reviews, PRs, pushes, releases, each timestamped (see [activity-feed](activity-feed.md)) |
+| `activity_feed` | Chronological public-activity timeline (see [activity-feed](activity-feed.md)) |
 
 Each subsection is automatically suppressed when its data is empty.
 
@@ -73,7 +67,7 @@ Each subsection is automatically suppressed when its data is empty.
 
 ```yaml
 sections:
-  command_center:
+  standup:
     layout: [hero, needs_attention, open_prs, recently_merged, response_inbox, review_inbox, activity_feed]
     per_block_rows: 5
 ```
@@ -82,32 +76,34 @@ sections:
 
 ```yaml
 sections:
-  command_center:
+  standup:
     layout: [hero, needs_attention]
     per_block_rows: 10
 ```
 
-**Inbox-only — drop the open-PR drilldown:**
+**Wins-forward — lead with what you shipped:**
 
 ```yaml
 sections:
-  command_center:
-    layout: [hero, response_inbox, review_inbox]
+  standup:
+    layout: [hero, recently_merged, needs_attention]
 ```
 
 ## Outputs
 
 | Output | Description |
 |---|---|
-| `command_center_open_prs_count` | Open PR count |
 | `command_center_awaiting_reply_count` | Threads waiting on you |
 | `command_center_review_requests_count` | Pending review requests |
 | `command_center_ready_count` | Approved + mergeable PRs |
 | `command_center_failing_count` | PRs with failing CI |
 | `command_center_stale_count` | PRs untouched past `stale_days` |
-| `command_center_week_opened` | PRs opened in the last 7 days |
-| `command_center_week_merged` | PRs merged in the last 7 days |
-| `command_center_week_reviewed` | PRs you reviewed in the last 7 days |
+| `command_center_merged_count` | PRs merged in the window |
+| `command_center_last30_opened` | PRs opened in the last 30 days |
+| `command_center_last30_merged` | PRs merged in the last 30 days |
+| `command_center_last30_reviewed` | PRs you reviewed in the last 30 days |
+
+(Output names keep the `command_center_` prefix for back-compat.)
 
 ## Acknowledge checkboxes
 
@@ -134,6 +130,6 @@ When you tick a box in the GitHub UI, GitHub commits the change. On the next das
 
 ## How it works
 
-The composite calls the same `render(ctx)` functions used by individual sections, but only uses them for accurate counts and the drill-down tables. The hero builds its own KPI line from cheap count-only search queries (one per metric), plus a 12-week velocity bucket for the inline sparkline. The `needs_attention` table re-queries the underlying search to keep titles + refs handy in a unified shape.
+The composite calls the same `render(ctx)` functions used by individual sections, but only uses them for accurate counts and the drill-down tables. The hero builds its own KPI line from cheap count-only search queries (one per metric), plus a 12-week velocity bucket for the inline sparkline. The `needs_attention` checklist re-queries the underlying search to keep titles + refs handy in a unified shape.
 
 Everything runs in parallel, so total wall time is roughly `max(individual section time)` — no additive cost over running the same sections standalone.
