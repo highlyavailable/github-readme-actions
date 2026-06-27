@@ -29,23 +29,25 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-24 01:55 UTC_
+> _Updated 2026-06-27 18:25 UTC_
 >
-> **Last 30 days** 0 opened (=) · 0 merged (↓1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁█▁▁▂▁▁` 0.7/wk
+> **Last 30 days** 1 opened (↓6) · 2 merged (↓1) · 0 reviewed (=) · velocity `▁▁▁▁▁█▄▁▂▁▁▁` 0.7/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 1 stale · 🟡 1 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 8 2w+
+>
+> _Since last update (3d ago): +1 opened, +2 merged, -1 awaiting._
 
 #### Needs attention (1)
 
-- [ ] 🟠 stale 3w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=1hy77uq-->
+- [ ] 🔴 CI failing — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=v1ivdr-->
 
 #### Open pull requests (1)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 4 | 3w |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 5 | 1h |
 
 #### Recently merged (4)
 
@@ -56,15 +58,12 @@ This README dogfoods the action. The block below is a single `standup` section �
 | [fix: declare opentelemetry-semantic-conventions for aio-pika, logging, pika and system-metrics](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | [`open-telemetry/opentelemetry-python-contrib#4594`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | 2026-05-19 |
 | [fix(confluent-kafka): declare opentelemetry-semantic-conventions as a direct dependency](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | [`open-telemetry/opentelemetry-python-contrib#4590`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | 2026-05-18 |
 
-#### Awaiting your reply (1)
+#### Recent activity (4)
 
-- [ ] [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) — [@squiidz](https://github.com/squiidz) 3w <!--ack:fp=1j34u42-->
-
-#### Recent activity (3)
-
+- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-4819241493) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(1h)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
-- 📤 Opened PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
-- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
+- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -94,9 +93,10 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
+- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-4819241493) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(1h)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
-- 📤 Opened PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
-- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
+- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
