@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 <!--readme-actions:command_center:start-->
 > ### Command Center · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-06-27 00:42 UTC_
+> _Updated 2026-06-27 07:06 UTC_
 >
-> **This week** 0 opened (=) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁█▁▁▂▁▁` 0.7/wk
+> **This week** 0 opened (=) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁█▆▁▃▁▁▁` 0.7/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 1 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
@@ -62,11 +62,11 @@ This README dogfoods the action. The block below is a single `command_center` se
 
 #### Recent activity (6)
 
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(2d)_
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(2d)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(3d)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(3d)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 - ⬆️ Pushed 0 commits to `feature/1515-per-node-callback` in [`highlyavailable/astronomer-cosmos`](https://github.com/highlyavailable/astronomer-cosmos) _(2w)_
-- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -96,12 +96,12 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(2d)_
-- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(2d)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(3d)_
+- ⬆️ Pushed 0 commits to `main` in [`highlyavailable/github-readme-actions`](https://github.com/highlyavailable/github-readme-actions) _(3d)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
 - ⬆️ Pushed 0 commits to `feature/1515-per-node-callback` in [`highlyavailable/astronomer-cosmos`](https://github.com/highlyavailable/astronomer-cosmos) _(2w)_
-- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
-- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(2w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
+- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
