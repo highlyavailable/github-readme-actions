@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-07-03 19:13 UTC_
+> _Updated 2026-07-04 02:31 UTC_
 >
-> **Last 30 days** 1 opened (↓6) · 1 merged (↓2) · 0 reviewed (=) · velocity `▁▁▁▁▁█▁▁▂▁▁▁` 0.7/wk
+> **Last 30 days** 1 opened (↓6) · 1 merged (↓2) · 0 reviewed (=) · velocity `▁▁▁▁█▆▁▃▁▁▁▁` 0.7/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 0 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
@@ -60,8 +60,8 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 - 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-4819241493) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(6d)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
-- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
-- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(4w)_
+- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(4w)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -93,8 +93,8 @@ Standalone `activity_feed` block — a longer slice of the public-events timelin
 <!--readme-actions:activity_feed:start-->
 - 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-4819241493) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(6d)_
 - 💬 Commented on PR [#2781 Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781#issuecomment-4650837008) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
-- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
-- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(3w)_
+- 💬 Commented on issue [#2130 Identify and document/create an example with the best way to retry model runs but not tests](https://github.com/astronomer/astronomer-cosmos/issues/2130#issuecomment-4636815506) in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(4w)_
+- 📤 Opened PR #2781 in [`astronomer/astronomer-cosmos`](https://github.com/astronomer/astronomer-cosmos) _(4w)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
