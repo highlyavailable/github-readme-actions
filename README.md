@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-07-15 13:27 UTC_
+> _Updated 2026-07-15 19:04 UTC_
 >
 > **Last 30 days** 3 opened (↓5) · 0 merged (↓4) · 0 reviewed (=) · velocity `▁▁▁█▁▁▂▁▁▁▁▄` 0.9/wk
 >
