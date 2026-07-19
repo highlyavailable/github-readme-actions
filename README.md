@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-07-18 18:56 UTC_
+> _Updated 2026-07-19 02:13 UTC_
 >
-> **Last 30 days** 3 opened (↑2) · 0 merged (↓3) · 0 reviewed (=) · velocity `▁▁█▄▁▂▁▁▁▁▁▅` 0.9/wk
+> **Last 30 days** 3 opened (↑2) · 0 merged (↓2) · 0 reviewed (=) · velocity `▁▁█▄▁▂▁▁▁▁▁▅` 0.9/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 1 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
@@ -39,10 +39,10 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Needs attention (4)
 
+- [ ] 🟠 stale 3w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=awlr32-->
 - [ ] 🔴 CI failing — [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) <!--ack:fp=4vaek9-->
 - [ ] 🔴 CI failing — [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) — [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) <!--ack:fp=4sgq9f-->
 - [ ] 🔴 CI failing — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=dntm7a-->
-- [ ] 🔴 CI failing — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=v1ivdr-->
 
 #### Open pull requests (4)
 
