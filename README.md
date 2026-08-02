@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-08-02 08:14 UTC_
+> _Updated 2026-08-02 13:11 UTC_
 >
-> **Last 30 days** 3 opened (↑2) · 0 merged (↓1) · 0 reviewed (=) · velocity `█▄▁▂▁▁▁▁▁▅▁▁` 0.9/wk
+> **Last 30 days** 3 opened (↑2) · 0 merged (↓1) · 0 reviewed (=) · velocity `█▄▁▂▁▁▁▁▅▁▁▁` 0.9/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 3 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
@@ -49,9 +49,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 6 | 12d |
-| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 0 | 2w |
-| [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 2w |
-| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 0 | 2w |
+| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 0 | 3w |
+| [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 3w |
+| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 0 | 3w |
 
 #### Recently merged (4)
 
@@ -65,9 +65,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 #### Recent activity (4)
 
 - 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-5027380168) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(12d)_
-- 📤 Opened PR #10478 in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(2w)_
-- 📤 Opened PR #4598 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(2w)_
-- 📤 Opened PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(2w)_
+- 📤 Opened PR #10478 in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(3w)_
+- 📤 Opened PR #4598 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3w)_
+- 📤 Opened PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3w)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -98,9 +98,9 @@ Standalone `activity_feed` block — a longer slice of the public-events timelin
 
 <!--readme-actions:activity_feed:start-->
 - 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-5027380168) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(12d)_
-- 📤 Opened PR #10478 in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(2w)_
-- 📤 Opened PR #4598 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(2w)_
-- 📤 Opened PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(2w)_
+- 📤 Opened PR #10478 in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(3w)_
+- 📤 Opened PR #4598 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3w)_
+- 📤 Opened PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3w)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
