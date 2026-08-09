@@ -29,13 +29,13 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-08-08 18:30 UTC_
+> _Updated 2026-08-09 01:19 UTC_
 >
 > **Last 30 days** 3 opened (↑3) · 0 merged (↓1) · 0 reviewed (=) · velocity `▆▁▃▁▁▁▁▁█▁▁▁` 0.5/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 4 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
-> **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 11 2w+
+> **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 6 2w+
 
 #### Needs attention (4)
 
