@@ -29,20 +29,13 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-08-13 07:19 UTC_
+> _Updated 2026-08-13 12:58 UTC_
 >
 > **Last 30 days** 0 opened (↓3) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▃▁▁▁▁█▁▁▁▁` 0.3/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 4 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 4 2w+
-
-#### Needs attention (4)
-
-- [ ] 🟠 stale 4w — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1sk0jvp-->
-- [ ] 🟠 stale 4w — [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) — [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) <!--ack:fp=1jonnxu-->
-- [ ] 🟠 stale 4w — [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) <!--ack:fp=1jrhc8o-->
-- [ ] 🟠 stale 3w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=13bktz0-->
 
 #### Open pull requests (4)
 
