@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-08-16 18:21 UTC_
+> _Updated 2026-08-17 00:59 UTC_
 >
 > **Last 30 days** 0 opened (↓3) · 0 merged (=) · 0 reviewed (=) · velocity `▁▃▁▁▁▁█▁▁▁▁▁` 0.3/wk
 >
@@ -53,14 +53,13 @@ This README dogfoods the action. The block below is a single `standup` section �
 | [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 5w |
 | [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 0 | 5w |
 
-#### Recently merged (4)
+#### Recently merged (3)
 
 | PR | Ref | Merged |
 | --- | --- | --- |
 | [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 2026-06-11 |
 | [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 2026-05-28 |
 | [fix: declare opentelemetry-semantic-conventions for aio-pika, logging, pika and system-metrics](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | [`open-telemetry/opentelemetry-python-contrib#4594`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | 2026-05-19 |
-| [fix(confluent-kafka): declare opentelemetry-semantic-conventions as a direct dependency](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | [`open-telemetry/opentelemetry-python-contrib#4590`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | 2026-05-18 |
 
 #### Recent activity (1)
 
