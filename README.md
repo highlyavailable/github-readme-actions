@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-08-17 18:31 UTC_
+> _Updated 2026-08-18 00:57 UTC_
 >
 > **Last 30 days** 0 opened (↓3) · 0 merged (=) · 0 reviewed (=) · velocity `▁▃▁▁▁▁█▁▁▁▁▁` 0.3/wk
 >
@@ -42,28 +42,27 @@ This README dogfoods the action. The block below is a single `standup` section �
 - [ ] 🟠 stale 5w — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1sk0jvp-->
 - [ ] 🟠 stale 5w — [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) — [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) <!--ack:fp=1jonnxu-->
 - [ ] 🟠 stale 5w — [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) <!--ack:fp=1jrhc8o-->
-- [ ] 🟠 stale 3w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=13bktz0-->
+- [ ] 🟠 stale 4w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=13bktz0-->
 
 #### Open pull requests (4)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 6 | 3w |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 6 | 4w |
 | [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 0 | 5w |
 | [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 5w |
 | [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 0 | 5w |
 
-#### Recently merged (3)
+#### Recently merged (2)
 
 | PR | Ref | Merged |
 | --- | --- | --- |
 | [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 2026-06-11 |
 | [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 2026-05-28 |
-| [fix: declare opentelemetry-semantic-conventions for aio-pika, logging, pika and system-metrics](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | [`open-telemetry/opentelemetry-python-contrib#4594`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | 2026-05-19 |
 
 #### Recent activity (1)
 
-- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-5027380168) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3w)_
+- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-5027380168) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(4w)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -93,7 +92,7 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
-- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-5027380168) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3w)_
+- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-5027380168) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(4w)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
