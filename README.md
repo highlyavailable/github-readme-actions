@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-08-28 21:40 UTC_
+> _Updated 2026-08-29 05:22 UTC_
 >
-> **Last 30 days** 0 opened (↓3) · 0 merged (=) · 0 reviewed (=) · velocity `▃▁▁▁▁█▁▁▁▁▁▁` 0.3/wk
+> **Last 30 days** 0 opened (↓3) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁█▁▁▁▁▁▁` 0.3/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 4 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
