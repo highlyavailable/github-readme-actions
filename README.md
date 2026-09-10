@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-09-09 20:19 UTC_
+> _Updated 2026-09-10 02:49 UTC_
 >
 > **Last 30 days** 0 opened (↓3) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁█▁▁▁▁▁▁▁▁` 0.3/wk
 >
@@ -52,12 +52,6 @@ This README dogfoods the action. The block below is a single `standup` section �
 | [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 0 | 1mo |
 | [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 1mo |
 | [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 0 | 1mo |
-
-#### Recently merged (1)
-
-| PR | Ref | Merged |
-| --- | --- | --- |
-| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 2026-06-11 |
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
