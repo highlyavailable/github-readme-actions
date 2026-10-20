@@ -29,15 +29,23 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-10-20 16:15 UTC_
+> _Updated 2026-10-20 21:10 UTC_
 >
 > **Last 30 days** 1 opened (↑1) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁▁█` 0.1/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 2 failing · 🟠 4 stale · 🟡 0 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 2 failing · 🟠 4 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 1 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 0 2w+
 >
-> _Since last update (5h ago): -1 awaiting._
+> _Since last update (4h ago): +1 awaiting._
+
+#### Needs attention (5)
+
+- [ ] 🟠 stale 3mo — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1sk0jvp-->
+- [ ] 🟠 stale 3mo — [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) — [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) <!--ack:fp=1jonnxu-->
+- [ ] 🟠 stale 3mo — [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) <!--ack:fp=1jrhc8o-->
+- [ ] 🟠 stale 3mo — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=13bktz0-->
+- [ ] 🔴 CI failing — [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) — [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) <!--ack:fp=1fhzlk4-->
 
 #### Open pull requests (5)
 
