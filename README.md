@@ -29,39 +29,34 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-10-21 03:04 UTC_
+> _Updated 2026-10-21 11:03 UTC_
 >
 > **Last 30 days** 1 opened (↑1) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁▁█` 0.1/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 2 failing · 🟠 4 stale · 🟡 1 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 2 failing · 🟠 3 stale · 🟡 2 awaiting reply · 🔵 0 review requests
 >
-> **Aging** 🟢 1 0–3d · 🟡 0 3–7d · 🟠 0 1–2w · 🔴 0 2w+
-
-#### Needs attention (5)
-
-- [ ] 🟠 stale 3mo — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1sk0jvp-->
-- [ ] 🟠 stale 3mo — [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) — [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) <!--ack:fp=1jonnxu-->
-- [ ] 🟠 stale 3mo — [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) <!--ack:fp=1jrhc8o-->
-- [ ] 🟠 stale 3mo — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=13bktz0-->
-- [ ] 🔴 CI failing — [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) — [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) <!--ack:fp=1fhzlk4-->
+> **Aging** 🟢 0 0–3d · 🟡 1 3–7d · 🟠 0 1–2w · 🔴 0 2w+
+>
+> _Since last update (7h ago): +1 awaiting._
 
 #### Open pull requests (5)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 🟡 open | 2 | 2d |
+| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 1 | 1h |
+| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 🟡 open | 2 | 3d |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 6 | 3mo |
 | [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 0 | 3mo |
 | [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 3mo |
-| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 0 | 3mo |
 
-#### Awaiting your reply (1)
+#### Awaiting your reply (2)
 
-- [ ] [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) — [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) — [@github-actions[bot]](https://github.com/github-actions[bot]) 2d<br>&nbsp;&nbsp;_> 🎉 **Welcome to the Kubeflow Spark Operator!** 🎉 Thanks for opening your first PR! We're happy to…_ <!--ack:fp=1yquwlc-->
+- [ ] [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) — [@chenraoCR](https://github.com/chenraoCR) 1h<br>&nbsp;&nbsp;_> @kennyp @clee @gabrielg @darron so how about this PR, can merge and make a release?_ <!--ack:fp=wh6ijj-->
+- [ ] [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) — [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) — [@github-actions[bot]](https://github.com/github-actions[bot]) 3d<br>&nbsp;&nbsp;_> 🎉 **Welcome to the Kubeflow Spark Operator!** 🎉 Thanks for opening your first PR! We're happy to…_ <!--ack:fp=1yquwlc-->
 
 #### Recent activity (1)
 
-- 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(2d)_
+- 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(3d)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -91,7 +86,7 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
-- 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(2d)_
+- 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(3d)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
