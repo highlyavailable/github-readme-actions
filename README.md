@@ -29,30 +29,40 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-10-22 16:31 UTC_
+> _Updated 2026-10-22 21:08 UTC_
 >
-> **Last 30 days** 1 opened (↑1) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁▁▁` 0.0/wk
+> **Last 30 days** 1 opened (↑1) · 1 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁▁█` 0.1/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 0 failing · 🟠 0 stale · 🟡 0 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 1 ready · 🔴 0 failing · 🟠 0 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
-> _Since last update (5h ago): -1 merged, -1 failing._
+> **Aging** 🟢 0 0–3d · 🟡 1 3–7d · 🟠 0 1–2w · 🔴 0 2w+
+>
+> _Since last update (4h ago): +1 merged._
 
-#### Open pull requests (4)
+#### Needs attention (1)
+
+- [ ] 🟢 ready to merge — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=beqrbk-->
+
+#### Open pull requests (3)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 1 | 1d |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 6 | 3mo |
-| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 0 | 3mo |
-| [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 3mo |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 8 | 11m |
+| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 1 | 14m |
+| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 50m |
 
-#### Awaiting your reply (1)
+#### Recently merged (1)
 
-- [ ] [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) — [@chenraoCR](https://github.com/chenraoCR) 1d<br>&nbsp;&nbsp;_> @kennyp @clee @gabrielg @darron so how about this PR, can merge and make a release?_ <!--ack:fp=wh6ijj-->
+| PR | Ref | Merged |
+| --- | --- | --- |
+| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
 
-#### Recent activity (1)
+#### Recent activity (4)
 
+- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-6351097923) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(13m)_
+- 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(50m)_
 - 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(4d)_
+- 🚫 Closed PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3mo)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -63,7 +73,19 @@ _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighly
 Standalone `merged_prs` block — every accepted PR in the window (`merged_window_days`), up to `max_rows`.
 
 <!--readme-actions:merged_prs:start-->
-_No merged PRs in the window._
+| PR | Ref | Merged |
+| --- | --- | --- |
+| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
+| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 2026-06-11 |
+| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 2026-05-28 |
+| [fix: declare opentelemetry-semantic-conventions for aio-pika, logging, pika and system-metrics](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | [`open-telemetry/opentelemetry-python-contrib#4594`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | 2026-05-19 |
+| [fix(confluent-kafka): declare opentelemetry-semantic-conventions as a direct dependency](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | [`open-telemetry/opentelemetry-python-contrib#4590`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | 2026-05-18 |
+| [prometheus: validate exponential histogram scale range (#6779)](https://github.com/open-telemetry/opentelemetry-go/pull/6822) | [`open-telemetry/opentelemetry-go#6822`](https://github.com/open-telemetry/opentelemetry-go/pull/6822) | 2025-06-16 |
+| [fix: reduce API test memory consumption from 8.26GB to 1.57GB (#8263)](https://github.com/treeverse/lakeFS/pull/9097) | [`treeverse/lakeFS#9097`](https://github.com/treeverse/lakeFS/pull/9097) | 2025-06-08 |
+| [Separate configurations for colorized and json logs in Task SDK / Celery Executor](https://github.com/apache/airflow/pull/51082) | [`apache/airflow#51082`](https://github.com/apache/airflow/pull/51082) | 2025-06-03 |
+| [Fix/issue 6560 install trace bridge test](https://github.com/open-telemetry/opentelemetry-go/pull/6814) | [`open-telemetry/opentelemetry-go#6814`](https://github.com/open-telemetry/opentelemetry-go/pull/6814) | 2025-05-26 |
+| [bridge/opencensus: add test for OTelSpanContextToOC function](https://github.com/open-telemetry/opentelemetry-go/pull/6813) | [`open-telemetry/opentelemetry-go#6813`](https://github.com/open-telemetry/opentelemetry-go/pull/6813) | 2025-05-23 |
+| [Create RateMyProfessors.com-Selenium-Scraper.yml](https://github.com/up-for-grabs/up-for-grabs.net/pull/3744) | [`up-for-grabs/up-for-grabs.net#3744`](https://github.com/up-for-grabs/up-for-grabs.net/pull/3744) | 2023-02-10 |
 <!--readme-actions:merged_prs:end-->
 
 ### Extended activity timeline
@@ -71,7 +93,10 @@ _No merged PRs in the window._
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
+- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-6351097923) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(13m)_
+- 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(50m)_
 - 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(4d)_
+- 🚫 Closed PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3mo)_
 <!--readme-actions:activity_feed:end-->
 
 ## Quickstart
