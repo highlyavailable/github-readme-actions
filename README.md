@@ -29,28 +29,41 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-10-21 21:10 UTC_
+> _Updated 2026-10-22 03:02 UTC_
 >
-> **Last 30 days** 1 opened (↑1) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁▁█` 0.1/wk
+> **Last 30 days** 1 opened (↑1) · 1 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁▁█` 0.1/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 2 failing · 🟠 3 stale · 🟡 0 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 3 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 0 0–3d · 🟡 1 3–7d · 🟠 0 1–2w · 🔴 0 2w+
+>
+> _Since last update (5h ago): +1 merged, +1 awaiting, -1 failing._
 
-#### Open pull requests (5)
+#### Needs attention (4)
+
+- [ ] 🟠 stale 3mo — [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) — [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) <!--ack:fp=1jonnxu-->
+- [ ] 🟠 stale 3mo — [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) <!--ack:fp=1jrhc8o-->
+- [ ] 🟠 stale 3mo — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=13bktz0-->
+- [ ] 🔴 CI failing — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1oavfes-->
+
+#### Open pull requests (4)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 1 | 11h |
-| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 🟡 open | 2 | 3d |
+| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 1 | 17h |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 6 | 3mo |
 | [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 0 | 3mo |
 | [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 3mo |
 
-#### Awaiting your reply (2)
+#### Recently merged (1)
 
-- [ ] [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) — [@chenraoCR](https://github.com/chenraoCR) 11h<br>&nbsp;&nbsp;_> @kennyp @clee @gabrielg @darron so how about this PR, can merge and make a release?_ <!--ack:fp=wh6ijj-->
-- [ ] [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) — [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) — [@github-actions[bot]](https://github.com/github-actions[bot]) 3d<br>&nbsp;&nbsp;_> 🎉 **Welcome to the Kubeflow Spark Operator!** 🎉 Thanks for opening your first PR! We're happy to…_ <!--ack:fp=1yquwlc-->
+| PR | Ref | Merged |
+| --- | --- | --- |
+| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
+
+#### Awaiting your reply (1)
+
+- [ ] [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) — [@chenraoCR](https://github.com/chenraoCR) 17h<br>&nbsp;&nbsp;_> @kennyp @clee @gabrielg @darron so how about this PR, can merge and make a release?_ <!--ack:fp=wh6ijj-->
 
 #### Recent activity (1)
 
@@ -67,6 +80,7 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 <!--readme-actions:merged_prs:start-->
 | PR | Ref | Merged |
 | --- | --- | --- |
+| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
 | [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 2026-06-11 |
 | [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 2026-05-28 |
 | [fix: declare opentelemetry-semantic-conventions for aio-pika, logging, pika and system-metrics](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | [`open-telemetry/opentelemetry-python-contrib#4594`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | 2026-05-19 |
