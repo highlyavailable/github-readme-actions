@@ -29,15 +29,13 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-10-22 11:02 UTC_
+> _Updated 2026-10-22 16:31 UTC_
 >
-> **Last 30 days** 1 opened (↑1) · 1 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁▁█` 0.1/wk
+> **Last 30 days** 1 opened (↑1) · 0 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁▁▁` 0.0/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 1 failing · 🟠 3 stale · 🟡 0 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 0 failing · 🟠 0 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
-> **Aging** 🟢 0 0–3d · 🟡 1 3–7d · 🟠 0 1–2w · 🔴 0 2w+
->
-> _Since last update (8h ago): -1 awaiting._
+> _Since last update (5h ago): -1 merged, -1 failing._
 
 #### Open pull requests (4)
 
@@ -47,12 +45,6 @@ This README dogfoods the action. The block below is a single `standup` section �
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 6 | 3mo |
 | [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 0 | 3mo |
 | [ffi: use correct glibc SONAME libc.so.6 in processor example](https://github.com/redpanda-data/connect/pull/4597) | [`redpanda-data/connect#4597`](https://github.com/redpanda-data/connect/pull/4597) | 🟡 open | 0 | 3mo |
-
-#### Recently merged (1)
-
-| PR | Ref | Merged |
-| --- | --- | --- |
-| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
 
 #### Awaiting your reply (1)
 
@@ -71,19 +63,7 @@ _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighly
 Standalone `merged_prs` block — every accepted PR in the window (`merged_window_days`), up to `max_rows`.
 
 <!--readme-actions:merged_prs:start-->
-| PR | Ref | Merged |
-| --- | --- | --- |
-| [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
-| [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 2026-06-11 |
-| [feat(inputs.directory_monitor): Allow to preserve timestamps when moving file](https://github.com/influxdata/telegraf/pull/18921) | [`influxdata/telegraf#18921`](https://github.com/influxdata/telegraf/pull/18921) | 2026-05-28 |
-| [fix: declare opentelemetry-semantic-conventions for aio-pika, logging, pika and system-metrics](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | [`open-telemetry/opentelemetry-python-contrib#4594`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4594) | 2026-05-19 |
-| [fix(confluent-kafka): declare opentelemetry-semantic-conventions as a direct dependency](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | [`open-telemetry/opentelemetry-python-contrib#4590`](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4590) | 2026-05-18 |
-| [prometheus: validate exponential histogram scale range (#6779)](https://github.com/open-telemetry/opentelemetry-go/pull/6822) | [`open-telemetry/opentelemetry-go#6822`](https://github.com/open-telemetry/opentelemetry-go/pull/6822) | 2025-06-16 |
-| [fix: reduce API test memory consumption from 8.26GB to 1.57GB (#8263)](https://github.com/treeverse/lakeFS/pull/9097) | [`treeverse/lakeFS#9097`](https://github.com/treeverse/lakeFS/pull/9097) | 2025-06-08 |
-| [Separate configurations for colorized and json logs in Task SDK / Celery Executor](https://github.com/apache/airflow/pull/51082) | [`apache/airflow#51082`](https://github.com/apache/airflow/pull/51082) | 2025-06-03 |
-| [Fix/issue 6560 install trace bridge test](https://github.com/open-telemetry/opentelemetry-go/pull/6814) | [`open-telemetry/opentelemetry-go#6814`](https://github.com/open-telemetry/opentelemetry-go/pull/6814) | 2025-05-26 |
-| [bridge/opencensus: add test for OTelSpanContextToOC function](https://github.com/open-telemetry/opentelemetry-go/pull/6813) | [`open-telemetry/opentelemetry-go#6813`](https://github.com/open-telemetry/opentelemetry-go/pull/6813) | 2025-05-23 |
-| [Create RateMyProfessors.com-Selenium-Scraper.yml](https://github.com/up-for-grabs/up-for-grabs.net/pull/3744) | [`up-for-grabs/up-for-grabs.net#3744`](https://github.com/up-for-grabs/up-for-grabs.net/pull/3744) | 2023-02-10 |
+_No merged PRs in the window._
 <!--readme-actions:merged_prs:end-->
 
 ### Extended activity timeline
