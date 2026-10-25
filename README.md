@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-10-25 15:27 UTC_
+> _Updated 2026-10-25 20:19 UTC_
 >
 > **Last 30 days** 1 opened (↑1) · 1 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁█▁` 0.1/wk
 >
@@ -45,9 +45,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 2 | 7h |
+| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 2 | 12h |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 2d |
-| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 2d |
+| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 3d |
 
 #### Recently merged (1)
 
@@ -57,14 +57,14 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Awaiting your reply (1)
 
-- [ ] [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) — [@itaiad200](https://github.com/itaiad200) 7h<br>&nbsp;&nbsp;_> > hi @itaiad200, just checking in on this one I think you meant to tag @itaigilo_ <!--ack:fp=v9ncnc-->
+- [ ] [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) — [@itaiad200](https://github.com/itaiad200) 12h<br>&nbsp;&nbsp;_> > hi @itaiad200, just checking in on this one I think you meant to tag @itaigilo_ <!--ack:fp=v9ncnc-->
 
 #### Recent activity (6)
 
 - 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-6351121848) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(2d)_
 - 💬 Commented on PR [#10478 esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478#issuecomment-6351081716) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(2d)_
-- 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(2d)_
-- 💬 Commented on PR [#169 fix: send Markdown-Patch-Version: 1 header and preserve frontmatter value types on PATCH](https://github.com/MarkusPfundstein/mcp-obsidian/pull/169#issuecomment-6347013672) in [`MarkusPfundstein/mcp-obsidian`](https://github.com/MarkusPfundstein/mcp-obsidian) _(2d)_
+- 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3d)_
+- 💬 Commented on PR [#169 fix: send Markdown-Patch-Version: 1 header and preserve frontmatter value types on PATCH](https://github.com/MarkusPfundstein/mcp-obsidian/pull/169#issuecomment-6347013672) in [`MarkusPfundstein/mcp-obsidian`](https://github.com/MarkusPfundstein/mcp-obsidian) _(3d)_
 - 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(7d)_
 
 ---
@@ -98,8 +98,8 @@ Standalone `activity_feed` block — a longer slice of the public-events timelin
 <!--readme-actions:activity_feed:start-->
 - 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-6351121848) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(2d)_
 - 💬 Commented on PR [#10478 esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478#issuecomment-6351081716) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(2d)_
-- 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(2d)_
-- 💬 Commented on PR [#169 fix: send Markdown-Patch-Version: 1 header and preserve frontmatter value types on PATCH](https://github.com/MarkusPfundstein/mcp-obsidian/pull/169#issuecomment-6347013672) in [`MarkusPfundstein/mcp-obsidian`](https://github.com/MarkusPfundstein/mcp-obsidian) _(2d)_
+- 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3d)_
+- 💬 Commented on PR [#169 fix: send Markdown-Patch-Version: 1 header and preserve frontmatter value types on PATCH](https://github.com/MarkusPfundstein/mcp-obsidian/pull/169#issuecomment-6347013672) in [`MarkusPfundstein/mcp-obsidian`](https://github.com/MarkusPfundstein/mcp-obsidian) _(3d)_
 - 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(7d)_
 - 🚫 Closed PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3mo)_
 <!--readme-actions:activity_feed:end-->
