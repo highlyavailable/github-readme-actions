@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-10-26 22:13 UTC_
+> _Updated 2026-10-27 03:28 UTC_
 >
 > **Last 30 days** 1 opened (↑1) · 1 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▁█▁` 0.1/wk
 >
@@ -45,8 +45,8 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 2 | 10h |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 3d |
+| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 2 | 15h |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 4d |
 | [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 4d |
 
 #### Recently merged (1)
@@ -57,7 +57,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Awaiting your reply (1)
 
-- [ ] [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) — [@itaigilo](https://github.com/itaigilo) 10h<br>&nbsp;&nbsp;_> Thanks @highlyavailable for your contribution! These tests indeed add to the robustness of lakeFS,…_ <!--ack:fp=ilhulw-->
+- [ ] [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) — [@itaigilo](https://github.com/itaigilo) 15h<br>&nbsp;&nbsp;_> Thanks @highlyavailable for your contribution! These tests indeed add to the robustness of lakeFS,…_ <!--ack:fp=ilhulw-->
 
 #### Recent activity (6)
 
