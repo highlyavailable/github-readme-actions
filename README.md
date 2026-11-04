@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-04 13:41 UTC_
+> _Updated 2026-11-04 23:07 UTC_
 >
 > **Last 30 days** 3 opened (↑3) · 1 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▅▁█` 0.3/wk
 >
@@ -49,11 +49,11 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 0 | 20h |
-| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 3 | 22h |
+| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 0 | 1d |
+| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 3 | 1d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 1d |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 12d |
-| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 12d |
+| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 13d |
 
 #### Recently merged (1)
 
@@ -63,8 +63,8 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Awaiting your reply (3)
 
-- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@hickeyma](https://github.com/hickeyma) 20h<br>&nbsp;&nbsp;_> Thanks @highlyavailable for pushing this feature. Going with `subject-path` over `sbom-path` makes…_ <!--ack:fp=hi7ng1-->
-- [ ] [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) — [@itaigilo](https://github.com/itaigilo) 22h<br>&nbsp;&nbsp;_> Great stuff @highlyavailable - almost there! I ran the CI on a separate branch, and it seems that t…_ <!--ack:fp=fln45x-->
+- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@hickeyma](https://github.com/hickeyma) 1d<br>&nbsp;&nbsp;_> Thanks @highlyavailable for pushing this feature. Going with `subject-path` over `sbom-path` makes…_ <!--ack:fp=hi7ng1-->
+- [ ] [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) — [@itaigilo](https://github.com/itaigilo) 1d<br>&nbsp;&nbsp;_> Great stuff @highlyavailable - almost there! I ran the CI on a separate branch, and it seems that t…_ <!--ack:fp=fln45x-->
 - [ ] [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) — [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) — [@gemini-code-assist[bot]](https://github.com/gemini-code-assist[bot]) 4d<br>&nbsp;&nbsp;_> ![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg) Hardcoding the Prometheus da…_ <!--ack:fp=s5wbvp-->
 
 #### Recent activity (21)
@@ -119,10 +119,10 @@ Standalone `activity_feed` block — a longer slice of the public-events timelin
 - 💬 Commented on PR [#10478](https://github.com/treeverse/lakeFS/pull/10478#discussion_r4430530219) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(4d)_
 - 👀 Reviewed [#10478](https://github.com/treeverse/lakeFS/pull/10478#pullrequestreview-5721274463) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(4d)_
 - 💬 Commented on PR [#10478](https://github.com/treeverse/lakeFS/pull/10478#discussion_r4430527977) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(4d)_
-- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-6351121848) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(12d)_
-- 💬 Commented on PR [#10478 esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478#issuecomment-6351081716) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(12d)_
-- 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(12d)_
-- 💬 Commented on PR [#169 fix: send Markdown-Patch-Version: 1 header and preserve frontmatter value types on PATCH](https://github.com/MarkusPfundstein/mcp-obsidian/pull/169#issuecomment-6347013672) in [`MarkusPfundstein/mcp-obsidian`](https://github.com/MarkusPfundstein/mcp-obsidian) _(12d)_
+- 💬 Commented on PR [#4432 gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432#issuecomment-6351121848) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(13d)_
+- 💬 Commented on PR [#10478 esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478#issuecomment-6351081716) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(13d)_
+- 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(13d)_
+- 💬 Commented on PR [#169 fix: send Markdown-Patch-Version: 1 header and preserve frontmatter value types on PATCH](https://github.com/MarkusPfundstein/mcp-obsidian/pull/169#issuecomment-6347013672) in [`MarkusPfundstein/mcp-obsidian`](https://github.com/MarkusPfundstein/mcp-obsidian) _(13d)_
 - 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(2w)_
 - 🚫 Closed PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3mo)_
 <!--readme-actions:activity_feed:end-->
