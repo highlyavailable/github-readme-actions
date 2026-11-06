@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-06 13:39 UTC_
+> _Updated 2026-11-06 22:39 UTC_
 >
 > **Last 30 days** 3 opened (↑3) · 1 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▁▅▁█` 0.3/wk
 >
@@ -49,8 +49,8 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 0 | 2d |
-| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 3 | 2d |
+| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 0 | 3d |
+| [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 🟡 open | 3 | 3d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 3d |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 2w |
 | [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 2w |
@@ -63,8 +63,8 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Awaiting your reply (3)
 
-- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@hickeyma](https://github.com/hickeyma) 2d<br>&nbsp;&nbsp;_> Thanks @highlyavailable for pushing this feature. Going with `subject-path` over `sbom-path` makes…_ <!--ack:fp=hi7ng1-->
-- [ ] [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) — [@itaigilo](https://github.com/itaigilo) 2d<br>&nbsp;&nbsp;_> Great stuff @highlyavailable - almost there! I ran the CI on a separate branch, and it seems that t…_ <!--ack:fp=fln45x-->
+- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@hickeyma](https://github.com/hickeyma) 3d<br>&nbsp;&nbsp;_> Thanks @highlyavailable for pushing this feature. Going with `subject-path` over `sbom-path` makes…_ <!--ack:fp=hi7ng1-->
+- [ ] [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) — [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) — [@itaigilo](https://github.com/itaigilo) 3d<br>&nbsp;&nbsp;_> Great stuff @highlyavailable - almost there! I ran the CI on a separate branch, and it seems that t…_ <!--ack:fp=fln45x-->
 - [ ] [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) — [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) — [@gemini-code-assist[bot]](https://github.com/gemini-code-assist[bot]) 6d<br>&nbsp;&nbsp;_> ![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg) Hardcoding the Prometheus da…_ <!--ack:fp=s5wbvp-->
 
 #### Recent activity (21)
