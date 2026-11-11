@@ -29,23 +29,22 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-10 22:45 UTC_
+> _Updated 2026-11-11 04:25 UTC_
 >
-> **Last 30 days** 3 opened (↑3) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▅▁█▁` 0.3/wk
+> **Last 30 days** 4 opened (↑4) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▅▁█▅` 0.3/wk
 >
-> **Inbox** 🟢 1 ready · 🔴 0 failing · 🟠 2 stale · 🟡 1 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 0 ready · 🔴 0 failing · 🟠 2 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
-> **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 2 1–2w · 🔴 1 2w+
+> **Aging** 🟢 1 0–3d · 🟡 0 3–7d · 🟠 2 1–2w · 🔴 1 2w+
+>
+> _Since last update (5h ago): +1 opened._
 
-#### Needs attention (1)
-
-- [ ] 🟢 ready to merge — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=14kk0s1-->
-
-#### Open pull requests (4)
+#### Open pull requests (5)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 2 | 18h |
+| [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 2h |
+| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 2 | 23h |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 3d |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 2w |
 | [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 2w |
@@ -61,13 +60,13 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 - [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@elevran](https://github.com/elevran) 2d<br>&nbsp;&nbsp;_> @hickeyma @highlyavailable - thanks for pushing this. @hickeyma once ready, please LGTM and I'll me…_ <!--ack:fp=1j5srx3-->
 
-#### Recent activity (27)
+#### Recent activity (28)
 
+- 📤 Opened PR #2526 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(2h)_
 - 💬 Commented on issue [#2325 Inference cold start: measured breakdown and proposed optimizations](https://github.com/kaito-project/kaito/issues/2325#issuecomment-6709244289) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(3d)_
 - 👀 Reviewed [#1186](https://github.com/vllm-project/production-stack/pull/1186#pullrequestreview-5813345844) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(3d)_
 - 💬 Commented on PR [#1186](https://github.com/vllm-project/production-stack/pull/1186#discussion_r4502539742) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(3d)_
 - 👀 Reviewed [#3802](https://github.com/llm-d/llm-d-router/pull/3802#pullrequestreview-5813334977) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(3d)_
-- 💬 Commented on PR [#3802](https://github.com/llm-d/llm-d-router/pull/3802#discussion_r4502531593) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(3d)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -99,13 +98,14 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
+- 📤 Opened PR #2526 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(2h)_
 - 💬 Commented on issue [#2325 Inference cold start: measured breakdown and proposed optimizations](https://github.com/kaito-project/kaito/issues/2325#issuecomment-6709244289) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(3d)_
 - 👀 Reviewed [#1186](https://github.com/vllm-project/production-stack/pull/1186#pullrequestreview-5813345844) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(3d)_
 - 💬 Commented on PR [#1186](https://github.com/vllm-project/production-stack/pull/1186#discussion_r4502539742) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(3d)_
 - 👀 Reviewed [#3802](https://github.com/llm-d/llm-d-router/pull/3802#pullrequestreview-5813334977) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(3d)_
 - 💬 Commented on PR [#3802](https://github.com/llm-d/llm-d-router/pull/3802#discussion_r4502531593) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(3d)_
 - 💬 Commented on PR [#3802 ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802#issuecomment-6709178920) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(3d)_
-- 👀 Reviewed [#3802](https://github.com/llm-d/llm-d-router/pull/3802#pullrequestreview-5735651769) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(7d)_
+- 👀 Reviewed [#3802](https://github.com/llm-d/llm-d-router/pull/3802#pullrequestreview-5735651769) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(8d)_
 - 💬 Commented on issue [#3563 [ci] Sign the SBOMs attached to releases](https://github.com/llm-d/llm-d-router/issues/3563#issuecomment-6539563696) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(10d)_
 - 💬 Commented on issue [#1145 feature: add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/issues/1145#issuecomment-6539561347) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(10d)_
 - 📤 Opened PR #3802 in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(10d)_
