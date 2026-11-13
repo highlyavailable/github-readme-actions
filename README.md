@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-13 04:48 UTC_
+> _Updated 2026-11-13 13:50 UTC_
 >
 > **Last 30 days** 4 opened (↑4) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▅▁█▅` 0.3/wk
 >
@@ -109,10 +109,10 @@ Standalone `activity_feed` block — a longer slice of the public-events timelin
 - 💬 Commented on PR [#3802](https://github.com/llm-d/llm-d-router/pull/3802#discussion_r4502531593) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(5d)_
 - 💬 Commented on PR [#3802 ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802#issuecomment-6709178920) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(5d)_
 - 👀 Reviewed [#3802](https://github.com/llm-d/llm-d-router/pull/3802#pullrequestreview-5735651769) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(10d)_
-- 💬 Commented on issue [#3563 [ci] Sign the SBOMs attached to releases](https://github.com/llm-d/llm-d-router/issues/3563#issuecomment-6539563696) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(12d)_
-- 💬 Commented on issue [#1145 feature: add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/issues/1145#issuecomment-6539561347) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(12d)_
-- 📤 Opened PR #3802 in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(12d)_
-- 📤 Opened PR #1186 in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(12d)_
+- 💬 Commented on issue [#3563 [ci] Sign the SBOMs attached to releases](https://github.com/llm-d/llm-d-router/issues/3563#issuecomment-6539563696) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(13d)_
+- 💬 Commented on issue [#1145 feature: add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/issues/1145#issuecomment-6539561347) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(13d)_
+- 📤 Opened PR #3802 in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(13d)_
+- 📤 Opened PR #1186 in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(13d)_
 - 👀 Reviewed [#10478](https://github.com/treeverse/lakeFS/pull/10478#pullrequestreview-5721297898) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(13d)_
 - 💬 Commented on PR [#10478](https://github.com/treeverse/lakeFS/pull/10478#discussion_r4430549557) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(13d)_
 - 👀 Reviewed [#10478](https://github.com/treeverse/lakeFS/pull/10478#pullrequestreview-5721283475) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(13d)_
