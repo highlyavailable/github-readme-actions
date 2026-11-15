@@ -29,9 +29,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-15 04:32 UTC_
+> _Updated 2026-11-15 13:21 UTC_
 >
-> **Last 30 days** 4 opened (↑4) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▁▅█▁▅` 0.3/wk
+> **Last 30 days** 4 opened (↑4) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▅▁█▁▅` 0.3/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 0 failing · 🟠 2 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
@@ -47,7 +47,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
 | [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 4d |
-| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 2 | 4d |
+| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 2 | 5d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 7d |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 3w |
 | [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 3w |
@@ -127,7 +127,7 @@ Standalone `activity_feed` block — a longer slice of the public-events timelin
 - 💬 Commented on PR [#10478 esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478#issuecomment-6351081716) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(3w)_
 - 💬 Commented on PR [#4598 opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598#issuecomment-6350370492) in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(3w)_
 - 💬 Commented on PR [#169 fix: send Markdown-Patch-Version: 1 header and preserve frontmatter value types on PATCH](https://github.com/MarkusPfundstein/mcp-obsidian/pull/169#issuecomment-6347013672) in [`MarkusPfundstein/mcp-obsidian`](https://github.com/MarkusPfundstein/mcp-obsidian) _(3w)_
-- 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(3w)_
+- 📤 Opened PR #3248 in [`kubeflow/spark-operator`](https://github.com/kubeflow/spark-operator) _(4w)_
 - 🚫 Closed PR #4597 in [`redpanda-data/connect`](https://github.com/redpanda-data/connect) _(4mo)_
 <!--readme-actions:activity_feed:end-->
 
