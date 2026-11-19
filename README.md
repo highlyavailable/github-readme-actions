@@ -29,18 +29,15 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-19 05:41 UTC_
+> _Updated 2026-11-19 15:08 UTC_
 >
 > **Last 30 days** 3 opened (↑2) · 2 merged (↑2) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▅▁█▅▁` 0.3/wk
 >
-> **Inbox** 🟢 0 ready · 🔴 0 failing · 🟠 2 stale · 🟡 1 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 1 ready · 🔴 0 failing · 🟠 2 stale · 🟡 0 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 1 1–2w · 🔴 3 2w+
-
-#### Needs attention (2)
-
-- [ ] 🟠 stale 3w — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1d0dkus-->
-- [ ] 🟠 stale 3w — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=9pklg5-->
+>
+> _Since last update (9h ago): -1 awaiting._
 
 #### Open pull requests (5)
 
@@ -61,7 +58,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Awaiting your reply (1)
 
-- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@elevran](https://github.com/elevran) 10d<br>&nbsp;&nbsp;_> @hickeyma @highlyavailable - thanks for pushing this. @hickeyma once ready, please LGTM and I'll me…_ <!--ack:fp=1j5srx3-->
+- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@elevran](https://github.com/elevran) 11d<br>&nbsp;&nbsp;_> @hickeyma @highlyavailable - thanks for pushing this. @hickeyma once ready, please LGTM and I'll me…_ <!--ack:fp=1j5srx3-->
 
 #### Recent activity (27)
 
