@@ -29,30 +29,30 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-20 00:13 UTC_
+> _Updated 2026-11-20 14:48 UTC_
 >
-> **Last 30 days** 3 opened (↑2) · 2 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▅▁█▅▁` 0.3/wk
+> **Last 30 days** 4 opened (↑3) · 2 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▅▁█▅▅` 0.4/wk
 >
-> **Inbox** 🟢 1 ready · 🔴 0 failing · 🟠 2 stale · 🟡 1 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 1 ready · 🔴 0 failing · 🟠 2 stale · 🟡 2 awaiting reply · 🔵 0 review requests
 >
-> **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 1 1–2w · 🔴 3 2w+
+> **Aging** 🟢 1 0–3d · 🟡 0 3–7d · 🟠 1 1–2w · 🔴 3 2w+
 >
-> _Since last update (9h ago): +1 awaiting._
+> _Since last update (14h ago): +1 opened, +1 awaiting._
 
 #### Needs attention (2)
 
 - [ ] 🟢 ready to merge — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=14kk0s1-->
 - [ ] 🟠 stale 4w — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1d0dkus-->
 
-#### Open pull requests (5)
+#### Open pull requests (6)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 8d |
-| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 2 | 9d |
+| [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) | [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) | 🟡 open | 1 | 8h |
+| [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 9h |
+| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 2 | 10d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 12d |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 3w |
-| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 4w |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 4w |
 
 #### Recently merged (2)
 
@@ -61,17 +61,18 @@ This README dogfoods the action. The block below is a single `standup` section �
 | [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 2026-11-07 |
 | [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
 
-#### Awaiting your reply (1)
+#### Awaiting your reply (2)
 
+- [ ] [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) — [@Fei-Guo](https://github.com/Fei-Guo) 8h<br>&nbsp;&nbsp;_> Some newbie questions: 1) If pod is restarted (mean it is deleted and recreated in the same node),…_ <!--ack:fp=1yigyko-->
 - [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@elevran](https://github.com/elevran) 11d<br>&nbsp;&nbsp;_> @hickeyma @highlyavailable - thanks for pushing this. @hickeyma once ready, please LGTM and I'll me…_ <!--ack:fp=1j5srx3-->
 
-#### Recent activity (27)
+#### Recent activity (28)
 
-- 📤 Opened PR #2526 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(8d)_
+- 📤 Opened PR #2572 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(9h)_
+- 📤 Opened PR #2526 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(9d)_
 - 💬 Commented on issue [#2325 Inference cold start: measured breakdown and proposed optimizations](https://github.com/kaito-project/kaito/issues/2325#issuecomment-6709244289) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(12d)_
 - 👀 Reviewed [#1186](https://github.com/vllm-project/production-stack/pull/1186#pullrequestreview-5813345844) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(12d)_
 - 💬 Commented on PR [#1186](https://github.com/vllm-project/production-stack/pull/1186#discussion_r4502539742) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(12d)_
-- 👀 Reviewed [#3802](https://github.com/llm-d/llm-d-router/pull/3802#pullrequestreview-5813334977) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(12d)_
 
 ---
 _[View open PRs on GitHub](https://github.com/issues?q=type%3Apr+author%3Ahighlyavailable+is%3Aopen) · [Review requests](https://github.com/issues?q=type%3Apr+review-requested%3Ahighlyavailable+is%3Aopen) · [Customize this dashboard](https://github.com/highlyavailable/github-readme-actions/blob/main/docs/customization.md)_
@@ -103,7 +104,8 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
-- 📤 Opened PR #2526 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(8d)_
+- 📤 Opened PR #2572 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(9h)_
+- 📤 Opened PR #2526 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(9d)_
 - 💬 Commented on issue [#2325 Inference cold start: measured breakdown and proposed optimizations](https://github.com/kaito-project/kaito/issues/2325#issuecomment-6709244289) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(12d)_
 - 👀 Reviewed [#1186](https://github.com/vllm-project/production-stack/pull/1186#pullrequestreview-5813345844) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(12d)_
 - 💬 Commented on PR [#1186](https://github.com/vllm-project/production-stack/pull/1186#discussion_r4502539742) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(12d)_
