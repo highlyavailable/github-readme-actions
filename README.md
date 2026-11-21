@@ -29,15 +29,13 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-21 05:23 UTC_
+> _Updated 2026-11-21 14:05 UTC_
 >
-> **Last 30 days** 4 opened (↑3) · 1 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▅▁█▅▅` 0.4/wk
+> **Last 30 days** 4 opened (↑3) · 1 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▁▅█▁▅▅` 0.4/wk
 >
 > **Inbox** 🟢 0 ready · 🔴 0 failing · 🟠 2 stale · 🟡 2 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 1 0–3d · 🟡 0 3–7d · 🟠 1 1–2w · 🔴 3 2w+
->
-> _Since last update (5h ago): -1 merged._
 
 #### Needs attention (2)
 
@@ -48,7 +46,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) | [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) | 🟡 open | 1 | 23h |
+| [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) | [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) | 🟡 open | 1 | 1d |
 | [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 1d |
 | [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 2 | 11d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 13d |
@@ -63,7 +61,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Awaiting your reply (2)
 
-- [ ] [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) — [@Fei-Guo](https://github.com/Fei-Guo) 23h<br>&nbsp;&nbsp;_> Some newbie questions: 1) If pod is restarted (mean it is deleted and recreated in the same node),…_ <!--ack:fp=1yigyko-->
+- [ ] [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) — [@Fei-Guo](https://github.com/Fei-Guo) 1d<br>&nbsp;&nbsp;_> Some newbie questions: 1) If pod is restarted (mean it is deleted and recreated in the same node),…_ <!--ack:fp=1yigyko-->
 - [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@elevran](https://github.com/elevran) 12d<br>&nbsp;&nbsp;_> @hickeyma @highlyavailable - thanks for pushing this. @hickeyma once ready, please LGTM and I'll me…_ <!--ack:fp=1j5srx3-->
 
 #### Recent activity (28)
@@ -113,10 +111,10 @@ Standalone `activity_feed` block — a longer slice of the public-events timelin
 - 💬 Commented on PR [#3802](https://github.com/llm-d/llm-d-router/pull/3802#discussion_r4502531593) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(13d)_
 - 💬 Commented on PR [#3802 ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802#issuecomment-6709178920) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(13d)_
 - 👀 Reviewed [#3802](https://github.com/llm-d/llm-d-router/pull/3802#pullrequestreview-5735651769) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(2w)_
-- 💬 Commented on issue [#3563 [ci] Sign the SBOMs attached to releases](https://github.com/llm-d/llm-d-router/issues/3563#issuecomment-6539563696) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(2w)_
-- 💬 Commented on issue [#1145 feature: add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/issues/1145#issuecomment-6539561347) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(2w)_
-- 📤 Opened PR #3802 in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(2w)_
-- 📤 Opened PR #1186 in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(2w)_
+- 💬 Commented on issue [#3563 [ci] Sign the SBOMs attached to releases](https://github.com/llm-d/llm-d-router/issues/3563#issuecomment-6539563696) in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(3w)_
+- 💬 Commented on issue [#1145 feature: add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/issues/1145#issuecomment-6539561347) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(3w)_
+- 📤 Opened PR #3802 in [`llm-d/llm-d-router`](https://github.com/llm-d/llm-d-router) _(3w)_
+- 📤 Opened PR #1186 in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(3w)_
 - 👀 Reviewed [#10478](https://github.com/treeverse/lakeFS/pull/10478#pullrequestreview-5721297898) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(3w)_
 - 💬 Commented on PR [#10478](https://github.com/treeverse/lakeFS/pull/10478#discussion_r4430549557) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(3w)_
 - 👀 Reviewed [#10478](https://github.com/treeverse/lakeFS/pull/10478#pullrequestreview-5721283475) in [`treeverse/lakeFS`](https://github.com/treeverse/lakeFS) _(3w)_
