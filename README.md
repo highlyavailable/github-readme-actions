@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-22 13:57 UTC_
+> _Updated 2026-11-22 23:08 UTC_
 >
 > **Last 30 days** 4 opened (↑3) · 1 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▅▁█▁▅▅` 0.4/wk
 >
@@ -46,9 +46,9 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
+| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 3 | 4h |
 | [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) | [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) | 🟡 open | 1 | 2d |
 | [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 2d |
-| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 2 | 12d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 2w |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 4w |
 
@@ -61,8 +61,8 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Awaiting your reply (2)
 
+- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@elevran](https://github.com/elevran) 4h<br>&nbsp;&nbsp;_> @hickeyma - would appreciate your feedback if you have time, it's blocked on resolution of your fee…_ <!--ack:fp=1cs2zzg-->
 - [ ] [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) — [@Fei-Guo](https://github.com/Fei-Guo) 2d<br>&nbsp;&nbsp;_> Some newbie questions: 1) If pod is restarted (mean it is deleted and recreated in the same node),…_ <!--ack:fp=1yigyko-->
-- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@elevran](https://github.com/elevran) 13d<br>&nbsp;&nbsp;_> @hickeyma @highlyavailable - thanks for pushing this. @hickeyma once ready, please LGTM and I'll me…_ <!--ack:fp=1j5srx3-->
 
 #### Recent activity (26)
 
