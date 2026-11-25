@@ -29,44 +29,44 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-24 16:53 UTC_
+> _Updated 2026-11-25 01:51 UTC_
 >
-> **Last 30 days** 4 opened (↑3) · 1 merged (=) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▅▁█▁▅▅` 0.4/wk
+> **Last 30 days** 4 opened (↑3) · 2 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▅▁█▁▅▅` 0.4/wk
 >
-> **Inbox** 🟢 2 ready · 🔴 1 failing · 🟠 3 stale · 🟡 2 awaiting reply · 🔵 0 review requests
+> **Inbox** 🟢 1 ready · 🔴 1 failing · 🟠 3 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
 > **Aging** 🟢 0 0–3d · 🟡 1 3–7d · 🟠 1 1–2w · 🔴 3 2w+
 >
-> _Since last update (13h ago): +1 failing._
+> _Since last update (8h ago): +1 merged, -1 awaiting._
 
 #### Needs attention (5)
 
-- [ ] 🟢 ready to merge — [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) <!--ack:fp=1l60uhe-->
 - [ ] 🟢 ready to merge — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=14kk0s1-->
 - [ ] 🟠 stale 4w — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1d0dkus-->
 - [ ] 🔴 CI failing — [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) <!--ack:fp=7whbp7-->
 - [ ] 🔴 CI failing — [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) — [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) <!--ack:fp=1otrgzv-->
+- [ ] 🔴 CI failing — [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) — [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) <!--ack:fp=17j39qy-->
 
-#### Open pull requests (6)
+#### Open pull requests (5)
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 🟡 open | 3 | 4h |
 | [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) | [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) | 🟡 open | 3 | 1d |
 | [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 4d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 2w |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 4w |
+| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 4w |
 
-#### Recently merged (2)
+#### Recently merged (3)
 
 | PR | Ref | Merged |
 | --- | --- | --- |
+| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 2026-11-24 |
 | [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 2026-11-07 |
 | [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
 
-#### Awaiting your reply (2)
+#### Awaiting your reply (1)
 
-- [ ] [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) — [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) — [@elevran](https://github.com/elevran) 4h<br>&nbsp;&nbsp;_> stampping following review and LGTM from @hickeyma_ <!--ack:fp=ev7wq2-->
 - [ ] [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) — [@zhuangqh](https://github.com/zhuangqh) 1d<br>&nbsp;&nbsp;_> From my point of view, restart is a less critical path. Shorten start time in this case but introdu…_ <!--ack:fp=1o33j48-->
 
 #### Recent activity (24)
@@ -88,6 +88,7 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 <!--readme-actions:merged_prs:start-->
 | PR | Ref | Merged |
 | --- | --- | --- |
+| [ci: sign the SBOM files attached to releases](https://github.com/llm-d/llm-d-router/pull/3802) | [`llm-d/llm-d-router#3802`](https://github.com/llm-d/llm-d-router/pull/3802) | 2026-11-24 |
 | [esti: test lakectl fs upload of files over 5GiB](https://github.com/treeverse/lakeFS/pull/10478) | [`treeverse/lakeFS#10478`](https://github.com/treeverse/lakeFS/pull/10478) | 2026-11-07 |
 | [docs: show how to set runtimeClassName with pod templates](https://github.com/kubeflow/spark-operator/pull/3248) | [`kubeflow/spark-operator#3248`](https://github.com/kubeflow/spark-operator/pull/3248) | 2026-10-21 |
 | [Support per-node callbacks via string import paths](https://github.com/astronomer/astronomer-cosmos/pull/2781) | [`astronomer/astronomer-cosmos#2781`](https://github.com/astronomer/astronomer-cosmos/pull/2781) | 2026-06-11 |
