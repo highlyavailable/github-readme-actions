@@ -29,13 +29,13 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-27 01:26 UTC_
+> _Updated 2026-11-27 16:00 UTC_
 >
-> **Last 30 days** 4 opened (↑3) · 2 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▅▁█▅▁▅` 0.4/wk
+> **Last 30 days** 4 opened (↑3) · 2 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▅▁█▅▅▁` 0.4/wk
 >
 > **Inbox** 🟢 1 ready · 🔴 1 failing · 🟠 3 stale · 🟡 1 awaiting reply · 🔵 0 review requests
 >
-> **Aging** 🟢 0 0–3d · 🟡 1 3–7d · 🟠 0 1–2w · 🔴 4 2w+
+> **Aging** 🟢 0 0–3d · 🟡 0 3–7d · 🟠 1 1–2w · 🔴 4 2w+
 
 #### Needs attention (5)
 
@@ -49,10 +49,10 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 | PR | Ref | State | Comments | Updated |
 | --- | --- | --- | --- | --- |
-| [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) | [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) | 🟡 open | 3 | 3d |
-| [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 6d |
+| [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) | [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) | 🟡 open | 3 | 4d |
+| [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 7d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 2w |
-| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 4w |
+| [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 5w |
 | [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 5w |
 
 #### Recently merged (3)
@@ -65,12 +65,12 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 #### Awaiting your reply (1)
 
-- [ ] [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) — [@zhuangqh](https://github.com/zhuangqh) 3d<br>&nbsp;&nbsp;_> From my point of view, restart is a less critical path. Shorten start time in this case but introdu…_ <!--ack:fp=1o33j48-->
+- [ ] [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) — [@zhuangqh](https://github.com/zhuangqh) 4d<br>&nbsp;&nbsp;_> From my point of view, restart is a less critical path. Shorten start time in this case but introdu…_ <!--ack:fp=1o33j48-->
 
 #### Recent activity (24)
 
-- 💬 Commented on PR [#2572 feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572#issuecomment-7090199207) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(3d)_
-- 📤 Opened PR #2572 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(6d)_
+- 💬 Commented on PR [#2572 feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572#issuecomment-7090199207) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(4d)_
+- 📤 Opened PR #2572 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(7d)_
 - 📤 Opened PR #2526 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(2w)_
 - 💬 Commented on issue [#2325 Inference cold start: measured breakdown and proposed optimizations](https://github.com/kaito-project/kaito/issues/2325#issuecomment-6709244289) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(2w)_
 - 👀 Reviewed [#1186](https://github.com/vllm-project/production-stack/pull/1186#pullrequestreview-5813345844) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(2w)_
@@ -106,8 +106,8 @@ Standalone `merged_prs` block — every accepted PR in the window (`merged_windo
 Standalone `activity_feed` block — a longer slice of the public-events timeline than the compact preview in the dashboard above.
 
 <!--readme-actions:activity_feed:start-->
-- 💬 Commented on PR [#2572 feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572#issuecomment-7090199207) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(3d)_
-- 📤 Opened PR #2572 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(6d)_
+- 💬 Commented on PR [#2572 feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572#issuecomment-7090199207) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(4d)_
+- 📤 Opened PR #2572 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(7d)_
 - 📤 Opened PR #2526 in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(2w)_
 - 💬 Commented on issue [#2325 Inference cold start: measured breakdown and proposed optimizations](https://github.com/kaito-project/kaito/issues/2325#issuecomment-6709244289) in [`kaito-project/kaito`](https://github.com/kaito-project/kaito) _(2w)_
 - 👀 Reviewed [#1186](https://github.com/vllm-project/production-stack/pull/1186#pullrequestreview-5813345844) in [`vllm-project/production-stack`](https://github.com/vllm-project/production-stack) _(2w)_
