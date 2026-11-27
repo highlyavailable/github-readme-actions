@@ -29,7 +29,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 
 <!--readme-actions:standup:start-->
 > ### Standup · [`highlyavailable`](https://github.com/highlyavailable)
-> _Updated 2026-11-26 16:15 UTC_
+> _Updated 2026-11-27 01:26 UTC_
 >
 > **Last 30 days** 4 opened (↑3) · 2 merged (↑1) · 0 reviewed (=) · velocity `▁▁▁▁▁▁▅▁█▅▁▅` 0.4/wk
 >
@@ -40,7 +40,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 #### Needs attention (5)
 
 - [ ] 🟢 ready to merge — [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) — [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) <!--ack:fp=14kk0s1-->
-- [ ] 🟠 stale 4w — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1d0dkus-->
+- [ ] 🟠 stale 5w — [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) — [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) <!--ack:fp=1d0dkus-->
 - [ ] 🔴 CI failing — [feat: keep vLLM weights on the GPU across restarts with vllm preload](https://github.com/kaito-project/kaito/pull/2572) — [`kaito-project/kaito#2572`](https://github.com/kaito-project/kaito/pull/2572) <!--ack:fp=7whbp7-->
 - [ ] 🔴 CI failing — [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) — [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) <!--ack:fp=1otrgzv-->
 - [ ] 🔴 CI failing — [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) — [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) <!--ack:fp=17j39qy-->
@@ -53,7 +53,7 @@ This README dogfoods the action. The block below is a single `standup` section �
 | [feat: persist the vLLM compile cache on the node](https://github.com/kaito-project/kaito/pull/2526) | [`kaito-project/kaito#2526`](https://github.com/kaito-project/kaito/pull/2526) | 🟡 open | 0 | 6d |
 | [[Feat][Helm] Add a router-level Grafana dashboard](https://github.com/vllm-project/production-stack/pull/1186) | [`vllm-project/production-stack#1186`](https://github.com/vllm-project/production-stack/pull/1186) | 🟡 open | 0 | 2w |
 | [gcp: migrate Pub/Sub input and output to the pubsub/v2 SDK](https://github.com/redpanda-data/connect/pull/4432) | [`redpanda-data/connect#4432`](https://github.com/redpanda-data/connect/pull/4432) | 🟡 open | 7 | 4w |
-| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 4w |
+| [opensearch: support the create action in the output](https://github.com/redpanda-data/connect/pull/4598) | [`redpanda-data/connect#4598`](https://github.com/redpanda-data/connect/pull/4598) | 🟡 open | 2 | 5w |
 
 #### Recently merged (3)
 
